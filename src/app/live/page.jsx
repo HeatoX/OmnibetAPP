@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import PredictionCard from '@/components/PredictionCard';
+import SportFilter, { MatchDetailModal } from '@/components/SportWidgets';
 import { getRealMatches } from '@/lib/real-data-service';
+import { SPORTS } from '@/lib/mock-data';
 
 export default function LivePage() {
     const [matches, setMatches] = useState([]);
