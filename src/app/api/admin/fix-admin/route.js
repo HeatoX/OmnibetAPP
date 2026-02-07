@@ -7,40 +7,46 @@ export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
         const emailParam = searchParams.get('email');
-        const adminEmail = emailParam || 'kesp230590@gmail.com';
+        const targetEmails = emailParam ? [emailParam] : ['admin@omnibet.ai', 'kesp230590@gmail.com'];
 
-        // 1. Find the profile for the admin email
-        const { data: profile, error: fetchError } = await supabase
-            .from('profiles')
-            .select('id, email, subscription_tier')
-            .eq('email', adminEmail)
-            .single();
+        const results = [];
 
-        if (fetchError) {
-            return NextResponse.json({
-                success: false,
-                error: `Profile for ${adminEmail} not found: ${fetchError.message}`
-            }, { status: 404 });
-        }
+        for (const email of targetEmails) {
+            // 1. Find the profile
+            const { data: profile, error: fetchError } = await supabase
+                .from('profiles')
+                .select('id, email, subscription_tier')
+                .eq('email', email)
+                .single();
 
-        // 2. Update to diamond tier
-        const { data: updated, error: updateError } = await supabase
-            .from('profiles')
-            .update({
-                subscription_tier: 'diamond'
-            })
-            .eq('id', profile.id)
-            .select();
+            if (fetchError) {
+                results.push({ email, success: false, error: 'Profile not found' });
+                continue;
+            }
 
-        if (updateError) {
-            throw updateError;
+            // 2. Update to diamond tier
+            const { data: updated, error: updateError } = await supabase
+                .from('profiles')
+                .update({ subscription_tier: 'diamond' })
+                .eq('id', profile.id)
+                .select();
+
+            if (updateError) {
+                results.push({ email, success: false, error: updateError.message });
+            } else {
+                results.push({
+                    email,
+                    success: true,
+                    previous_tier: profile.subscription_tier,
+                    new_tier: updated?.[0]?.subscription_tier
+                });
+            }
         }
 
         return NextResponse.json({
             success: true,
-            message: `User ${adminEmail} updated to diamond tier.`,
-            previous_tier: profile.subscription_tier,
-            updated_profile: updated?.[0]
+            processed: results.length,
+            details: results
         });
 
     } catch (error) {

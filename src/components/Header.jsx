@@ -7,7 +7,14 @@ import LoginModal from './LoginModal';
 import RiskProfileSelector, { useRiskProfile } from './RiskProfileSelector';
 
 // Admin emails
-const ADMIN_EMAILS = ['pablo@admin.com', 'admin@omnibet.ai'];
+const ADMIN_EMAILS = [
+    'pablo@admin.com',
+    'admin@omnibet.ai',
+    'admin',
+    'admin@example.com',
+    'pablollu18@gmail.com',
+    'kesp230590@gmail.com'
+];
 
 /**
  * Navigation Header Component with Auth
