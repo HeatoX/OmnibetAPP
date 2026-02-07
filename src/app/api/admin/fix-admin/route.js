@@ -3,9 +3,11 @@ import { supabase } from '@/lib/supabase-config';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request) {
     try {
-        const adminEmail = 'admin@omnibet.ai';
+        const { searchParams } = new URL(request.url);
+        const emailParam = searchParams.get('email');
+        const adminEmail = emailParam || 'kesp230590@gmail.com';
 
         // 1. Find the profile for the admin email
         const { data: profile, error: fetchError } = await supabase

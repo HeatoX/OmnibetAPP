@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase-config';
 
 // Admin emails that have access
-const ADMIN_EMAILS = ['pablo@admin.com', 'admin@omnibet.ai'];
+const ADMIN_EMAILS = ['pablo@admin.com', 'admin@omnibet.ai', 'kesp230590@gmail.com'];
 
 export default function AdminPage() {
     const router = useRouter();
