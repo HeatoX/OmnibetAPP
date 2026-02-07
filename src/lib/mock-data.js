@@ -97,6 +97,7 @@ export const SPORTS = {
         leagues: ['ATP', 'WTA', 'Australian Open'],
     },
 };
+export const DEPORTES = SPORTS;
 
 // ========================================
 // REAL TEAMS DATABASE - NO PLACEHOLDERS
