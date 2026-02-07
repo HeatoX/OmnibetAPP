@@ -2,10 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { loadStripe } from '@stripe/stripe-js';
-
-// Stripe will be initialized with your publishable key
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_key');
+import Script from 'next/script';
 
 const PRICING_TIERS = [
     {
@@ -80,49 +77,20 @@ export default function PricingPage() {
     const [loading, setLoading] = useState(null);
     const [error, setError] = useState('');
 
-    const handleSubscribe = async (tier) => {
-        if (!user) {
-            setShowLoginModal(true);
-            return;
-        }
+    // No handled checkout via Stripe anymore
 
-        if (!tier.priceId) return;
-
-        setLoading(tier.id);
-        setError('');
-
-        try {
-            // Create checkout session via API route
-            const response = await fetch('/api/create-checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    priceId: tier.priceId,
-                    userId: user.id,
-                    email: user.email,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (data.error) {
-                throw new Error(data.error);
-            }
-
-            // Redirect to Stripe Checkout
-            const stripe = await stripePromise;
-            await stripe.redirectToCheckout({ sessionId: data.sessionId });
-        } catch (err) {
-            setError(err.message || 'Error al procesar el pago');
-        }
-
-        setLoading(null);
+    const handlePaymentSuccess = (details, tier) => {
+        console.log('Payment Successful', details);
+        // Refresh profile or redirect
+        window.location.reload();
     };
-
-    const currentTier = profile?.subscription_tier || 'free';
 
     return (
         <div className="min-h-screen bg-grid py-20">
+            <Script
+                src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test'}&currency=USD&intent=capture`}
+                strategy="afterInteractive"
+            />
             <div className="bg-glow"></div>
 
             <div className="container mx-auto px-4 relative z-10">
@@ -157,7 +125,7 @@ export default function PricingPage() {
                     {PRICING_TIERS.map((tier) => (
                         <div
                             key={tier.id}
-                            className={`glass-card p-8 relative ${tier.popular ? 'border-2 border-yellow-500/50 scale-105' : ''
+                            className={`glass-card p-8 relative flex flex-col ${tier.popular ? 'border-2 border-yellow-500/50 scale-105' : ''
                                 } ${currentTier === tier.id ? 'ring-2 ring-cyan-500' : ''}`}
                         >
                             {/* Popular badge */}
@@ -182,7 +150,7 @@ export default function PricingPage() {
                             {/* Header */}
                             <div className="text-center mb-8">
                                 <h3 className={`text-2xl font-bold mb-2 ${tier.color === 'yellow' ? 'text-yellow-400' :
-                                        tier.color === 'cyan' ? 'text-cyan-400' : 'text-gray-400'
+                                    tier.color === 'cyan' ? 'text-cyan-400' : 'text-gray-400'
                                     }`}>
                                     {tier.name}
                                 </h3>
@@ -200,7 +168,7 @@ export default function PricingPage() {
                             </div>
 
                             {/* Features */}
-                            <ul className="space-y-3 mb-8">
+                            <ul className="space-y-3 mb-8 flex-grow">
                                 {tier.features.map((feature, idx) => (
                                     <li key={idx} className="flex items-start gap-3">
                                         <span className="text-green-400 mt-0.5">✓</span>
@@ -215,28 +183,56 @@ export default function PricingPage() {
                                 ))}
                             </ul>
 
-                            {/* CTA */}
-                            <button
-                                onClick={() => handleSubscribe(tier)}
-                                disabled={tier.disabled || loading === tier.id || currentTier === tier.id}
-                                className={`w-full py-4 rounded-xl font-bold text-lg transition-all
-                                    ${tier.color === 'yellow'
-                                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black hover:shadow-lg hover:shadow-yellow-500/30'
-                                        : tier.color === 'cyan'
-                                            ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-black hover:shadow-lg hover:shadow-cyan-500/30'
-                                            : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                    }
-                                    disabled:opacity-50 disabled:cursor-not-allowed`}
-                            >
-                                {loading === tier.id ? 'Procesando...' : tier.cta}
-                            </button>
+                            {/* CTA / PayPal Buttons */}
+                            <div className="mt-auto min-h-[60px]">
+                                {tier.id === 'free' ? (
+                                    <button
+                                        disabled
+                                        className="w-full py-4 rounded-xl font-bold text-lg bg-gray-700 text-gray-400 cursor-not-allowed"
+                                    >
+                                        Plan Actual
+                                    </button>
+                                ) : currentTier === tier.id ? (
+                                    <button
+                                        disabled
+                                        className="w-full py-4 rounded-xl font-bold text-lg bg-cyan-700 text-white opacity-50 cursor-not-allowed"
+                                    >
+                                        Plan Activo
+                                    </button>
+                                ) : (
+                                    <div className="relative z-0">
+                                        {typeof window !== 'undefined' && window.paypal ? (
+                                            <PayPalButtonWrapper
+                                                tier={tier}
+                                                userId={user?.id}
+                                                onSuccess={(details) => handlePaymentSuccess(details, tier)}
+                                                onError={(err) => setError(err)}
+                                            />
+                                        ) : (
+                                            <button
+                                                onClick={() => {
+                                                    if (!user) setShowLoginModal(true);
+                                                    else alert("Cargando sistema de pagos de PayPal...");
+                                                }}
+                                                className={`w-full py-4 rounded-xl font-bold text-lg transition-all
+                                                    ${tier.color === 'yellow'
+                                                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black'
+                                                        : 'bg-gradient-to-r from-cyan-400 to-blue-500 text-black'
+                                                    }`}
+                                            >
+                                                {user ? 'Pagar con PayPal' : 'Inicia Sesión para Comprar'}
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>
 
                 {error && (
                     <div className="max-w-md mx-auto mt-8 bg-red-500/10 border border-red-500/50 
-                                  text-red-400 px-4 py-3 rounded-xl text-center">
+                                   text-red-400 px-4 py-3 rounded-xl text-center">
                         {error}
                     </div>
                 )}
@@ -248,12 +244,12 @@ export default function PricingPage() {
                         <div className="glass-card p-6">
                             <div className="text-4xl mb-4">🔒</div>
                             <h3 className="font-bold text-white mb-2">Pago Seguro</h3>
-                            <p className="text-gray-400 text-sm">Procesado por Stripe con encriptación SSL</p>
+                            <p className="text-gray-400 text-sm">Procesado por PayPal con encriptación de grado militar</p>
                         </div>
                         <div className="glass-card p-6">
                             <div className="text-4xl mb-4">💰</div>
                             <h3 className="font-bold text-white mb-2">Garantía 30 días</h3>
-                            <p className="text-gray-400 text-sm">Reembolso completo si no estás satisfecho</p>
+                            <p className="text-gray-400 text-sm">Respaldo total del oráculo inteligente</p>
                         </div>
                         <div className="glass-card p-6">
                             <div className="text-4xl mb-4">📊</div>
@@ -265,4 +261,61 @@ export default function PricingPage() {
             </div>
         </div>
     );
+}
+
+/**
+ * PayPal Button Component Wrapper
+ */
+function PayPalButtonWrapper({ tier, userId, onSuccess, onError }) {
+    const [isRendered, setIsRendered] = useState(false);
+    const containerId = `paypal-button-container-${tier.id}`;
+
+    useState(() => {
+        const timer = setTimeout(() => {
+            if (window.paypal && !isRendered) {
+                window.paypal.Buttons({
+                    createOrder: async () => {
+                        const res = await fetch('/api/paypal/create-order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                tierId: tier.id,
+                                amount: tier.price
+                            })
+                        });
+                        const order = await res.json();
+                        return order.id;
+                    },
+                    onApprove: async (data) => {
+                        const res = await fetch('/api/paypal/capture-order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                orderID: data.orderID,
+                                userId: userId,
+                                tierId: tier.id
+                            })
+                        });
+                        const result = await res.json();
+                        if (result.success) onSuccess(result);
+                        else onError(result.error || 'Error capturando el pago');
+                    },
+                    onError: (err) => {
+                        console.error('PayPal Button Error', err);
+                        onError('Hubo un error con el botón de PayPal');
+                    },
+                    style: {
+                        color: tier.color === 'yellow' ? 'gold' : 'blue',
+                        shape: 'rect',
+                        label: 'pay',
+                        height: 50
+                    }
+                }).render(`#${containerId}`);
+                setIsRendered(true);
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [isRendered]);
+
+    return <div id={containerId} className="w-full"></div>;
 }

@@ -68,21 +68,14 @@ export default function UpgradeModal({ onClose }) {
                             <li>✓ Banker del Día (90% Win Rate)</li>
                             <li>✓ Alertas de Telegram</li>
                         </ul>
-                        <div className="grid grid-cols-2 gap-2">
-                            <button
-                                onClick={() => import('@/lib/stripe').then(mod => mod.handleCheckout('price_diamond'))}
-                                className="bg-white text-black font-bold py-2 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 text-sm"
+                        <div className="mt-4">
+                            <Link
+                                href="/pricing"
+                                className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 group"
                             >
-                                💳 Tarjeta
-                            </button>
-                            <a
-                                href="https://wa.me/1234567890?text=Hola,%20quiero%20suscribirme%20al%20Plan%20Diamond%20de%20OmniBet"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-[#25D366] text-white font-bold py-2 rounded-lg hover:bg-[#128C7E] transition-colors flex items-center justify-center gap-2 text-sm"
-                            >
-                                <span className="text-lg">📱</span> WhatsApp
-                            </a>
+                                💳 Suscribirse (PayPal / Tarjeta)
+                                <span className="group-hover:translate-x-1 transition-transform">→</span>
+                            </Link>
                         </div>
                     </div>
 
@@ -90,22 +83,12 @@ export default function UpgradeModal({ onClose }) {
                     <div className="border border-yellow-500/30 bg-yellow-900/10 rounded-xl p-4 hover:border-yellow-500 transition-colors">
                         <h3 className="text-lg font-bold text-white mb-1">⭐ Plan Gold</h3>
                         <p className="text-xl font-black text-yellow-400 mb-3">$9.99<span className="text-sm font-normal text-gray-400">/mes</span></p>
-                        <div className="grid grid-cols-2 gap-2">
-                            <button
-                                onClick={() => import('@/lib/stripe').then(mod => mod.handleCheckout('price_gold'))}
-                                className="bg-gray-700 text-white font-bold py-2 rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center gap-2 text-sm"
-                            >
-                                💳 Tarjeta
-                            </button>
-                            <a
-                                href="https://wa.me/1234567890?text=Hola,%20quiero%20suscribirme%20al%20Plan%20Gold%20de%20OmniBet"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-[#25D366] text-white font-bold py-2 rounded-lg hover:bg-[#128C7E] transition-colors flex items-center justify-center gap-2 text-sm"
-                            >
-                                <span className="text-lg">📱</span> WhatsApp
-                            </a>
-                        </div>
+                        <Link
+                            href="/pricing"
+                            className="w-full bg-gray-700 text-white font-bold py-2 rounded-lg hover:bg-gray-600 transition-all block text-center text-sm"
+                        >
+                            Ver Plan Gold
+                        </Link>
                     </div>
                 </div>
 
