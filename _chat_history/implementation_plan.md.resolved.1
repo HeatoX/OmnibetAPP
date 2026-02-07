@@ -1,0 +1,177 @@
+# 🐝 OmniBet AI v2.0 - Arquitectura "Colmena de IA"
+
+> Sistema de predicción con múltiples agentes especializados y datos en tiempo real
+
+---
+
+## 🎯 Visión Mejorada
+
+Transformar OmniBet de una demo a un **sistema de producción** con:
+- APIs de datos deportivos reales
+- Arquitectura de "enjambre" con agentes especializados
+- Análisis jugador-por-jugador
+- Tracking de incidentes pre-partido
+- Conexión en tiempo real
+
+---
+
+## 🧠 Arquitectura de IA en Colmena
+
+```mermaid
+graph TB
+    subgraph Orchestrator["🎯 Orquestador Central"]
+        Master[AI Master Controller]
+    end
+    
+    subgraph Scouts["🔍 Agentes Scout (Recolectores)"]
+        S1[Stats Agent]
+        S2[News Agent]
+        S3[Social Agent]
+        S4[Odds Agent]
+        S5[Weather Agent]
+    end
+    
+    subgraph Analysts["📊 Agentes Analistas"]
+        A1[Team Analyst]
+        A2[Player Analyst]
+        A3[H2H Analyst]
+        A4[Form Analyst]
+        A5[Injury Analyst]
+    end
+    
+    subgraph Predictors["🎲 Agentes Predictores"]
+        P1[Match Predictor]
+        P2[Score Predictor]
+        P3[Player Props]
+        P4[Value Detector]
+    end
+    
+    Master --> S1 & S2 & S3 & S4 & S5
+    S1 & S2 & S3 & S4 & S5 --> A1 & A2 & A3 & A4 & A5
+    A1 & A2 & A3 & A4 & A5 --> P1 & P2 & P3 & P4
+    P1 & P2 & P3 & P4 --> Master
+```
+
+---
+
+## 📡 APIs Reales a Integrar
+
+| API | Propósito | Datos |
+|-----|-----------|-------|
+| **API-Football** | Stats fútbol | xG, lineups, H2H, live |
+| **NBA API** | Stats basket | Pace, efficiency, box scores |
+| **TheOddsAPI** | Cuotas | Comparador multi-casa |
+| **NewsAPI** | Noticias | Lesiones, rumores, declaraciones |
+| **Twitter/X API** | Sentimiento | Análisis social pre-partido |
+| **OpenWeather** | Clima | Condiciones del estadio |
+| **TransferMarkt** | Jugadores | Valor, historial, estado |
+
+---
+
+## 🔧 Componentes a Implementar
+
+### Fase 7: Sistema de Agentes
+- [ ] **Agent Base Class** - Estructura común para agentes
+- [ ] **Stats Scout** - Recolector de estadísticas
+- [ ] **News Scout** - Monitor de noticias deportivas
+- [ ] **Sentiment Scout** - Análisis de redes sociales
+- [ ] **Odds Scout** - Comparador de cuotas en vivo
+
+### Fase 8: Análisis Profundo de Jugadores
+- [ ] Perfil completo por jugador
+- [ ] Historial de rendimiento últimos 20 partidos
+- [ ] Estado físico (fatiga, lesiones)
+- [ ] Alertas de incidentes pre-partido
+- [ ] Predicciones de props individuales
+
+### Fase 9: APIs En Vivo
+- [ ] Integración API-Football (fútbol)
+- [ ] Integración BallDontLie (NBA gratis)
+- [ ] Integración TheOddsAPI
+- [ ] WebSocket para datos live
+- [ ] Cache con Redis
+
+### Fase 10: Features Adicionales Sugeridos
+- [ ] 🤖 Bot de Telegram con alertas
+- [ ] 📊 Comparador de cuotas multi-casa
+- [ ] 💰 Calculadora de value bets
+- [ ] 📱 Push notifications
+- [ ] 🏆 Leaderboard de usuarios
+- [ ] 📤 Exportar picks a PDF
+
+---
+
+## 👤 Análisis de Jugador (Nuevo)
+
+```json
+{
+  "player": {
+    "name": "Jude Bellingham",
+    "team": "Real Madrid",
+    "position": "MID",
+    "form_rating": 8.7,
+    "fatigue_index": 0.3,
+    "minutes_last_5": [90, 85, 90, 0, 78],
+    "goals_last_5": [1, 0, 2, 0, 1],
+    "xG_last_5": [0.8, 0.3, 1.2, 0, 0.9],
+    "injury_status": "fit",
+    "news_alerts": [
+      {
+        "type": "positive",
+        "source": "MARCA",
+        "headline": "Bellingham entrena con normalidad",
+        "impact": "+5% rendimiento esperado"
+      }
+    ],
+    "social_sentiment": {
+      "score": 0.85,
+      "trending": true,
+      "mood": "confident"
+    },
+    "prediction": {
+      "goal_probability": 42,
+      "assist_probability": 28,
+      "card_probability": 8
+    }
+  }
+}
+```
+
+---
+
+## ⚠️ Factores Pre-Partido a Monitorear
+
+1. **Físicos**: Lesiones, fatiga, viajes largos
+2. **Tácticos**: Cambios en alineación, nuevos fichajes
+3. **Psicológicos**: Conflictos con técnico, rumores de traspaso
+4. **Externos**: Clima, estado del césped, altitud
+5. **Históricos**: Rendimiento vs rival específico
+
+---
+
+## 💡 Sugerencias Adicionales (Lo Mejor)
+
+| Feature | Impacto | Prioridad |
+|---------|---------|-----------|
+| 🤖 **Bot Telegram** | Alto - Alertas instantáneas | ⭐⭐⭐ |
+| 📊 **Odds Comparison** | Alto - Mejor valor | ⭐⭐⭐ |
+| 🔔 **Push Notifications** | Alto - Engagement | ⭐⭐ |
+| 🏆 **Leaderboard Social** | Medio - Viralidad | ⭐⭐ |
+| 💬 **Chat con la IA** | Alto - UX única | ⭐⭐⭐ |
+| 📈 **Backtesting Tool** | Alto - Credibilidad | ⭐⭐ |
+
+---
+
+## 🔑 API Keys Necesarias
+
+Para producción necesitarás:
+1. `API_FOOTBALL_KEY` - api-football.com
+2. `ODDS_API_KEY` - the-odds-api.com  
+3. `NEWS_API_KEY` - newsapi.org
+4. `OPENWEATHER_KEY` - openweathermap.org
+5. `OPENAI_KEY` - Para análisis de sentimiento
+
+---
+
+> [!IMPORTANT]
+> Esta arquitectura requiere un backend separado (Python/Node) para el procesamiento de IA y un sistema de cache (Redis) para performance.

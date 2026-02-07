@@ -1,0 +1,153 @@
+# 🐝 OmniBet AI v2.0 - Walkthrough Completo
+
+> Sistema de Predicciones con Inteligencia de Colmena
+
+---
+
+## ✅ Lo que se construyó
+
+### 🧠 Arquitectura de IA en Colmena
+
+Se implementó un sistema de **10 agentes especializados** que trabajan en paralelo:
+
+```mermaid
+graph TB
+    Master[🎯 Orchestrator] --> Scouts
+    Master --> Analysts
+    
+    subgraph Scouts["Scout Agents"]
+        S1[📊 Stats]
+        S2[📰 News]
+        S3[💬 Social]
+        S4[💰 Odds]
+        S5[🌤️ Weather]
+    end
+    
+    subgraph Analysts["Analyst Agents"]
+        A1[👤 Player]
+        A2[⚽ Team]
+        A3[🔄 H2H]
+        A4[📈 Form]
+        A5[🏥 Injury]
+    end
+```
+
+---
+
+## 🚀 Cómo Ejecutar
+
+```bash
+cd C:\Users\PABLO\.gemini\antigravity\scratch\omnibet-ai
+npm run dev
+```
+
+**URL**: [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 📱 Páginas Disponibles
+
+| Página | Ruta | Descripción |
+|--------|------|-------------|
+| Inicio | `/` | Feed de predicciones |
+| **Análisis IA** ⭐ | `/analysis` | Sistema de colmena completo |
+| En Vivo | `/live` | Partidos en tiempo real |
+| Rendimiento | `/performance` | Dashboard de precisión |
+| Pricing | `/pricing` | Planes de suscripción |
+
+---
+
+## 🐝 Agentes Implementados
+
+### Scout Agents (Recolectores)
+1. **Stats Scout** - Estadísticas xG, posesión, forma
+2. **News Scout** - Noticias de lesiones y declaraciones
+3. **Social Sentiment** - Análisis de Twitter/redes sociales
+4. **Odds Scout** - Comparador de 8 casas de apuestas
+5. **Weather Scout** - Condiciones climáticas del estadio
+
+### Analyst Agents (Analistas)
+1. **Player Analyst** - Análisis jugador-por-jugador con:
+   - Estado físico (condición, fatiga)
+   - Riesgo de lesión
+   - Alertas pre-partido
+   - Predicciones de props (gol, asist., tarjeta)
+2. **Team Analyst** - Tácticas, formación, fortalezas
+3. **H2H Analyst** - Historial de enfrentamientos
+4. **Form Analyst** - Forma reciente (últimos 10 partidos)
+5. **Injury Analyst** - Lesiones confirmadas y dudas
+
+---
+
+## 🔌 APIs Integradas
+
+| API | Estado | Función |
+|-----|--------|---------|
+| API-Football | ✅ Demo mode | Stats, fixtures, H2H |
+| The Odds API | ✅ Demo mode | Cuotas multi-casa |
+| News API | ✅ Demo mode | Noticias deportivas |
+| OpenWeather | ✅ Demo mode | Clima del estadio |
+
+> [!TIP]
+> Para activar modo real, configura las API keys en variables de entorno:
+> - `NEXT_PUBLIC_API_FOOTBALL_KEY`
+> - `NEXT_PUBLIC_ODDS_API_KEY`
+> - `NEXT_PUBLIC_NEWS_API_KEY`
+> - `NEXT_PUBLIC_OPENWEATHER_KEY`
+
+---
+
+## 📂 Estructura de Archivos Nuevos
+
+```
+src/lib/agents/
+├── scout-agents.js      # 5 agentes scout
+├── analyst-agents.js    # 5 agentes analyst
+└── orchestrator.js      # Coordinador central
+
+src/lib/
+└── api-services.js      # Conexiones a APIs reales
+
+src/components/
+├── PlayerAnalysis.jsx   # Card de jugador + AI Summary
+└── OddsComparison.jsx   # Tabla de cuotas + Weather
+
+src/app/analysis/
+└── page.jsx            # Página de análisis profundo
+```
+
+---
+
+## 🎯 Funcionalidades Clave
+
+### Análisis Ultra-Profundo
+- Progreso visual de agentes trabajando
+- Tabs: Resumen, Jugadores, Cuotas, Factores
+- Predicción principal con nivel de confianza
+
+### Comparador de Cuotas
+- 8 casas de apuestas
+- Mejor cuota resaltada
+- Detección de value bets
+- Cálculo de overround
+
+### Análisis de Jugadores
+- Rating actual y tendencia
+- Índice de fatiga
+- Riesgo de lesión con porcentaje
+- Alertas pre-partido (entrenamientos, declaraciones)
+- Predicciones de props individuales
+
+---
+
+## 💡 Próximos Pasos Sugeridos
+
+1. **Bot de Telegram** - Alertas push instantáneas
+2. **Backend Python** - Modelos ML con XGBoost
+3. **PostgreSQL** - Persistencia de predicciones
+4. **Auth + Pagos** - NextAuth + Stripe
+5. **WebSocket** - Datos verdaderamente en vivo
+
+---
+
+> ⚠️ **Disclaimer**: Las predicciones son informativas. El juego responsable es fundamental.

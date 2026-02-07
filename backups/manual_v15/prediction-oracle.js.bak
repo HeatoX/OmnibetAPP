@@ -1,0 +1,160 @@
+// ========================================
+// OmniBet AI - DEEP ANALYSIS PREDICTION ENGINE (BACKUP V15)
+// ========================================
+
+/**
+ * API Sources for deep analysis
+ */
+const API_SOURCES = {
+    oddsApi: {
+        baseUrl: 'https://api.the-odds-api.com/v4',
+        sports: '/sports',
+        odds: '/sports/{sport}/odds',
+    },
+    espn: {
+        standings: 'https://site.api.espn.com/apis/v2/sports/{sport}/{league}/standings',
+        scoreboard: 'https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard',
+        teams: 'https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/teams',
+    },
+    apiFootball: {
+        predictions: 'https://v3.football.api-sports.io/predictions',
+        headToHead: 'https://v3.football.api-sports.io/fixtures/headtohead',
+        fixtures: 'https://v3.football.api-sports.io/fixtures',
+    }
+};
+
+import { getWeatherForecast } from './weather-service.js';
+import { analyzeReferee } from './referee-database.js';
+import { analyzeVenue } from './venue-database.js';
+import { analyzeTactics } from './tactical-database.js';
+import { analyzeNewsSentiment } from './news-sentinel.js';
+import { analyzeMorale } from './morale-monitor.js';
+import { analyzeMarketMovement } from './market-shark.js';
+import { calculatePrediction } from './ai-engine.js';
+import { getDynamicWeights } from './ml-optimizer';
+import { getMatchDetails } from './real-data-service.js';
+
+/**
+ * Convert odds to implied probability
+ */
+function oddsToImpliedProbability(decimalOdds) {
+    if (!decimalOdds || decimalOdds <= 1) return 0;
+    return Math.round((1 / decimalOdds) * 100);
+}
+
+/**
+ * Analyze match using bookmaker odds
+ */
+function analyzeFromOdds(match) {
+    if (!match.odds?.home || !match.odds?.away) return null;
+
+    const homeOdds = parseFloat(match.odds.home);
+    const drawOdds = parseFloat(match.odds.draw) || 0;
+    const awayOdds = parseFloat(match.odds.away);
+
+    const homeProb = oddsToImpliedProbability(homeOdds);
+    const drawProb = oddsToImpliedProbability(drawOdds);
+    const awayProb = oddsToImpliedProbability(awayOdds);
+
+    const totalProb = homeProb + drawProb + awayProb;
+    if (totalProb === 0) return null;
+
+    const normalizedHome = Math.round((homeProb / totalProb) * 100);
+    const normalizedDraw = Math.round((drawProb / totalProb) * 100);
+    const normalizedAway = Math.round((awayProb / totalProb) * 100);
+
+    return {
+        homeWinProb: normalizedHome,
+        drawProb: normalizedDraw,
+        awayWinProb: normalizedAway,
+        confidence: Math.max(normalizedHome, normalizedAway, normalizedDraw),
+        source: 'bookmaker_odds',
+    };
+}
+
+/**
+ * Calculate DEEP prediction combining multiple factors
+ */
+async function calculateDeepPrediction(match) {
+    const { home, away, odds, sport, league } = match;
+
+    const oddsPrediction = analyzeFromOdds(match);
+    const weather = await getWeatherForecast(match.venue || home.name, home.name, match.date);
+    const deepData = await getMatchDetails(match.id, match.sport);
+
+    const analysisData = {
+        homeForm: deepData?.homeForm || { recentGames: [] },
+        awayForm: deepData?.awayForm || { recentGames: [] },
+        h2h: deepData?.h2h && deepData.h2h.length > 0 ? {
+            homeWins: deepData.h2h.filter(g => g.winnerId === home?.id).length,
+            awayWins: deepData.h2h.filter(g => g.winnerId === away?.id).length,
+            draws: deepData.h2h.filter(g => g.result === 'draw').length,
+            recent: deepData.h2h
+        } : { homeWins: 1, awayWins: 1, draws: 1 },
+        weather,
+        oddsPrediction
+    };
+
+    const mlConfig = await getDynamicWeights();
+
+    if (!calculatePrediction) return { ...oddsPrediction, maxProb: 50 };
+
+    const aiResult = calculatePrediction(match, analysisData, { weights: mlConfig });
+
+    let { homeWinProb, awayWinProb, drawProb, winner: aiWinner } = aiResult;
+
+    // --- ANCHOR LOGIC V13.1 (Anti-Flicker) ---
+    let winner = aiWinner;
+    const initialWinner = match.prediction?.winner;
+
+    if (initialWinner && initialWinner !== aiWinner && initialWinner !== 'draw') {
+        const currentProb = aiWinner === 'home' ? homeWinProb : (aiWinner === 'away' ? awayWinProb : drawProb);
+        const anchorProb = initialWinner === 'home' ? homeWinProb : awayWinProb;
+
+        if (Math.abs(currentProb - anchorProb) < 15) {
+            winner = initialWinner;
+        }
+    }
+
+    const maxProb = Math.max(homeWinProb, awayWinProb, drawProb);
+
+    // --- PROYECCIÓN DE CONFIANZA V13 ---
+    let pHome = homeWinProb;
+    let pAway = awayWinProb;
+    let pDraw = drawProb;
+
+    if (winner !== 'draw') {
+        const boostFactor = 1.85;
+        if (winner === 'home') {
+            const boost = (pHome - 30) * boostFactor;
+            pHome = Math.min(Math.max(pHome + boost, pHome + 20), 92);
+            const rem = 100 - pHome;
+            const r = pAway / (pAway + pDraw || 1);
+            pAway = rem * r; pDraw = rem * (1 - r);
+        } else {
+            const boost = (pAway - 30) * boostFactor;
+            pAway = Math.min(Math.max(pAway + boost, pAway + 20), 92);
+            const rem = 100 - pAway;
+            const r = pHome / (pHome + pDraw || 1);
+            pHome = rem * r; pDraw = rem * (1 - r);
+        }
+    }
+
+    const finalMax = Math.max(pHome, pAway, pDraw);
+    let confidence = 'silver';
+    if (finalMax >= 70) confidence = 'diamond';
+    else if (finalMax >= 55) confidence = 'gold';
+
+    return {
+        homeWinProb: Math.round(pHome),
+        awayWinProb: Math.round(pAway),
+        drawProb: Math.round(pDraw),
+        winner,
+        maxProb: Math.round(finalMax),
+        confidence,
+        basedOnOdds: !!oddsPrediction,
+        swarmInsights: aiResult.swarmInsights || [],
+        weather: aiResult.weather || null,
+    };
+}
+// (rest of file omitted in backup summary)

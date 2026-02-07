@@ -1,0 +1,189 @@
+# OmniBet AI - Full Premium Implementation Plan
+
+## Overview
+Transformar OmniBet AI en una plataforma premium de predicciones deportivas con:
+- Sistema de usuarios y autenticación
+- Monetización con tiers (Free: 2 predicciones/mes)
+- Múltiples APIs de datos deportivos
+- Modelo ML para predicciones avanzadas
+- Sistema de verificación y credibilidad
+
+---
+
+## Architecture
+
+```mermaid
+graph TB
+    subgraph Frontend [Next.js Frontend]
+        UI[UI Components]
+        Auth[Auth Context]
+        Sub[Subscription Manager]
+    end
+    
+    subgraph Backend [API Layer]
+        API[Next.js API Routes]
+        ML[ML Prediction Engine]
+        Agg[Data Aggregator]
+    end
+    
+    subgraph Data [External Data Sources]
+        ESPN[ESPN API]
+        Odds[The Odds API]
+        APIFoot[API-Football]
+        Weather[OpenWeather]
+    end
+    
+    subgraph Services [External Services]
+        Supabase[Supabase Auth + DB]
+        Stripe[Stripe Payments]
+    end
+    
+    UI --> API
+    Auth --> Supabase
+    API --> Agg
+    API --> ML
+    Agg --> ESPN
+    Agg --> Odds
+    Agg --> APIFoot
+    Agg --> Weather
+    Sub --> Stripe
+```
+
+---
+
+## Database Schema (Supabase)
+
+### Users Table
+```sql
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT UNIQUE NOT NULL,
+    name TEXT,
+    avatar_url TEXT,
+    subscription_tier TEXT DEFAULT 'free', -- 'free', 'gold', 'diamond'
+    subscription_end TIMESTAMP,
+    predictions_used_this_month INT DEFAULT 0,
+    predictions_reset_date DATE DEFAULT CURRENT_DATE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### Predictions History
+```sql
+CREATE TABLE predictions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    match_id TEXT NOT NULL,
+    sport TEXT NOT NULL,
+    home_team TEXT NOT NULL,
+    away_team TEXT NOT NULL,
+    predicted_winner TEXT, -- 'home', 'away', 'draw'
+    predicted_market TEXT, -- 'over_2.5', 'btts', etc.
+    confidence INT NOT NULL,
+    odds DECIMAL,
+    actual_result TEXT,
+    was_correct BOOLEAN,
+    created_at TIMESTAMP DEFAULT NOW(),
+    match_date TIMESTAMP
+);
+```
+
+### User Predictions (tracking who viewed what)
+```sql
+CREATE TABLE user_predictions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id),
+    prediction_id UUID REFERENCES predictions(id),
+    viewed_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+---
+
+## Proposed Changes
+
+### [NEW] Supabase Configuration
+#### [NEW] [supabase-config.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/supabase-config.js)
+- Initialize Supabase client
+- Auth helpers
+- Database queries
+
+---
+
+### [NEW] Authentication System
+#### [NEW] [AuthContext.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/context/AuthContext.jsx)
+- User state management
+- Login/Register/Logout
+- Subscription tier checking
+
+#### [NEW] [LoginModal.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/LoginModal.jsx)
+- Email/password login
+- Google OAuth
+- Registration form
+
+---
+
+### [NEW] Subscription System
+#### [NEW] [SubscriptionContext.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/context/SubscriptionContext.jsx)
+- Check user limits
+- Track usage
+- Upgrade prompts
+
+#### [NEW] [PricingPage.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/pricing/page.jsx)
+- Pricing tiers display
+- Stripe checkout integration
+
+---
+
+### [NEW] Enhanced Data Service
+#### [NEW] [multi-source-data.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/multi-source-data.js)
+- Aggregate data from 4 APIs
+- H2H history
+- Team statistics
+- Weather data
+- Real-time odds
+
+---
+
+### [NEW] Prediction History
+#### [NEW] [prediction-tracker.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/prediction-tracker.js)
+- Store all predictions
+- Track results
+- Calculate ROI
+
+#### [NEW] [HistoryPage.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/history/page.jsx)
+- Display past predictions
+- Filter by sport/result
+- Show accuracy stats
+
+---
+
+### Monetization Tiers
+
+| Tier | Price | Predictions/Month | Features |
+|------|-------|-------------------|----------|
+| **Free** | $0 | 2 | Basic predictions only |
+| **Gold** | $9.99 | Unlimited 70%+ | H2H data, detailed stats |
+| **Diamond** | $29.99 | All | ML predictions, value bets, alerts, API access |
+
+---
+
+## Verification Plan
+
+### Automated Tests
+1. Unit tests for prediction algorithms
+2. API integration tests
+3. Payment flow testing with Stripe test mode
+
+### Manual Verification
+1. User registration flow
+2. Payment processing
+3. Prediction limits enforcement
+4. Historical accuracy tracking
+
+---
+
+> [!IMPORTANT]
+> This is a large implementation. Requires:
+> - Supabase account (free tier available)
+> - Stripe account (for payments)
+> - API keys for sports data services

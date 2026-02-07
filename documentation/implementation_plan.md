@@ -1,0 +1,155 @@
+# OmniBet AI - Premium Features Implementation
+
+## Overview
+Implement 6 major premium features to transform OmniBet AI into a world-class betting intelligence platform.
+
+---
+
+## Feature 1: Parlay/Combinada Builder 🎰
+
+### Purpose
+Allow users to generate optimized multi-bet tickets with high potential returns.
+
+### Proposed Changes
+
+#### [NEW] `src/lib/parlay-engine.js`
+- `generateDailyParlay(matches, riskLevel)` - Selects 3-5 Diamond predictions
+- `calculateCombinedOdds(selections)` - Multiplies odds for total payout
+- `validateParlay(selections)` - Ensures no conflicting bets
+
+#### [NEW] `src/components/ParlayBuilder.jsx`
+- Visual card showing "Combinada del Día"
+- Risk selector (Safe/Balanced/Aggressive)
+- Total odds display with potential win calculation
+- "Copy to Clipboard" for betting sites
+
+#### [MODIFY] `src/app/app/page.jsx`
+- Add ParlayBuilder component to dashboard
+
+---
+
+## Feature 2: Value Bets Monitor 💎
+
+### Purpose
+Detect when bookmaker odds are mispriced vs. our probability model.
+
+### Proposed Changes
+
+#### [MODIFY] `src/lib/prediction-oracle.js`
+- Add `calculateExpectedValue(probability, odds)` function
+- Flag matches where EV > 5% as "VALUE BET"
+
+#### [NEW] `src/components/ValueBetBadge.jsx`
+- Animated badge showing "VALOR +" percentage
+- Tooltip explaining the mathematical edge
+
+#### [MODIFY] `src/components/PredictionCard.jsx`
+- Display ValueBetBadge when EV threshold met
+
+---
+
+## Feature 3: Telegram Alerts Bot 📱
+
+### Purpose
+Push notifications for high-confidence predictions.
+
+### Proposed Changes
+
+#### [NEW] `src/app/api/telegram/route.js`
+- Webhook handler for Telegram bot
+- `/start` command to register user
+- `/subscribe` to link Telegram to OmniBet account
+
+#### [NEW] `src/lib/telegram-service.js`
+- `sendAlert(chatId, match, prediction)` - Sends formatted message
+- `broadcastDiamondAlert(match)` - Notifies all Diamond subscribers
+
+#### [MODIFY] `src/app/admin/page.jsx`
+- Add "Send Manual Alert" button for admins
+
+---
+
+## Feature 4: Transparency Dashboard (P&L History) 📊
+
+### Purpose
+Public proof of prediction accuracy to build trust.
+
+### Proposed Changes
+
+#### [NEW] `src/app/history/page.jsx` (Enhance existing)
+- Public stats section (no login required for basic view)
+- Daily/Weekly/Monthly accuracy charts
+- ROI calculator based on hypothetical flat betting
+
+#### [NEW] `src/lib/history-tracker.js`
+- `recordPrediction(match, prediction)` - Stores before match
+- `resolvePrediction(matchId, result)` - Updates after match
+- `calculateStats(period)` - Aggregates win/loss/ROI
+
+#### Database (Supabase)
+- New table: `prediction_history` (match_id, prediction, result, odds, timestamp)
+
+---
+
+## Feature 5: Community Voting 👥
+
+### Purpose
+Let users vote on predictions, creating engagement and social proof.
+
+### Proposed Changes
+
+#### [NEW] `src/components/CommunityVote.jsx`
+- "Agree" / "Disagree" buttons with animated counters
+- Percentage bar showing community sentiment
+- "X users following this prediction"
+
+#### [NEW] `src/app/api/votes/route.js`
+- POST: Submit vote (requires login)
+- GET: Fetch vote counts for a match
+
+#### Database (Supabase)
+- New table: `prediction_votes` (user_id, match_id, vote, timestamp)
+
+---
+
+## Feature 6: Banker of the Day 🔥
+
+### Purpose
+Highlight the single safest bet of the day with premium visual treatment.
+
+### Proposed Changes
+
+#### [MODIFY] `src/lib/prediction-oracle.js`
+- Add `selectBankerOfTheDay(matches)` - Returns highest confidence match
+
+#### [NEW] `src/components/BankerCard.jsx`
+- Ultra-premium card design (fire animations, gold borders)
+- Countdown timer to match start
+- Historical "Banker" win streak display
+
+#### [MODIFY] `src/app/app/page.jsx`
+- Display BankerCard prominently at top of dashboard
+
+---
+
+## Implementation Order
+
+1. **Banker of the Day** - Quick win, high visual impact
+2. **Value Bets Monitor** - Enhances existing cards
+3. **Parlay Builder** - New major feature
+4. **Transparency Dashboard** - Builds trust
+5. **Community Voting** - Engagement feature
+6. **Telegram Alerts** - Requires external setup
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Unit tests for parlay odds calculation
+- Integration tests for vote API
+
+### Manual Verification
+- Visual review of all new components
+- Test Telegram bot with personal account
+- Verify P&L calculations match expected results

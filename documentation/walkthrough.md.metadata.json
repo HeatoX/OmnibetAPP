@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary": "Implemented a comprehensive update to OmniBet AI, adding a new Admin Dashboard with user management and 'God Mode', and enhancing the core product with a Detailed Match Analysis view featuring deep statistical narratives (historical curses, player form). The landing page was also updated to feature a 'Demo' of this analysis to drive user engagement.",
+  "updatedAt": "2026-02-03T04:50:32.625448200Z",
+  "version": "6"
+}

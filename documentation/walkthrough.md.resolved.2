@@ -1,0 +1,118 @@
+# 🐝 OmniBet AI v2.0 - Walkthrough
+
+> Sistema de Predicciones con Inteligencia de Colmena
+
+---
+
+## ✅ Cambios Recientes
+
+### 1. 🎨 Rediseño Ultra-Premium Futurista
+
+| Antes | Ahora |
+|-------|-------|
+| Diseño básico | Futurista premium |
+| Emojis como logos | **Logos reales de equipos** |
+| Fuente genérica | **Orbitron** (tipografía deportiva) |
+| Efectos simples | Efectos holográficos y neón |
+
+**Nuevos efectos CSS:**
+- Badges metálicos (diamante/oro/plata) con shimmer animado
+- Glassmorphism 2.0 con blur de 30px
+- Grid con patrón hexagonal
+- Animaciones de entrada premium
+- Colores neón: `#00ff9d`, `#00d4ff`, `#bf00ff`
+
+---
+
+### 2. 🏆 Logos Reales de Equipos
+
+Integración de logos oficiales desde CDNs confiables:
+
+```javascript
+// Fuentes de logos
+- API-Sports CDN (fútbol europeo)
+- NBA CDN oficial  
+- ESPN (NFL, MLB)
+```
+
+**Equipos incluidos:**
+- ⚽ 30+ clubes de fútbol (LaLiga, Premier, Bundesliga, Serie A, Ligue 1)
+- 🏀 12 equipos NBA
+- 🏈 8 equipos NFL
+- ⚾ 6 equipos MLB
+- 🎾 11 tenistas ATP/WTA
+
+---
+
+### 3. 🎾 Fix de Terminología por Deporte
+
+**Problema detectado:**
+> Tenis mostraba "Anota gol" en lugar de terminología de tenis
+
+**Solución implementada:**
+
+| Deporte | Predicciones |
+|---------|--------------|
+| Fútbol | ⚽ Gol, 🅰️ Asist., 🟨 Tarjeta |
+| Tenis | 🏆 Sets corridos, 🎾 Aces, ⚡ Break |
+| Basketball | 🏀 +20 pts, 📊 +10 reb, ⭐ Doble-doble |
+| NFL | 🏈 Touchdown, 📏 +100 yardas |
+| Baseball | 💥 Jonrón, 🏏 +2 hits |
+
+---
+
+### 4. 🐝 Arquitectura de Colmena IA
+
+```mermaid
+graph TB
+    O[🎯 Orchestrator] --> S[Scout Agents]
+    O --> A[Analyst Agents]
+    
+    subgraph S[5 Scout Agents]
+        S1[📊 Stats]
+        S2[📰 News]  
+        S3[💬 Social]
+        S4[💰 Odds]
+        S5[🌤️ Weather]
+    end
+    
+    subgraph A[5 Analyst Agents]
+        A1[👤 Player]
+        A2[⚽ Team]
+        A3[🔄 H2H]
+        A4[📈 Form]
+        A5[🏥 Injury]
+    end
+```
+
+---
+
+## 🚀 Cómo Ejecutar
+
+```bash
+cd C:\Users\PABLO\.gemini\antigravity\scratch\omnibet-ai
+npm run dev
+```
+
+**URL:** [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 📂 Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| [globals.css](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/globals.css) | Rediseño completo con Orbitron, holographic effects |
+| [mock-data.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/mock-data.js) | Predicciones específicas por deporte |
+| [team-logos.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/team-logos.js) | Base de datos de logos reales (NUEVO) |
+| [PredictionCard.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/PredictionCard.jsx) | Logos reales + diseño premium |
+| [SportWidgets.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/SportWidgets.jsx) | Stats específicas por deporte |
+
+---
+
+## 💡 Próximos Pasos
+
+1. **Conectar APIs reales** - Activar con API keys
+2. **Bot de Telegram** - Alertas push
+3. **Backend ML** - Modelos predictivos reales
+4. **Auth + Pagos** - NextAuth + Stripe

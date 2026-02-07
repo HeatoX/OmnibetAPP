@@ -1,0 +1,82 @@
+# 🔍 Omnibet AI - Project Audit & Roadmap
+**Date:** 2026-02-03
+**Version:** 6.0 (Oracle Supreme)
+
+## 1. Project Overview
+Omnibet AI is a sophisticated sports prediction platform utilizing a "Multi-Agent" architecture to analyze matches. It combines real-time data (Odds, Weather, News) with historical stats to generate high-confidence predictions.
+
+**Core Tech Stack:**
+- **Frontend:** Next.js (App Router), TailwindCSS, Framer Motion.
+- **Backend/Logic:** Serverless Functions (Next.js API routes logic embedded in `lib`).
+- **Database:** Supabase (PostgreSQL) for user auth & prediction history.
+- **External APIs:** TheOddsAPI, OpenMeteo, ESPN (via undocumented endpoints), TheSportsDB.
+
+## 2. Architecture & File Structure
+
+### 📂 `src/lib` (The Brain)
+The robust backend logic layer.
+- **[prediction-oracle.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/prediction-oracle.js) (Unified):** The main entry point. Orchestrates the analysis. NOW V6.0 compliant (uses ML weights).
+- **[ai-engine.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js):** The core mathematical engine. Accepts config/weights to output probabilities.
+- **[ml-optimizer.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ml-optimizer.js) (New):** Machine Learning module. Analyzes past performance to adjust weights dynamically.
+- **[history-tracker.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/history-tracker.js):** Handles saving predictions to Supabase and calculating ROI/Stats.
+- **[real-data-service.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js):** Powerful scraper/fetcher for ESPN data.
+
+### 📂 `src/lib/agents` & Services (The Scouts)
+Specialized experts.
+- **[weather-service.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/weather-service.js):** Fetches real-time weather impact.
+- **[referee-database.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/referee-database.js):** JSON database of referee stats.
+- **[news-sentinel.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/news-sentinel.js):** RSS parser for sentiment analysis.
+- **[market-shark.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/market-shark.js):** Analyzes odds movement (Sharp money detection).
+- ⚠️ **Redundancy Alert:** [scout-agents.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/agents/scout-agents.js) contains class-based implementations of Weather/News that largely duplicate the functional services.
+    - *Recommendation:* Deprecate [scout-agents.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/agents/scout-agents.js) in Phase 7 to reduce bundle size.
+
+### 📂 `src/components` (The Face)
+High-quality UI components.
+- **[DetailedMatchAnalysis.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/DetailedMatchAnalysis.jsx):** The flagship component. Shows the "Oracle" view.
+- **[PredictionCard.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/PredictionCard.jsx):** The summary card used in the feed.
+- **[PerformanceDashboard.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/PerformanceDashboard.jsx):** Displays the ROI/Accuracy graphs.
+
+## 3. Current Status (v6.0)
+- **Intelligence:** 🟢 Excellent. The "Supreme" upgrade (ML) is active.
+- **Data Integrity:** 🟢 Good. Fallbacks exist for missing data.
+- **UI/UX:** 🟢 Premium. "Glassmorphism" design is consistent.
+- **Persistence:** 🟢 Active. Predictions are saved to Supabase.
+
+## 4. Architectural Gaps
+1.  **Code Duplication:** As noted, [scout-agents.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/agents/scout-agents.js) vs individual services.
+2.  **Testing:** Zero automated unit tests. A refactor could break the math engine easily.
+3.  **Hardcoded "Mock" Modes:** Some files still have extensive mock data fallbacks which might mask API failures in production.
+
+---
+
+## 5. 🚀 Roadmap: What can we add? (Phase 7+)
+
+Here are 5 high-impact features to reach "God Tier":
+
+### 1️⃣ Voice Interface ("Oracle Voice")
+*   **Concept:** Allows users to talk to the AI. "Hey Oracle, is Real Madrid winning today?"
+*   **Tech:** Web Speech API (Native browser support, no cost).
+*   **Why:** Huge "Wow" factor. Increases accessibility.
+
+### 2️⃣ The "Time Machine" (Backtesting UI)
+*   **Concept:** A UI where users can run the AI against *past* matches (last year) to verify accuracy instantly.
+*   **Tech:** Use [history-tracker.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/history-tracker.js) + ESPN Archive API.
+*   **Why:** Ultimate proof of trust. "Don't believe us? Check our performance on 500 past games."
+
+### 3️⃣ Social Bet Cards
+*   **Concept:** Button to "Share Prediction". Generates a beautiful image (Canvas/OG Image) with the stats overlay for Instagram/Twitter.
+*   **Tech:** `html2canvas` or Next.js OG Image Generation.
+*   **Why:** Viral growth loop. Users share their "Access to the Oracle".
+
+### 4️⃣ "Shark Alert" & Arbitrage
+*   **Concept:** Push notifications when the AI detects a huge discrepancy between Bookmaker Odds and Real Probability (Value Bet > 20%).
+*   **Tech:** Web Push API + Background Cron.
+*   **Why:** High-value utility for serious bettors.
+
+### 5️⃣ Personalized Risk Profile
+*   **Concept:** User sets profile: "Safe Investor" vs "Degen Gambler".
+*   **Feature:** The AI adjusts its "Recommended Bet" (Stake sizing) based on this profile.
+*   **Tech:** Simple specialized logic in [StakeCalculator.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/StakeCalculator.jsx).
+
+## 6. Immediate Next Step Recommendation
+Implement **"Oracle Voice"**. It requires no backend changes, purely frontend integration into [Header.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/Header.jsx) or a floating button, and adds a futuristic feel that aligns with the "Supreme AI" branding.

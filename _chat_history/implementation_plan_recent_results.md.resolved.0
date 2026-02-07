@@ -1,0 +1,18 @@
+# OmniBet AI - Phase 3 Logic Updates
+
+## Feature 7: Recent Results (Games Finished < 12h)
+
+### Purpose
+Allow users to see the results of recently finished games for validation and transparency. These should disappear 12 hours after the game ends to keep the dashboard fresh.
+
+### Proposed Changes
+#### [MODIFY] [src/lib/real-data-service.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js)
+- Create `getFinishedMatches(hours = 12)`
+- Logic: Fetch matches from ESPN with `?dates=YYYYMMDD` (Yesterday & Today).
+- Filter: `status === 'finished'` AND [(now - lastUpdated) < 12 hours](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/supabase-config.js#136-148).
+- Return: Sorted by completion time (most recent first).
+
+#### [MODIFY] [src/app/app/page.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/app/page.jsx)
+- Add new state `finishedMatches`.
+- Add section "🏁 Resultados Recientes (Últimas 12h)" below specific league or above "Upcoming".
+- Reuse `PredictionCard` but in a "ReadOnly" or "Result" mode (dimmed opacity, clear score).

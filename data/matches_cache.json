@@ -1,0 +1,4600 @@
+{
+  "timestamp": 1770491964393,
+  "data": [
+    {
+      "id": "740844",
+      "uid": "s:600~l:700~e:740844",
+      "matchId": "740844",
+      "league": "Premier League",
+      "leagueId": "eng.1",
+      "home": {
+        "id": "361",
+        "name": "Newcastle United",
+        "score": "2",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/361.png"
+      },
+      "away": {
+        "id": "337",
+        "name": "Brentford",
+        "score": "3",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/337.png"
+      },
+      "startDate": "2026-02-07T17:30Z",
+      "startTime": "13:30",
+      "status": "live",
+      "isLive": true,
+      "isFinished": false,
+      "liveMinute": "85'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": "3.70",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Brentford",
+        "homeWinProb": 27,
+        "awayWinProb": 46,
+        "drawProb": 27,
+        "confidence": "silver",
+        "oracleConfidence": 46,
+        "maxProb": 46,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 64,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Newcastle gana 1er tiempo",
+          "prediction": "",
+          "probability": 65,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 66,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 67,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 68,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Newcastle -1 handicap",
+          "prediction": "",
+          "probability": 69,
+          "icon": "📊",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "746906",
+      "uid": "s:600~l:720~e:746906",
+      "matchId": "746906",
+      "league": "Bundesliga",
+      "leagueId": "ger.1",
+      "home": {
+        "id": "268",
+        "name": "Borussia Mönchengladbach",
+        "score": "1",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/268.png"
+      },
+      "away": {
+        "id": "131",
+        "name": "Bayer Leverkusen",
+        "score": "1",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/131.png"
+      },
+      "startDate": "2026-02-07T17:30Z",
+      "startTime": "13:30",
+      "status": "live",
+      "isLive": true,
+      "isFinished": false,
+      "liveMinute": "88'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": "3.50",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Leverkusen",
+        "homeWinProb": 29,
+        "awayWinProb": 47,
+        "drawProb": 24,
+        "confidence": "silver",
+        "oracleConfidence": 47,
+        "maxProb": 47,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 51,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Gladbach -1 handicap",
+          "prediction": "",
+          "probability": 52,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 53,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Leverkusen +1 gol",
+          "prediction": "",
+          "probability": 54,
+          "icon": "➕",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "746594",
+      "uid": "s:600~l:710~e:746594",
+      "matchId": "746594",
+      "league": "Ligue 1",
+      "leagueId": "fra.1",
+      "home": {
+        "id": "6997",
+        "name": "Brest",
+        "score": "1",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/6997.png"
+      },
+      "away": {
+        "id": "273",
+        "name": "Lorient",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/273.png"
+      },
+      "startDate": "2026-02-07T18:00Z",
+      "startTime": "14:00",
+      "status": "live",
+      "isLive": true,
+      "isFinished": false,
+      "liveMinute": "57'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": "3.10",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Brest",
+        "homeWinProb": 52,
+        "awayWinProb": 29,
+        "drawProb": 19,
+        "confidence": "silver",
+        "oracleConfidence": 52,
+        "maxProb": 52,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "unstoppable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 64,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 65,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 66,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 67,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Brest gana 1er tiempo",
+          "prediction": "",
+          "probability": 68,
+          "icon": "⏱️",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "747656",
+      "uid": "s:600~l:3926~e:747656",
+      "matchId": "747656",
+      "league": "Ligue 2",
+      "leagueId": "fra.2",
+      "home": {
+        "id": "178",
+        "name": "Saint-Étienne",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/178.png"
+      },
+      "away": {
+        "id": "274",
+        "name": "Montpellier",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/274.png"
+      },
+      "startDate": "2026-02-07T19:00Z",
+      "startTime": "15:00",
+      "status": "live",
+      "isLive": true,
+      "isFinished": false,
+      "liveMinute": "17'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": "3.65",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana St. Étienne",
+        "homeWinProb": 48,
+        "awayWinProb": 27,
+        "drawProb": 25,
+        "confidence": "silver",
+        "oracleConfidence": 48,
+        "maxProb": 48,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 51,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "St. Étienne gana 1er tiempo",
+          "prediction": "",
+          "probability": 52,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 53,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 54,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 55,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 56,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "737020",
+      "uid": "s:600~l:730~e:737020",
+      "matchId": "737020",
+      "league": "Serie A",
+      "leagueId": "ita.1",
+      "home": {
+        "id": "109",
+        "name": "Fiorentina",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png"
+      },
+      "away": {
+        "id": "239",
+        "name": "Torino",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/239.png"
+      },
+      "startDate": "2026-02-07T19:45Z",
+      "startTime": "15:45",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": "3.70",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Torino",
+        "homeWinProb": 27,
+        "awayWinProb": 47,
+        "drawProb": 26,
+        "confidence": "silver",
+        "oracleConfidence": 47,
+        "maxProb": 47,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "recovering",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 65,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 66,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 67,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Fiorentina gana 1er tiempo",
+          "prediction": "",
+          "probability": 68,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 69,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Fiorentina -1 handicap",
+          "prediction": "",
+          "probability": 45,
+          "icon": "📊",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "748366",
+      "uid": "s:600~l:740~e:748366",
+      "matchId": "748366",
+      "league": "LaLiga",
+      "leagueId": "esp.1",
+      "home": {
+        "id": "89",
+        "name": "Real Sociedad",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/89.png"
+      },
+      "away": {
+        "id": "3751",
+        "name": "Elche",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3751.png"
+      },
+      "startDate": "2026-02-07T20:00Z",
+      "startTime": "16:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": "4.00",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Real Sociedad",
+        "homeWinProb": 46,
+        "awayWinProb": 27,
+        "drawProb": 27,
+        "confidence": "silver",
+        "oracleConfidence": 46,
+        "maxProb": 46,
+        "oracleV12": {
+          "homeState": "over_performing",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 61,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Real Sociedad -1 handicap",
+          "prediction": "",
+          "probability": 62,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Elche +1 gol",
+          "prediction": "",
+          "probability": 64,
+          "icon": "➕",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "401810602",
+      "uid": "s:40~l:46~e:401810602",
+      "matchId": "401810602",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "17",
+        "name": "Brooklyn Nets",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png"
+      },
+      "away": {
+        "id": "27",
+        "name": "Washington Wizards",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png"
+      },
+      "startDate": "2026-02-07T20:00Z",
+      "startTime": "16:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Nets",
+        "homeWinProb": 76,
+        "awayWinProb": 24,
+        "drawProb": 0,
+        "confidence": "diamond",
+        "oracleConfidence": 76,
+        "maxProb": 76,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 47,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 48,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Nets -5.5 handicap",
+          "prediction": "",
+          "probability": 49,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 50,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Wizards gana 1er cuarto",
+          "prediction": "",
+          "probability": 51,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 52,
+          "icon": "🏀",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "746598",
+      "uid": "s:600~l:710~e:746598",
+      "matchId": "746598",
+      "league": "Ligue 1",
+      "leagueId": "fra.1",
+      "home": {
+        "id": "165",
+        "name": "Nantes",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/165.png"
+      },
+      "away": {
+        "id": "167",
+        "name": "Lyon",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/167.png"
+      },
+      "startDate": "2026-02-07T20:05Z",
+      "startTime": "16:05",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": "3.80",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Nantes",
+        "homeWinProb": 47,
+        "awayWinProb": 26,
+        "drawProb": 27,
+        "confidence": "silver",
+        "oracleConfidence": 47,
+        "maxProb": 47,
+        "oracleV12": {
+          "homeState": "recovering",
+          "awayState": "unstoppable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 69,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 45,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Nantes -1 handicap",
+          "prediction": "",
+          "probability": 46,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Nantes gana 1er tiempo",
+          "prediction": "",
+          "probability": 47,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 48,
+          "icon": "🚩",
+          "type": "corners"
+        }
+      ]
+    },
+    {
+      "id": "401810603",
+      "uid": "s:40~l:46~e:401810603",
+      "matchId": "401810603",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "25",
+        "name": "Oklahoma City Thunder",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png"
+      },
+      "away": {
+        "id": "10",
+        "name": "Houston Rockets",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png"
+      },
+      "startDate": "2026-02-07T20:30Z",
+      "startTime": "16:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Thunder",
+        "homeWinProb": 63,
+        "awayWinProb": 37,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 63,
+        "maxProb": 63,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 48,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Thunder -5.5 handicap",
+          "prediction": "",
+          "probability": 49,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 50,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 51,
+          "icon": "🏀",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "401810604",
+      "uid": "s:40~l:46~e:401810604",
+      "matchId": "401810604",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "24",
+        "name": "San Antonio Spurs",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png"
+      },
+      "away": {
+        "id": "6",
+        "name": "Dallas Mavericks",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png"
+      },
+      "startDate": "2026-02-07T23:00Z",
+      "startTime": "19:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Spurs",
+        "homeWinProb": 64,
+        "awayWinProb": 36,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 64,
+        "maxProb": 64,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Mavericks gana 1er cuarto",
+          "prediction": "",
+          "probability": 49,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 50,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 51,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 52,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Spurs -5.5 handicap",
+          "prediction": "",
+          "probability": 53,
+          "icon": "📊",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "401810605",
+      "uid": "s:40~l:46~e:401810605",
+      "matchId": "401810605",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "19",
+        "name": "Orlando Magic",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/orl.png"
+      },
+      "away": {
+        "id": "26",
+        "name": "Utah Jazz",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png"
+      },
+      "startDate": "2026-02-08T00:00Z",
+      "startTime": "20:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Magic",
+        "homeWinProb": 64,
+        "awayWinProb": 36,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 64,
+        "maxProb": 64,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Jazz gana 1er cuarto",
+          "prediction": "",
+          "probability": 50,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 51,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 52,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 53,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Magic -5.5 handicap",
+          "prediction": "",
+          "probability": 54,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 55,
+          "icon": "1️⃣",
+          "type": "quarter"
+        }
+      ]
+    },
+    {
+      "id": "401810606",
+      "uid": "s:40~l:46~e:401810606",
+      "matchId": "401810606",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "1",
+        "name": "Atlanta Hawks",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png"
+      },
+      "away": {
+        "id": "30",
+        "name": "Charlotte Hornets",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png"
+      },
+      "startDate": "2026-02-08T00:30Z",
+      "startTime": "20:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Hornets",
+        "homeWinProb": 37,
+        "awayWinProb": 63,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 63,
+        "maxProb": 63,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 51,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 52,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Hawks -5.5 handicap",
+          "prediction": "",
+          "probability": 53,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 54,
+          "icon": "🏀",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "401810607",
+      "uid": "s:40~l:46~e:401810607",
+      "matchId": "401810607",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "4",
+        "name": "Chicago Bulls",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png"
+      },
+      "away": {
+        "id": "7",
+        "name": "Denver Nuggets",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png"
+      },
+      "startDate": "2026-02-08T01:00Z",
+      "startTime": "21:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Bulls",
+        "homeWinProb": 64,
+        "awayWinProb": 36,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 64,
+        "maxProb": 64,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 52,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Nuggets gana 1er cuarto",
+          "prediction": "",
+          "probability": 53,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 54,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Bulls -5.5 handicap",
+          "prediction": "",
+          "probability": 55,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 56,
+          "icon": "📈",
+          "type": "margin"
+        }
+      ]
+    },
+    {
+      "id": "401810608",
+      "uid": "s:40~l:46~e:401810608",
+      "matchId": "401810608",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "13",
+        "name": "Los Angeles Lakers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png"
+      },
+      "away": {
+        "id": "9",
+        "name": "Golden State Warriors",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png"
+      },
+      "startDate": "2026-02-08T01:30Z",
+      "startTime": "21:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Lakers",
+        "homeWinProb": 64,
+        "awayWinProb": 36,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 64,
+        "maxProb": 64,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Lakers -5.5 handicap",
+          "prediction": "",
+          "probability": 53,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 54,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Warriors gana 1er cuarto",
+          "prediction": "",
+          "probability": 55,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 56,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 57,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 58,
+          "icon": "🏀",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "401810609",
+      "uid": "s:40~l:46~e:401810609",
+      "matchId": "401810609",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "21",
+        "name": "Phoenix Suns",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phx.png"
+      },
+      "away": {
+        "id": "20",
+        "name": "Philadelphia 76ers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phi.png"
+      },
+      "startDate": "2026-02-08T02:00Z",
+      "startTime": "22:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Suns",
+        "homeWinProb": 64,
+        "awayWinProb": 36,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 64,
+        "maxProb": 64,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 54,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Suns -5.5 handicap",
+          "prediction": "",
+          "probability": 55,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 56,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 57,
+          "icon": "📈",
+          "type": "margin"
+        }
+      ]
+    },
+    {
+      "id": "401810610",
+      "uid": "s:40~l:46~e:401810610",
+      "matchId": "401810610",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "22",
+        "name": "Portland Trail Blazers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png"
+      },
+      "away": {
+        "id": "29",
+        "name": "Memphis Grizzlies",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mem.png"
+      },
+      "startDate": "2026-02-08T03:00Z",
+      "startTime": "23:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Trail Blazers",
+        "homeWinProb": 66,
+        "awayWinProb": 34,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 66,
+        "maxProb": 66,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 55,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 56,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Trail Blazers -5.5 handicap",
+          "prediction": "",
+          "probability": 57,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 58,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Grizzlies gana 1er cuarto",
+          "prediction": "",
+          "probability": 59,
+          "icon": "⏱️",
+          "type": "quarter"
+        }
+      ]
+    },
+    {
+      "id": "401810611",
+      "uid": "s:40~l:46~e:401810611",
+      "matchId": "401810611",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "23",
+        "name": "Sacramento Kings",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png"
+      },
+      "away": {
+        "id": "5",
+        "name": "Cleveland Cavaliers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png"
+      },
+      "startDate": "2026-02-08T03:00Z",
+      "startTime": "23:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Hoy",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Cavaliers",
+        "homeWinProb": 37,
+        "awayWinProb": 63,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 63,
+        "maxProb": 63,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 56,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 57,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 58,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Cavaliers gana 1er cuarto",
+          "prediction": "",
+          "probability": 59,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 60,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Kings -5.5 handicap",
+          "prediction": "",
+          "probability": 61,
+          "icon": "📊",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "1056-2026",
+      "uid": "s:850~l:900~e:1056-2026",
+      "matchId": "1056-2026",
+      "league": "WTA Tennis",
+      "leagueId": "wta",
+      "home": {
+        "id": "-3",
+        "name": "Local",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/-3.png"
+      },
+      "away": {
+        "id": "-4",
+        "name": "Visita",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/-4.png"
+      },
+      "startDate": "2026-02-08T05:00Z",
+      "startTime": "01:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "",
+      "sport": "tennis",
+      "sportIcon": "🎾",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana TBD",
+        "homeWinProb": 62,
+        "awayWinProb": 38,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 62,
+        "maxProb": 62,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 22.5 games",
+          "prediction": "",
+          "probability": 46,
+          "icon": "📊",
+          "type": "games"
+        },
+        {
+          "team": "Gana en sets corridos",
+          "prediction": "",
+          "probability": 47,
+          "icon": "🏆",
+          "type": "straight"
+        },
+        {
+          "team": "+5 aces en el partido",
+          "prediction": "",
+          "probability": 48,
+          "icon": "🎯",
+          "type": "aces"
+        },
+        {
+          "team": "Partido de +3 sets",
+          "prediction": "",
+          "probability": 49,
+          "icon": "🎾",
+          "type": "sets"
+        },
+        {
+          "team": "Tie-break en el partido",
+          "prediction": "",
+          "probability": 50,
+          "icon": "⚡",
+          "type": "tiebreak"
+        }
+      ]
+    },
+    {
+      "id": "737021",
+      "uid": "s:600~l:730~e:737021",
+      "matchId": "737021",
+      "league": "Serie A",
+      "leagueId": "ita.1",
+      "home": {
+        "id": "107",
+        "name": "Bologna",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png"
+      },
+      "away": {
+        "id": "115",
+        "name": "Parma",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png"
+      },
+      "startDate": "2026-02-08T11:30Z",
+      "startTime": "07:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.65",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Parma",
+        "homeWinProb": 28,
+        "awayWinProb": 48,
+        "drawProb": 24,
+        "confidence": "silver",
+        "oracleConfidence": 48,
+        "maxProb": 48,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 66,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Parma +1 gol",
+          "prediction": "",
+          "probability": 67,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Bologna gana 1er tiempo",
+          "prediction": "",
+          "probability": 68,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 69,
+          "icon": "⚽",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "748367",
+      "uid": "s:600~l:740~e:748367",
+      "matchId": "748367",
+      "league": "LaLiga",
+      "leagueId": "esp.1",
+      "home": {
+        "id": "96",
+        "name": "Alavés",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png"
+      },
+      "away": {
+        "id": "2922",
+        "name": "Getafe",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png"
+      },
+      "startDate": "2026-02-08T13:00Z",
+      "startTime": "09:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "2.75",
+        "away": null
+      },
+      "prediction": {
+        "winner": "draw",
+        "text": "Empate",
+        "homeWinProb": 28,
+        "awayWinProb": 29,
+        "drawProb": 43,
+        "confidence": "silver",
+        "oracleConfidence": 43,
+        "maxProb": 43,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 62,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Getafe +1 gol",
+          "prediction": "",
+          "probability": 63,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 64,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Alavés gana 1er tiempo",
+          "prediction": "",
+          "probability": 65,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 66,
+          "icon": "⚽",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "740838",
+      "uid": "s:600~l:700~e:740838",
+      "matchId": "740838",
+      "league": "Premier League",
+      "leagueId": "eng.1",
+      "home": {
+        "id": "331",
+        "name": "Brighton & Hove Albion",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/331.png"
+      },
+      "away": {
+        "id": "384",
+        "name": "Crystal Palace",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/384.png"
+      },
+      "startDate": "2026-02-08T14:00Z",
+      "startTime": "10:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.65",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Brighton",
+        "homeWinProb": 49,
+        "awayWinProb": 27,
+        "drawProb": 24,
+        "confidence": "silver",
+        "oracleConfidence": 49,
+        "maxProb": 49,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 58,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Brighton -1 handicap",
+          "prediction": "",
+          "probability": 59,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "C Palace +1 gol",
+          "prediction": "",
+          "probability": 60,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Brighton gana 1er tiempo",
+          "prediction": "",
+          "probability": 61,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 62,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "737016",
+      "uid": "s:600~l:730~e:737016",
+      "matchId": "737016",
+      "league": "Serie A",
+      "leagueId": "ita.1",
+      "home": {
+        "id": "113",
+        "name": "Lecce",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/113.png"
+      },
+      "away": {
+        "id": "118",
+        "name": "Udinese",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/118.png"
+      },
+      "startDate": "2026-02-08T14:00Z",
+      "startTime": "10:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "2.75",
+        "away": null
+      },
+      "prediction": {
+        "winner": "draw",
+        "text": "Empate",
+        "homeWinProb": 28,
+        "awayWinProb": 29,
+        "drawProb": 43,
+        "confidence": "silver",
+        "oracleConfidence": 43,
+        "maxProb": 43,
+        "oracleV12": {
+          "homeState": "crisis",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 61,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Lecce -1 handicap",
+          "prediction": "",
+          "probability": 62,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Udinese +1 gol",
+          "prediction": "",
+          "probability": 64,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 65,
+          "icon": "⚽",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "746599",
+      "uid": "s:600~l:710~e:746599",
+      "matchId": "746599",
+      "league": "Ligue 1",
+      "leagueId": "fra.1",
+      "home": {
+        "id": "2502",
+        "name": "Nice",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2502.png"
+      },
+      "away": {
+        "id": "174",
+        "name": "AS Monaco",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/174.png"
+      },
+      "startDate": "2026-02-08T14:00Z",
+      "startTime": "10:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.85",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Monaco",
+        "homeWinProb": 28,
+        "awayWinProb": 47,
+        "drawProb": 25,
+        "confidence": "silver",
+        "oracleConfidence": 47,
+        "maxProb": 47,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 69,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Nice gana 1er tiempo",
+          "prediction": "",
+          "probability": 45,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 46,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 47,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "746899",
+      "uid": "s:600~l:720~e:746899",
+      "matchId": "746899",
+      "league": "Bundesliga",
+      "leagueId": "ger.1",
+      "home": {
+        "id": "122",
+        "name": "FC Cologne",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/122.png"
+      },
+      "away": {
+        "id": "11420",
+        "name": "RB Leipzig",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/11420.png"
+      },
+      "startDate": "2026-02-08T14:30Z",
+      "startTime": "10:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.75",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Cologne",
+        "homeWinProb": 48,
+        "awayWinProb": 29,
+        "drawProb": 23,
+        "confidence": "silver",
+        "oracleConfidence": 48,
+        "maxProb": 48,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 69,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Cologne -1 handicap",
+          "prediction": "",
+          "probability": 45,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 46,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 47,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "748365",
+      "uid": "s:600~l:740~e:748365",
+      "matchId": "748365",
+      "league": "LaLiga",
+      "leagueId": "esp.1",
+      "home": {
+        "id": "243",
+        "name": "Sevilla",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/243.png"
+      },
+      "away": {
+        "id": "9812",
+        "name": "Girona",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9812.png"
+      },
+      "startDate": "2026-02-08T15:15Z",
+      "startTime": "11:15",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.50",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Sevilla",
+        "homeWinProb": 48,
+        "awayWinProb": 30,
+        "drawProb": 22,
+        "confidence": "silver",
+        "oracleConfidence": 48,
+        "maxProb": 48,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 60,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 61,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 62,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Sevilla gana 1er tiempo",
+          "prediction": "",
+          "probability": 64,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Sevilla -1 handicap",
+          "prediction": "",
+          "probability": 65,
+          "icon": "📊",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "748373",
+      "uid": "s:600~l:740~e:748373",
+      "matchId": "748373",
+      "league": "LaLiga",
+      "leagueId": "esp.1",
+      "home": {
+        "id": "93",
+        "name": "Athletic Club",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png"
+      },
+      "away": {
+        "id": "1538",
+        "name": "Levante",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png"
+      },
+      "startDate": "2026-02-08T15:15Z",
+      "startTime": "11:15",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.95",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Athletic",
+        "homeWinProb": 58,
+        "awayWinProb": 27,
+        "drawProb": 15,
+        "confidence": "gold",
+        "oracleConfidence": 58,
+        "maxProb": 58,
+        "oracleV12": {
+          "homeState": "recovering",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Athletic -1 handicap",
+          "prediction": "",
+          "probability": 69,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 45,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Athletic gana 1er tiempo",
+          "prediction": "",
+          "probability": 46,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Levante +1 gol",
+          "prediction": "",
+          "probability": 47,
+          "icon": "➕",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "746593",
+      "uid": "s:600~l:710~e:746593",
+      "matchId": "746593",
+      "league": "Ligue 1",
+      "leagueId": "fra.1",
+      "home": {
+        "id": "172",
+        "name": "AJ Auxerre",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/172.png"
+      },
+      "away": {
+        "id": "6851",
+        "name": "Paris FC",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/6851.png"
+      },
+      "startDate": "2026-02-08T16:15Z",
+      "startTime": "12:15",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.20",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Paris FC",
+        "homeWinProb": 25,
+        "awayWinProb": 56,
+        "drawProb": 19,
+        "confidence": "gold",
+        "oracleConfidence": 56,
+        "maxProb": 56,
+        "oracleV12": {
+          "homeState": "crisis",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 64,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 65,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 66,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "746592",
+      "uid": "s:600~l:710~e:746592",
+      "matchId": "746592",
+      "league": "Ligue 1",
+      "leagueId": "fra.1",
+      "home": {
+        "id": "7868",
+        "name": "Angers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/7868.png"
+      },
+      "away": {
+        "id": "179",
+        "name": "Toulouse",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/179.png"
+      },
+      "startDate": "2026-02-08T16:15Z",
+      "startTime": "12:15",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.15",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Toulouse",
+        "homeWinProb": 28,
+        "awayWinProb": 48,
+        "drawProb": 24,
+        "confidence": "silver",
+        "oracleConfidence": 48,
+        "maxProb": 48,
+        "oracleV12": {
+          "homeState": "crisis",
+          "awayState": "over_performing",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 62,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Toulouse +1 gol",
+          "prediction": "",
+          "probability": 63,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 64,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Angers gana 1er tiempo",
+          "prediction": "",
+          "probability": 65,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 66,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 67,
+          "icon": "⚽",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "746600",
+      "uid": "s:600~l:710~e:746600",
+      "matchId": "746600",
+      "league": "Ligue 1",
+      "leagueId": "fra.1",
+      "home": {
+        "id": "3236",
+        "name": "Le Havre AC",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3236.png"
+      },
+      "away": {
+        "id": "180",
+        "name": "Strasbourg",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/180.png"
+      },
+      "startDate": "2026-02-08T16:15Z",
+      "startTime": "12:15",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.70",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Le Havre AC",
+        "homeWinProb": 49,
+        "awayWinProb": 27,
+        "drawProb": 24,
+        "confidence": "silver",
+        "oracleConfidence": 49,
+        "maxProb": 49,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "over_performing",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 45,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 46,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 47,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Le Havre AC gana 1er tiempo",
+          "prediction": "",
+          "probability": 48,
+          "icon": "⏱️",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "740845",
+      "uid": "s:600~l:700~e:740845",
+      "matchId": "740845",
+      "league": "Premier League",
+      "leagueId": "eng.1",
+      "home": {
+        "id": "364",
+        "name": "Liverpool",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/364.png"
+      },
+      "away": {
+        "id": "382",
+        "name": "Manchester City",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/382.png"
+      },
+      "startDate": "2026-02-08T16:30Z",
+      "startTime": "12:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "3.70",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Liverpool",
+        "homeWinProb": 55,
+        "awayWinProb": 26,
+        "drawProb": 19,
+        "confidence": "gold",
+        "oracleConfidence": 55,
+        "maxProb": 55,
+        "oracleV12": {
+          "homeState": "bounce_back",
+          "awayState": "stable",
+          "hasPattern": true
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 72,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 66,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 75,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "746903",
+      "uid": "s:600~l:720~e:746903",
+      "matchId": "746903",
+      "league": "Bundesliga",
+      "leagueId": "ger.1",
+      "home": {
+        "id": "132",
+        "name": "Bayern Munich",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/132.png"
+      },
+      "away": {
+        "id": "7911",
+        "name": "TSG Hoffenheim",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/7911.png"
+      },
+      "startDate": "2026-02-08T16:30Z",
+      "startTime": "12:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "6.50",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Hoffenheim",
+        "homeWinProb": 28,
+        "awayWinProb": 47,
+        "drawProb": 25,
+        "confidence": "silver",
+        "oracleConfidence": 47,
+        "maxProb": 47,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "unstoppable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 48,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 49,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Hoffenheim +1 gol",
+          "prediction": "",
+          "probability": 50,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 51,
+          "icon": "⚽",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "737023",
+      "uid": "s:600~l:730~e:737023",
+      "matchId": "737023",
+      "league": "Serie A",
+      "leagueId": "ita.1",
+      "home": {
+        "id": "3997",
+        "name": "Sassuolo",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3997.png"
+      },
+      "away": {
+        "id": "110",
+        "name": "Internazionale",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png"
+      },
+      "startDate": "2026-02-08T17:00Z",
+      "startTime": "13:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "4.40",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Inter Milan",
+        "homeWinProb": 29,
+        "awayWinProb": 50,
+        "drawProb": 21,
+        "confidence": "silver",
+        "oracleConfidence": 50,
+        "maxProb": 50,
+        "oracleV12": {
+          "homeState": "crisis",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Sassuolo -1 handicap",
+          "prediction": "",
+          "probability": 69,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 45,
+          "icon": "🚩",
+          "type": "corners"
+        },
+        {
+          "team": "Sassuolo gana 1er tiempo",
+          "prediction": "",
+          "probability": 46,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 47,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 48,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "748369",
+      "uid": "s:600~l:740~e:748369",
+      "matchId": "748369",
+      "league": "LaLiga",
+      "leagueId": "esp.1",
+      "home": {
+        "id": "1068",
+        "name": "Atlético Madrid",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png"
+      },
+      "away": {
+        "id": "244",
+        "name": "Real Betis",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png"
+      },
+      "startDate": "2026-02-08T17:30Z",
+      "startTime": "13:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "4.80",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Atlético",
+        "homeWinProb": 50,
+        "awayWinProb": 28,
+        "drawProb": 22,
+        "confidence": "silver",
+        "oracleConfidence": 50,
+        "maxProb": 50,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 64,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Atlético -1 handicap",
+          "prediction": "",
+          "probability": 65,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 66,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 67,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "401810612",
+      "uid": "s:40~l:46~e:401810612",
+      "matchId": "401810612",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "2",
+        "name": "Boston Celtics",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png"
+      },
+      "away": {
+        "id": "18",
+        "name": "New York Knicks",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ny.png"
+      },
+      "startDate": "2026-02-08T17:30Z",
+      "startTime": "13:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Celtics",
+        "homeWinProb": 63,
+        "awayWinProb": 37,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 63,
+        "maxProb": 63,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 57,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Celtics -5.5 handicap",
+          "prediction": "",
+          "probability": 58,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Knicks gana 1er cuarto",
+          "prediction": "",
+          "probability": 59,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 60,
+          "icon": "📈",
+          "type": "margin"
+        }
+      ]
+    },
+    {
+      "id": "401810613",
+      "uid": "s:40~l:46~e:401810613",
+      "matchId": "401810613",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "27",
+        "name": "Washington Wizards",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png"
+      },
+      "away": {
+        "id": "14",
+        "name": "Miami Heat",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mia.png"
+      },
+      "startDate": "2026-02-08T19:00Z",
+      "startTime": "15:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Wizards",
+        "homeWinProb": 64,
+        "awayWinProb": 36,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 64,
+        "maxProb": 64,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Heat gana 1er cuarto",
+          "prediction": "",
+          "probability": 58,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 59,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Wizards -5.5 handicap",
+          "prediction": "",
+          "probability": 60,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 61,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 62,
+          "icon": "🏀",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "737017",
+      "uid": "s:600~l:730~e:737017",
+      "matchId": "737017",
+      "league": "Serie A",
+      "leagueId": "ita.1",
+      "home": {
+        "id": "111",
+        "name": "Juventus",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png"
+      },
+      "away": {
+        "id": "112",
+        "name": "Lazio",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/112.png"
+      },
+      "startDate": "2026-02-08T19:45Z",
+      "startTime": "15:45",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "4.10",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Lazio",
+        "homeWinProb": 28,
+        "awayWinProb": 49,
+        "drawProb": 23,
+        "confidence": "silver",
+        "oracleConfidence": 49,
+        "maxProb": 49,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 62,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Juventus -1 handicap",
+          "prediction": "",
+          "probability": 63,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 64,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Lazio +1 gol",
+          "prediction": "",
+          "probability": 65,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 66,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 67,
+          "icon": "🤝",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "746595",
+      "uid": "s:600~l:710~e:746595",
+      "matchId": "746595",
+      "league": "Ligue 1",
+      "leagueId": "fra.1",
+      "home": {
+        "id": "160",
+        "name": "Paris Saint-Germain",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/160.png"
+      },
+      "away": {
+        "id": "176",
+        "name": "Marseille",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/176.png"
+      },
+      "startDate": "2026-02-08T19:45Z",
+      "startTime": "15:45",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "5.00",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana PSG",
+        "homeWinProb": 47,
+        "awayWinProb": 27,
+        "drawProb": 26,
+        "confidence": "silver",
+        "oracleConfidence": 47,
+        "maxProb": 47,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 72,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 66,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 75,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Marseille +1 gol",
+          "prediction": "",
+          "probability": 69,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "PSG gana 1er tiempo",
+          "prediction": "",
+          "probability": 45,
+          "icon": "⏱️",
+          "type": "half"
+        }
+      ]
+    },
+    {
+      "id": "748364",
+      "uid": "s:600~l:740~e:748364",
+      "matchId": "748364",
+      "league": "LaLiga",
+      "leagueId": "esp.1",
+      "home": {
+        "id": "94",
+        "name": "Valencia",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/94.png"
+      },
+      "away": {
+        "id": "86",
+        "name": "Real Madrid",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png"
+      },
+      "startDate": "2026-02-08T20:00Z",
+      "startTime": "16:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": "4.40",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Valencia",
+        "homeWinProb": 58,
+        "awayWinProb": 27,
+        "drawProb": 15,
+        "confidence": "gold",
+        "oracleConfidence": 58,
+        "maxProb": 58,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 67,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Valencia -1 handicap",
+          "prediction": "",
+          "probability": 65,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 61,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 62,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Real Madrid +1 gol",
+          "prediction": "",
+          "probability": 63,
+          "icon": "➕",
+          "type": "handicap"
+        }
+      ]
+    },
+    {
+      "id": "401810614",
+      "uid": "s:40~l:46~e:401810614",
+      "matchId": "401810614",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "28",
+        "name": "Toronto Raptors",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png"
+      },
+      "away": {
+        "id": "11",
+        "name": "Indiana Pacers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ind.png"
+      },
+      "startDate": "2026-02-08T20:00Z",
+      "startTime": "16:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Raptors",
+        "homeWinProb": 65,
+        "awayWinProb": 35,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 65,
+        "maxProb": 65,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 59,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 60,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Raptors -5.5 handicap",
+          "prediction": "",
+          "probability": 61,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 62,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Pacers gana 1er cuarto",
+          "prediction": "",
+          "probability": 63,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 64,
+          "icon": "📈",
+          "type": "margin"
+        }
+      ]
+    },
+    {
+      "id": "401810615",
+      "uid": "s:40~l:46~e:401810615",
+      "matchId": "401810615",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "16",
+        "name": "Minnesota Timberwolves",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png"
+      },
+      "away": {
+        "id": "12",
+        "name": "LA Clippers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png"
+      },
+      "startDate": "2026-02-08T20:00Z",
+      "startTime": "16:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "Mañana",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Timberwolves",
+        "homeWinProb": 64,
+        "awayWinProb": 36,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 64,
+        "maxProb": 64,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Timberwolves -5.5 handicap",
+          "prediction": "",
+          "probability": 60,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Clippers gana 1er cuarto",
+          "prediction": "",
+          "probability": 61,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 62,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🏀",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "737022",
+      "uid": "s:600~l:730~e:737022",
+      "matchId": "737022",
+      "league": "Serie A",
+      "leagueId": "ita.1",
+      "home": {
+        "id": "105",
+        "name": "Atalanta",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/105.png"
+      },
+      "away": {
+        "id": "4050",
+        "name": "Cremonese",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4050.png"
+      },
+      "startDate": "2026-02-09T17:30Z",
+      "startTime": "13:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": "4.80",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Cremonese",
+        "homeWinProb": 29,
+        "awayWinProb": 48,
+        "drawProb": 23,
+        "confidence": "silver",
+        "oracleConfidence": 48,
+        "maxProb": 48,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 67,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Atalanta -1 handicap",
+          "prediction": "",
+          "probability": 68,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 69,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Cremonese +1 gol",
+          "prediction": "",
+          "probability": 45,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 46,
+          "icon": "🚩",
+          "type": "corners"
+        }
+      ]
+    },
+    {
+      "id": "737014",
+      "uid": "s:600~l:730~e:737014",
+      "matchId": "737014",
+      "league": "Serie A",
+      "leagueId": "ita.1",
+      "home": {
+        "id": "104",
+        "name": "AS Roma",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/104.png"
+      },
+      "away": {
+        "id": "2925",
+        "name": "Cagliari",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2925.png"
+      },
+      "startDate": "2026-02-09T19:45Z",
+      "startTime": "15:45",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": "3.90",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana AS Roma",
+        "homeWinProb": 50,
+        "awayWinProb": 28,
+        "drawProb": 22,
+        "confidence": "silver",
+        "oracleConfidence": 50,
+        "maxProb": 50,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 59,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Cagliari +1 gol",
+          "prediction": "",
+          "probability": 60,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 61,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "AS Roma gana 1er tiempo",
+          "prediction": "",
+          "probability": 62,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Más de 2.5 goles",
+          "prediction": "",
+          "probability": 64,
+          "icon": "⚽",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "747654",
+      "uid": "s:600~l:3926~e:747654",
+      "matchId": "747654",
+      "league": "Ligue 2",
+      "leagueId": "fra.2",
+      "home": {
+        "id": "3335",
+        "name": "SC Amiens",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3335.png"
+      },
+      "away": {
+        "id": "3171",
+        "name": "Clermont Foot",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3171.png"
+      },
+      "startDate": "2026-02-09T19:45Z",
+      "startTime": "15:45",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": "3.15",
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana SC Amiens",
+        "homeWinProb": 50,
+        "awayWinProb": 28,
+        "drawProb": 22,
+        "confidence": "silver",
+        "oracleConfidence": 50,
+        "maxProb": 50,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 49,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "SC Amiens gana 1er tiempo",
+          "prediction": "",
+          "probability": 50,
+          "icon": "⏱️",
+          "type": "half"
+        },
+        {
+          "team": "Clermont Foot +1 gol",
+          "prediction": "",
+          "probability": 51,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 52,
+          "icon": "⚽",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "748368",
+      "uid": "s:600~l:740~e:748368",
+      "matchId": "748368",
+      "league": "LaLiga",
+      "leagueId": "esp.1",
+      "home": {
+        "id": "102",
+        "name": "Villarreal",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/102.png"
+      },
+      "away": {
+        "id": "88",
+        "name": "Espanyol",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/88.png"
+      },
+      "startDate": "2026-02-09T20:00Z",
+      "startTime": "16:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0'",
+      "sport": "football",
+      "sportIcon": "⚽",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": "4.20",
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Espanyol",
+        "homeWinProb": 29,
+        "awayWinProb": 49,
+        "drawProb": 22,
+        "confidence": "silver",
+        "oracleConfidence": 49,
+        "maxProb": 49,
+        "oracleV12": {
+          "homeState": "crisis",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Ambos equipos anotan",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🎯",
+          "type": "btts"
+        },
+        {
+          "team": "Espanyol +1 gol",
+          "prediction": "",
+          "probability": 64,
+          "icon": "➕",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 2.5 goles",
+          "prediction": "",
+          "probability": 65,
+          "icon": "⚽",
+          "type": "over_under"
+        },
+        {
+          "team": "Empate al descanso",
+          "prediction": "",
+          "probability": 66,
+          "icon": "🤝",
+          "type": "half"
+        },
+        {
+          "team": "Villarreal -1 handicap",
+          "prediction": "",
+          "probability": 67,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Más de 3 corners 1er tiempo",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🚩",
+          "type": "corners"
+        }
+      ]
+    },
+    {
+      "id": "401810616",
+      "uid": "s:40~l:46~e:401810616",
+      "matchId": "401810616",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "30",
+        "name": "Charlotte Hornets",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png"
+      },
+      "away": {
+        "id": "8",
+        "name": "Detroit Pistons",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png"
+      },
+      "startDate": "2026-02-10T00:00Z",
+      "startTime": "20:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Hornets",
+        "homeWinProb": 67,
+        "awayWinProb": 33,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 67,
+        "maxProb": 67,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 61,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 62,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Hornets -5.5 handicap",
+          "prediction": "",
+          "probability": 64,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 65,
+          "icon": "1️⃣",
+          "type": "quarter"
+        }
+      ]
+    },
+    {
+      "id": "401810617",
+      "uid": "s:40~l:46~e:401810617",
+      "matchId": "401810617",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "17",
+        "name": "Brooklyn Nets",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png"
+      },
+      "away": {
+        "id": "4",
+        "name": "Chicago Bulls",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png"
+      },
+      "startDate": "2026-02-10T00:30Z",
+      "startTime": "20:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Nets",
+        "homeWinProb": 63,
+        "awayWinProb": 37,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 63,
+        "maxProb": 63,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 62,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 63,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 64,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Nets -5.5 handicap",
+          "prediction": "",
+          "probability": 65,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 66,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Bulls gana 1er cuarto",
+          "prediction": "",
+          "probability": 67,
+          "icon": "⏱️",
+          "type": "quarter"
+        }
+      ]
+    },
+    {
+      "id": "401810618",
+      "uid": "s:40~l:46~e:401810618",
+      "matchId": "401810618",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "14",
+        "name": "Miami Heat",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mia.png"
+      },
+      "away": {
+        "id": "26",
+        "name": "Utah Jazz",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png"
+      },
+      "startDate": "2026-02-10T00:30Z",
+      "startTime": "20:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Jazz",
+        "homeWinProb": 37,
+        "awayWinProb": 63,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 63,
+        "maxProb": 63,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Jazz gana 1er cuarto",
+          "prediction": "",
+          "probability": 63,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 64,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Heat -5.5 handicap",
+          "prediction": "",
+          "probability": 65,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 66,
+          "icon": "1️⃣",
+          "type": "quarter"
+        }
+      ]
+    },
+    {
+      "id": "401810619",
+      "uid": "s:40~l:46~e:401810619",
+      "matchId": "401810619",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "19",
+        "name": "Orlando Magic",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/orl.png"
+      },
+      "away": {
+        "id": "15",
+        "name": "Milwaukee Bucks",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png"
+      },
+      "startDate": "2026-02-10T00:30Z",
+      "startTime": "20:30",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Magic",
+        "homeWinProb": 66,
+        "awayWinProb": 34,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 66,
+        "maxProb": 66,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 64,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Magic -5.5 handicap",
+          "prediction": "",
+          "probability": 65,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 66,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 67,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🏀",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "401810620",
+      "uid": "s:40~l:46~e:401810620",
+      "matchId": "401810620",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "16",
+        "name": "Minnesota Timberwolves",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png"
+      },
+      "away": {
+        "id": "1",
+        "name": "Atlanta Hawks",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png"
+      },
+      "startDate": "2026-02-10T01:00Z",
+      "startTime": "21:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Hawks",
+        "homeWinProb": 38,
+        "awayWinProb": 62,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 62,
+        "maxProb": 62,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 65,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 66,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Timberwolves -5.5 handicap",
+          "prediction": "",
+          "probability": 67,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 68,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Hawks gana 1er cuarto",
+          "prediction": "",
+          "probability": 69,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 45,
+          "icon": "📈",
+          "type": "margin"
+        }
+      ]
+    },
+    {
+      "id": "401810621",
+      "uid": "s:40~l:46~e:401810621",
+      "matchId": "401810621",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "3",
+        "name": "New Orleans Pelicans",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/no.png"
+      },
+      "away": {
+        "id": "23",
+        "name": "Sacramento Kings",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png"
+      },
+      "startDate": "2026-02-10T01:00Z",
+      "startTime": "21:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Pelicans",
+        "homeWinProb": 63,
+        "awayWinProb": 37,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 63,
+        "maxProb": 63,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 66,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Kings gana 1er cuarto",
+          "prediction": "",
+          "probability": 67,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Pelicans -5.5 handicap",
+          "prediction": "",
+          "probability": 68,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 69,
+          "icon": "📈",
+          "type": "margin"
+        }
+      ]
+    },
+    {
+      "id": "401810622",
+      "uid": "s:40~l:46~e:401810622",
+      "matchId": "401810622",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "7",
+        "name": "Denver Nuggets",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png"
+      },
+      "away": {
+        "id": "5",
+        "name": "Cleveland Cavaliers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png"
+      },
+      "startDate": "2026-02-10T02:00Z",
+      "startTime": "22:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Nuggets",
+        "homeWinProb": 63,
+        "awayWinProb": 37,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 63,
+        "maxProb": 63,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Cavaliers gana 1er cuarto",
+          "prediction": "",
+          "probability": 67,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Nuggets -5.5 handicap",
+          "prediction": "",
+          "probability": 69,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 45,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 46,
+          "icon": "1️⃣",
+          "type": "quarter"
+        }
+      ]
+    },
+    {
+      "id": "401810623",
+      "uid": "s:40~l:46~e:401810623",
+      "matchId": "401810623",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "9",
+        "name": "Golden State Warriors",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png"
+      },
+      "away": {
+        "id": "29",
+        "name": "Memphis Grizzlies",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mem.png"
+      },
+      "startDate": "2026-02-10T03:00Z",
+      "startTime": "23:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Warriors",
+        "homeWinProb": 66,
+        "awayWinProb": 34,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 66,
+        "maxProb": 66,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 68,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Grizzlies gana 1er cuarto",
+          "prediction": "",
+          "probability": 69,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Warriors -5.5 handicap",
+          "prediction": "",
+          "probability": 45,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 46,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 47,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 48,
+          "icon": "1️⃣",
+          "type": "quarter"
+        }
+      ]
+    },
+    {
+      "id": "401810624",
+      "uid": "s:40~l:46~e:401810624",
+      "matchId": "401810624",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "13",
+        "name": "Los Angeles Lakers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png"
+      },
+      "away": {
+        "id": "25",
+        "name": "Oklahoma City Thunder",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png"
+      },
+      "startDate": "2026-02-10T03:00Z",
+      "startTime": "23:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "away",
+        "text": "Gana Thunder",
+        "homeWinProb": 38,
+        "awayWinProb": 62,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 62,
+        "maxProb": 62,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Lakers -5.5 handicap",
+          "prediction": "",
+          "probability": 69,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 45,
+          "icon": "1️⃣",
+          "type": "quarter"
+        },
+        {
+          "team": "Thunder gana 1er cuarto",
+          "prediction": "",
+          "probability": 46,
+          "icon": "⏱️",
+          "type": "quarter"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 47,
+          "icon": "🏀",
+          "type": "over_under"
+        }
+      ]
+    },
+    {
+      "id": "401810625",
+      "uid": "s:40~l:46~e:401810625",
+      "matchId": "401810625",
+      "league": "NBA",
+      "leagueId": "nba",
+      "home": {
+        "id": "22",
+        "name": "Portland Trail Blazers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png"
+      },
+      "away": {
+        "id": "20",
+        "name": "Philadelphia 76ers",
+        "score": "0",
+        "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phi.png"
+      },
+      "startDate": "2026-02-10T03:00Z",
+      "startTime": "23:00",
+      "status": "upcoming",
+      "isLive": false,
+      "isFinished": false,
+      "liveMinute": "0.0",
+      "sport": "basketball",
+      "sportIcon": "🏀",
+      "relativeDate": "lun 9",
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null
+      },
+      "prediction": {
+        "winner": "home",
+        "text": "Gana Trail Blazers",
+        "homeWinProb": 65,
+        "awayWinProb": 35,
+        "drawProb": 0,
+        "confidence": "gold",
+        "oracleConfidence": 65,
+        "maxProb": 65,
+        "oracleV12": {
+          "homeState": "stable",
+          "awayState": "stable",
+          "hasPattern": false
+        }
+      },
+      "playerPredictions": [
+        {
+          "team": "Diferencia > 10 puntos",
+          "prediction": "",
+          "probability": 45,
+          "icon": "📈",
+          "type": "margin"
+        },
+        {
+          "team": "Más de 210.5 puntos",
+          "prediction": "",
+          "probability": 46,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Menos de 210.5 puntos",
+          "prediction": "",
+          "probability": 47,
+          "icon": "🏀",
+          "type": "over_under"
+        },
+        {
+          "team": "Trail Blazers -5.5 handicap",
+          "prediction": "",
+          "probability": 48,
+          "icon": "📊",
+          "type": "handicap"
+        },
+        {
+          "team": "1er cuarto más anotador",
+          "prediction": "",
+          "probability": 49,
+          "icon": "1️⃣",
+          "type": "quarter"
+        }
+      ]
+    }
+  ]
+}

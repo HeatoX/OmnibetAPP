@@ -1,0 +1,105 @@
+# OmniBet AI - Project Expansion
+
+## Overview
+Expand the application to include a comprehensive Admin Dashboard, detailed "Deep Analysis" match views with rich data (H2H, injuries, stats), enhance the landing page with demo interactions, and add 6 premium features for maximum user engagement and conversion.
+
+## Checklist
+
+### [x] Admin Dashboard
+- [x] Create `/admin` layout and protection (Admins only)
+- [x] User Management Table (View, Block, Delete)
+- [x] Sales & Revenue Analytics Chart
+- [x] Platform Stats (Active users, predictions generated)
+- [x] "God Mode" toggle (Access everything for free)
+
+### [x] Deep Match Analysis (The "Product")
+- [x] Create `DetailedMatchView` component
+    - [x] Head-to-Head History visualization
+    - [x] Team Form Guide (Last 5 matches)
+    - [x] Player Stats & Injuries Report
+    - [x] AI "Reasoning" Text Generation
+- [x] Implement `MockDeepDataService` to generate realistic stories for demo matches
+
+### [x] Landing Page Enhancements
+- [x] Integrate "Deep Analysis" demo into Landing Page (Modal or Inline)
+- [x] Ensure "Register" flows correctly to App
+- [x] Add "About the App" section explaining the tiers
+
+### [x] Tiered Content Gating
+- [x] Restrict predictions visibility (Silver/Gold/Diamond)
+- [x] Correct badge labels logic ('diamond', 'gold', 'silver')
+- [x] Implement "Unlock" prompt for lower tiers
+
+### [x] Multi-Sport & Data Reliability
+- [x] Enable and fix NFL, NBA, Tennis market predictions
+- [x] Implement tomorrow's games fetch for daily sports
+- [x] Fix "sportMarkets is not iterable" crash
+- [x] Remove "Partido muy igualado" fallback labels
+- [x] Restore missing Cup endpoints (Copa del Rey, FA Cup, etc.)
+
+---
+
+## Premium Features (NEW)
+
+### [x] Feature 1: Banker of the Day 🔥
+- [x] Create `BankerCard.jsx` with fire animations
+- [x] Select highest confidence match automatically
+- [x] Add to main dashboard prominently
+- [x] Add CSS fire/glow effects
+
+### [x] Feature 2: Value Bets Monitor 💎
+- [x] Create `ValueBetBadge.jsx` component
+- [x] Calculate Expected Value (EV) function
+- [x] Display when EV > 5% threshold
+- [x] Pulse animation for visibility
+
+### [x] Feature 3: Parlay Builder 🎰
+- [x] Create `parlay-engine.js` with odds calculation
+- [x] Create `ParlayBuilder.jsx` UI component
+- [x] Risk level selector (Safe/Balanced/Aggressive)
+- [x] Copy-to-clipboard for sharing
+- [x] Lock for free users
+
+### [x] Feature 4: Community Voting 👥
+- [x] Create `CommunityVote.jsx` component
+- [x] Create `/api/votes/route.js` API endpoint
+- [x] Agree/Disagree with percentage bars
+- [x] Social proof indicators
+
+### [x] Feature 5: Telegram Alerts 📱
+- [x] Create `telegram-service.js` module
+- [x] Create `/api/telegram/route.js` webhook handler
+- [x] Bot commands (/start, /subscribe, /status, etc.)
+- [x] Diamond alert broadcasting
+- [x] Banker of the Day special alerts
+- [x] Daily summary messages
+
+### [x] Feature 6: Transparency Dashboard 📊
+- [x] Create `history-tracker.js` service
+- [x] Create `TransparencyStats.jsx` component
+- [x] Record predictions before matches
+- [x] Resolve and calculate P&L after
+- [x] ROI, win rates, streaks display
+- [x] Tier-based performance breakdown
+
+---
+
+## Database & Infrastructure
+
+### [x] Supabase Migrations
+- [x] Create `prediction_history` table
+- [x] Create `prediction_votes` table
+- [x] Create `telegram_subscribers` table
+- [x] Create `telegram_link_codes` table
+- [x] Set up RLS policies
+
+---
+
+## Verification
+- [x] Verify Admin controls works
+- [x] Verify Demo User experience
+- [x] Verify "Deep Analysis" looks impressive
+- [x] Verify upcoming games for all sports appear correctly
+- [ ] Test Telegram bot with real account
+- [ ] Verify premium features render correctly
+- [ ] Test parlay generator with multiple matches

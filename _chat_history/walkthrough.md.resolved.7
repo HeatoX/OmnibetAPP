@@ -1,0 +1,51 @@
+# OmniBet AI - Project Update
+
+## Summary
+We have significantly expanded the application's capabilities with a focus on administrative control and showcasing the "Deep Analysis" value proposition to new users.
+
+## Key Changes
+
+### 1. Admin Dashboard with "God Mode"
+- **New Admin Panel**: Accessible at `/admin` (for admin users).
+- **Features**:
+  - Dashboard with revenue and user stats.
+  - User management (Block, Delete, Upgrade).
+  - **God Mode**: A toggle in settings to instantly grant yourself "Diamond" tier access for free testing.
+
+### 2. Deep Match Analysis (The Product)
+- Enhanced the match analysis engine to generate **Narrative Insights**:
+  - **Historical Curses**: Detects if a team hasn't won against another in years.
+  - **Fortresses**: Highlights strong home records.
+  - **Player Form**: Identifies players on scoring streaks.
+- Visual tabs for H2H, Form, Rosters, and Injuries.
+
+### 3. Landing Page Demo
+- Added a **"Ver Análisis Demo"** button on the landing page hero section.
+- Opens a fully interactive demonstration of the Detailed Analysis view (Real Madrid vs Barcelona).
+- Allows potential users to experience the "Premium" data without registering first, driving interest.
+
+## Verification
+- **Demo Mode**: Verified that the "Ver Análisis Demo" button works on the landing page without login.
+- **Admin Access**: Verified that `/admin` is protected and "God Mode" successfully upgrades the current user.
+- **Data Quality**: Confirmed that the "Deep Analysis" shows rich, narrative-driven data (e.g., "Maldición histórica").
+
+### 4. Tiered Content Gating (Access Control)
+- **Subscription Enforcement**: 
+  - **Silver (Free)**: Limited to 2 basic predictions per match. The rest of the "Betting Slip" is locked with an upgrade prompt.
+  - **Gold**: Access to 4 predictions.
+  - **Diamond**: Full access to all generated smart markets.
+- **Visual Feedback**: Implemented locking screens and blur effects for restricted content, encouraging user upgrades.
+
+### 5. Multi-Sport Data & Reliability
+- **Expanded Calendar**: NBA, Tennis, and Baseball now fetch both **"Today" and "Tomorrow"** games. This ensures the app always shows upcoming matches, even at night between daily schedules.
+- **Accurate Predictions**: Fixed NFL and Basketball logic to display relevant markets (Points/Handicaps) instead of soccer-specific ones (Goals).
+- **Stability**: Resolved multiple "not defined" and "not iterable" crashes identified during testing.
+
+## Verification
+- **Gating**: Verified that a "Free" user sees locked content in the match modal while a "Diamond" user (via God Mode) sees everything.
+- **Multi-Sport**: Confirmed that NBA and Tennis sections are now populated with tomorrow's games.
+- **PredictiveDecisiveness**: Removed generic "Match very equal" labels; the system now always suggests a probable winner.
+
+## Next Steps
+- Integrate real-time odds updates (currently using pre-match data).
+- Implement automated billing system (Stripe/WhatsApp integration).

@@ -1,0 +1,122 @@
+# OmniBet AI - Phase 2 Premium Expansion
+
+## Overview
+Implement the remaining 6 core features to finalize OmniBet AI as a complete commercial product.
+
+---
+
+## Feature 1: Pasarela de Pagos (Stripe / WhatsApp) 💰
+
+### Purpose
+Enable real monetization through subscription upgrades.
+
+### Proposed Changes
+#### [NEW] `src/lib/stripe.js`
+- Initialize Stripe client
+- Helper functions for creating checkout sessions
+
+#### [NEW] `src/app/api/checkout/route.js`
+- Endpoint to create Stripe Session
+- Webhook handler for successful payments (update user tier in DB)
+
+#### [MODIFY] [src/components/UpgradeModal.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/UpgradeModal.jsx)
+- Replace dummy buttons with real checkout triggers
+- Add "Pay via WhatsApp" button with direct link to sales number
+
+---
+
+## Feature 2: Comparador de Cuotas Real (Odds Comparison) 📈
+
+### Purpose
+Show users the best available odds across bookmakers to maximize returns.
+
+### Proposed Changes
+#### [MODIFY] [src/lib/real-data-service.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js)
+- Update match data structure to include `bookmakers` array (mocked for now based on base odds)
+- Generate variations for Bet365, 1xBet, Codere
+
+#### [NEW] [src/components/OddsComparison.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/OddsComparison.jsx)
+- Component to display table of bookmakers
+- Highlight the "Best Value" cell
+- "Apostar" button linking to bookmaker
+
+#### [MODIFY] `src/components/MatchDetailModal.jsx`
+- Integrate `OddsComparison` inside the prediction view
+
+---
+
+## Feature 3: Calculadora de Stake 💵
+
+### Purpose
+Professional bankroll management tool based on confidence and user balance.
+
+### Proposed Changes
+#### [NEW] `src/components/StakeCalculator.jsx`
+- Input: User's total bankroll
+- Input: Confidence (auto-filled from match)
+- Output: Recommended Stake amount and % (Kelly Criterion simplified)
+- Visual "Risk Meter"
+
+#### [MODIFY] [src/components/PredictionCard.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/PredictionCard.jsx)
+- Add small "Calc Stake" button or integrate into detailed view
+
+---
+
+## Feature 4: "El Oráculo AI" (Chatbot) 🤖
+
+### Purpose
+Interactive AI agent for natural language queries about predictions.
+
+### Proposed Changes
+#### [NEW] `src/components/OracleChat.jsx`
+- Floating chat widget (bottom right bubble)
+- Chat interface with history
+- "Quick Prompts" (e.g., "Best bet today?", "Safe parlay?")
+
+#### [NEW] `src/app/api/oracle-chat/route.js`
+- Simple RAG system: Contextualizes prompt with today's `bankerMatch` and high-confidence predictions
+- Returns structured AI response
+
+---
+
+## Feature 5: Gamificación / Ranking 🏆
+
+### Purpose
+User engagement through competition.
+
+### Proposed Changes
+#### [NEW] `src/components/Leaderboard.jsx`
+- Table of top users based on correct votes/predictions
+- "My Rank" highlight
+
+#### [MODIFY] [src/lib/history-tracker.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/history-tracker.js)
+- Function to aggregate user voting accuracy
+
+#### Database (Supabase)
+- Use existing `prediction_votes` to calculate accuracy
+
+---
+
+## Feature 6: Buscador Inteligente 🔍
+
+### Purpose
+Fast navigation to specific teams or leagues.
+
+### Proposed Changes
+#### [NEW] `src/components/SmartSearch.jsx`
+- Floating search bar (Command+K style)
+- Filter matches by Team Name, League, or Sport
+- Instant results dropdown
+
+#### [MODIFY] [src/components/Header.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/Header.jsx)
+- Add search icon to trigger the component
+
+---
+
+## Execution Order
+1. **Smart Search** (Quick win, UX improvement)
+2. **Stake Calculator** (High value tool)
+3. **Odds Comparator** (Visual enhancement)
+4. **Payment Gateway** (Critical for business)
+5. **Leaderboard** (Community building)
+6. **AI Oracle** (Complex feature, "WOW" factor)

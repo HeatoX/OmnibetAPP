@@ -1,0 +1,120 @@
+# 🎯 OmniBet AI - Walkthrough
+
+> La mejor plataforma de predicciones deportivas con IA
+
+## ✅ Proyecto Completado
+
+La aplicación **OmniBet AI** está lista para usar. 
+
+### 🚀 Cómo Ejecutar
+
+```bash
+cd C:\Users\PABLO\.gemini\antigravity\scratch\omnibet-ai
+npm run dev
+```
+
+Luego abre en tu navegador: **http://localhost:3000**
+
+---
+
+## 📱 Páginas Implementadas
+
+### 1. [Landing Page](http://localhost:3000/) - Predicciones
+- Feed de predicciones filtrable por deporte
+- Tarjetas con glassmorphism premium
+- Indicadores de confianza (💎 Diamante, 🥇 Oro, 🥈 Plata)
+- Barras de probabilidad animadas
+- Modal de análisis detallado
+
+### 2. [En Vivo](http://localhost:3000/live) - Partidos en Tiempo Real
+- Actualización automática cada 5 segundos
+- Sistema de alertas "Sniper" 
+- Indicadores de partido en vivo
+- Oportunidades detectadas por IA
+
+### 3. [Rendimiento](http://localhost:3000/performance) - Tabulador de Certeza
+- Estadísticas animadas (contadores)
+- Gráfico semanal de precisión
+- Desglose por nivel de confianza
+- Desglose por deporte
+- Historial de predicciones verificables
+
+### 4. [Pricing](http://localhost:3000/pricing) - Suscripción
+- 3 planes: **Gratis**, **PRO ($10/mes)**, **ELITE ($49/mes)**
+- Toggle mensual/anual con descuento
+- Testimonios de usuarios
+- FAQ interactivo
+
+---
+
+## 🏆 Deportes Soportados
+
+| Deporte | Icono | Ligas |
+|---------|-------|-------|
+| Fútbol | ⚽ | LaLiga, Premier League, Champions |
+| Basketball | 🏀 | NBA, Euroleague |
+| Baseball | ⚾ | MLB |
+| NFL | 🏈 | NFL, NCAA |
+| Tenis | 🎾 | ATP, WTA, Grand Slam |
+
+---
+
+## 🎨 Características de Diseño
+
+- **Dark Mode** premium con efectos neón
+- **Glassmorphism** en todas las tarjetas
+- **Animaciones** fluidas (fade-in, slide-in, float)
+- **Badges de confianza** con efectos luminosos
+- **Responsive** para móvil, tablet y desktop
+- **Gráficos** de rendimiento interactivos
+
+---
+
+## 🧠 Motor de IA (Simulado)
+
+El motor incluye:
+- Factores ponderados por deporte
+- Generación de insights contextuales
+- Cálculo de "value bets"
+- Sugerencias de stake según confianza
+- Análisis detallado con estadísticas xG, posesión, forma reciente
+
+---
+
+## 📂 Estructura del Proyecto
+
+```
+omnibet-ai/
+├── src/
+│   ├── app/
+│   │   ├── page.jsx          # Landing
+│   │   ├── layout.jsx        # Layout + SEO
+│   │   ├── globals.css       # Design system
+│   │   ├── live/page.jsx     # En vivo
+│   │   ├── performance/page.jsx  # Rendimiento
+│   │   └── pricing/page.jsx  # Precios
+│   ├── components/
+│   │   ├── Header.jsx
+│   │   ├── PredictionCard.jsx
+│   │   ├── PerformanceDashboard.jsx
+│   │   └── SportWidgets.jsx
+│   └── lib/
+│       ├── mock-data.js      # Datos simulados
+│       └── ai-engine.js      # Motor de predicción
+└── package.json
+```
+
+---
+
+## 🔮 Próximos Pasos para Producción
+
+1. **APIs Reales**: Integrar Sportradar o API-Football
+2. **ML Backend**: Python con scikit-learn/XGBoost
+3. **Base de Datos**: PostgreSQL + Redis
+4. **Auth**: NextAuth.js o Clerk
+5. **Pagos**: Stripe para suscripciones
+6. **Deploy**: Vercel + AWS Lambda
+
+---
+
+> ⚠️ **Disclaimer**: Las apuestas deportivas conllevan riesgo. Esta herramienta es solo informativa.

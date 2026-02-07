@@ -1,0 +1,31 @@
+# OmniBet AI - Project Expansion
+
+## Overview
+Expand the application to include a comprehensive Admin Dashboard, detailed "Deep Analysis" match views with rich data (H2H, injuries, stats), and enhance the landing page with demo interactions.
+
+## Checklist
+
+### [ ] Admin Dashboard
+- [ ] Create `/admin` layout and protection (Admins only)
+- [ ] User Management Table (View, Block, Delete)
+- [ ] Sales & Revenue Analytics Chart
+- [ ] Platform Stats (Active users, predictions generated)
+- [ ] "God Mode" toggle (Access everything for free)
+
+### [ ] Deep Match Analysis (The "Product")
+- [ ] Create `DetailedMatchView` component
+    - [ ] Head-to-Head History visualization
+    - [ ] Team Form Guide (Last 5 matches)
+    - [ ] Player Stats & Injuries Report
+    - [ ] AI "Reasoning" Text Generation
+- [ ] Implement `MockDeepDataService` to generate realistic stories for demo matches
+
+### [ ] Landing Page Enhancements
+- [ ] Integrate "Deep Analysis" demo into Landing Page (Modal or Inline)
+- [ ] Ensure "Register" flows correctly to App
+- [ ] Add "About the App" section explaining the tiers
+
+### [ ] Verification
+- [ ] Verify Admin controls works
+- [ ] Verify Demo User experience
+- [ ] Verify "Deep Analysis" looks impressive

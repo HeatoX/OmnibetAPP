@@ -1,0 +1,33 @@
+# Expansion Plan: "Swarm Intelligence" & Data Depth
+
+## Goal
+Address user feedback regarding "missing games" and "low confidence" predictions. We will expand the data ingestion layer to cover more leagues (creating a "swarm" of data sources) and refine the prediction engine to generate high-confidence insights even when varied data sources (like odds) are missing.
+
+## User Review Required
+> [!IMPORTANT]
+> This update increases the number of API calls to ESPN endpoints. Performance should remain stable, but initial load times might increase slightly due to fetching more leagues in parallel.
+
+## Proposed Changes
+
+### Data Service Layer ([real-data-service.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js))
+#### [MODIFY] [real-data-service.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js)
+-   **Add New Endpoints**: Include Eredivisie (NED), Primeira Liga (POR), and potentially others to the `ESPN_ENDPOINTS` configuration.
+-   **Parallel Fetching**: Ensure all new endpoints are fetched in the `Promise.all` batch.
+
+### Prediction Engine ([prediction-oracle.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/prediction-oracle.js))
+#### [MODIFY] [prediction-oracle.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/prediction-oracle.js)
+-   **Unlock Confidence**: Life the `65%` probability cap for form-based predictions to `85%`.
+-   **Refine Confidence Logic**: Allow 'Gold' tier status if the win probability difference > 30%, even without odds data.
+-   **Lower Smart Market Threshold**: Reduce inclusion threshold from `70%` to `55%` so users see more "AI Suggestions".
+
+## Verification Plan
+
+### Automated Verification
+-   **Unit Check**: Verify [getRealMatches](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js#451-517) returns matches from the new leagues (e.g., check for "Ajax" or "Benfica").
+-   **Confidence Check**: Verify [analyzeMatchDeep](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/prediction-oracle.js#376-441) returns 'Gold' confidence for a lopsided match (e.g., strong team vs weak team) without odds.
+
+### Manual Verification
+1.  **Launch App**: Open `http://localhost:3000/app`.
+2.  **Check Coverage**: Scroll through the dashboard. Look for matches from "Eredivisie" or "Primeira Liga".
+3.  **Check Confidence**: Observe the "Gold" and "Silver" badges. Ensure not everything is "Silver".
+4.  **Deep Analysis**: Click "Ver Análisis" on a match. Verify the "Predicciones de Jugadores" section is populated (due to lowered threshold).

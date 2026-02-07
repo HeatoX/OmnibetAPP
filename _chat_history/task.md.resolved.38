@@ -1,0 +1,35 @@
+# Omnibet AI - Development Tasks
+
+## Phase 1: Foundation (COMPLETED)
+- [x] Integrate `WeatherService` (OpenMeteo)
+- [x] Integrate `ProfessionalOdds` (TheOddsAPI) -> **DONE**
+- [x] Setup [Supabase](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/history-tracker.js#14-23) for Persistence -> **DONE**
+- [x] Create `RefereeDatabase` -> **DONE**
+
+## Phase 2: Intelligence (COMPLETED)
+- [x] Implement [scout-agents.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/agents/scout-agents.js) (Weather, News, Referee)
+- [x] Create [ai-engine.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js) (The Brain)
+- [x] Connect [DetailedMatchAnalysis.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/DetailedMatchAnalysis.jsx) to AI Engine
+
+## Phase 3: Real Data Integration (COMPLETED)
+- [x] Connect `ESPN API` for Live Scores
+- [x] Connect `TheSportsDB` for Player Bios
+- [x] Implement [NewsScoutAgent](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/agents/scout-agents.js#137-231) with RSS Feeds (ESPN/BBC)
+
+## Phase 4: Verification & MVP (COMPLETED)
+- [x] Debug [calculatePrediction](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js#150-251)
+- [x] Verify API Keys
+- [x] Launch v5.0 "Sentient" Update
+
+## Phase 5: The "Supreme" Upgrade (Self-Learning) - CURRENT
+- [ ] **Unify Prediction Engines**
+    - [ ] Make [prediction-oracle.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/prediction-oracle.js) invoke [ai-engine.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js) logic (Merge Brains)
+    - [ ] Remove hardcoded weights (e.g. 0.15 for Form) -> Replace with Config
+- [ ] **Implement ML Optimizer (`ml-optimizer.js`)**
+    - [ ] Function `analyzeCorrelation()`: Check which factors (odds vs form) predicted best in last 100 games
+    - [ ] Function `getDynamicWeights()`: Return optimized weights (e.g. Form: 0.18, Odds: 0.60)
+- [ ] **Self-Healing Mechanism**
+    - [ ] Run `optimizeWeights()` every 24h via Cron/Check
+    - [ ] Store learned weights in Supabase or Local Cache
+- [ ] **Final Polish**
+    - [ ] Add "Learning Status" badge to UI ("Brain Version: 6.0b - Training on 158 matches")

@@ -1,0 +1,54 @@
+# 🚀 Omnibet AI: Informe Final de Ingeniería (v5.0)
+
+Este documento certifica la transformación de Omnibet AI desde un prototipo básico hasta una **plataforma de inteligencia deportiva profesional y sintiente**.
+
+---
+
+## 🏗️ Evolución de la Arquitectura
+
+### Fase 1: El Despertar (v1.0 - v2.0)
+*   **Estado Inicial:** El sistema generaba probabilidades basadas en aleatoriedad (`Math.random()`).
+*   **Limitación:** No tenía conexión con el mundo real. Era un juguete.
+
+### Fase 2: La Conexión (v3.0 - Data Driven)
+*   **Hito:** Integración de **ESPN API**.
+*   **Logro:** El sistema empezó a "ver" partidos reales, alineaciones y resultados en vivo.
+*   **Inteligencia:** Se implementaron agentes de Forma y H2H basados en estadísticas reales.
+
+### Fase 3: La Profesionalización (v3.1 - v4.0)
+*   **Hito:** Integración de **The Odds API** y **TheSportsDB**.
+*   **Value Bets:** El sistema aprendió a comparar sus cálculos con el mercado real para encontrar dinero inteligente.
+*   **Agente Climático (Real):** Se integró **OpenMeteo**. Ahora el sistema sabe si llueve en Anfield y penaliza el juego técnico.
+*   **Agente Arbitral:** Se creó una base de datos de árbitros para predecir rigor y riesgo de tarjetas.
+
+### Fase 4: La Consciencia (v5.0 - Estado Actual) 🧠
+*   **Memoria (Persistencia):**
+    *   **Implementado:** Cada análisis se guarda automáticamente en [Supabase](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/supabase-config.js#26-190).
+    *   **Impacto:** Permite rastrear el **ROI Real** del usuario y auditar la precisión del Oráculo a largo plazo.
+*   **Oído Digital (Noticias Reales):**
+    *   **Implementado:** [NewsScoutAgent](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/agents/scout-agents.js#137-231) ahora escanea feeds **RSS de ESPN, BBC y Fox Sports** en tiempo real.
+    *   **Impacto:** Si una estrella se lesiona en el calentamiento, el agente lo lee en las noticias y ajusta la predicción al instante.
+
+---
+
+## 🛠️ Resumen Técnico de Agentes Activos
+
+| Agente | Fuente de Datos | Estado | Función Principal |
+| :--- | :--- | :--- | :--- |
+| **Stats Scout** | ESPN / API-Football | ✅ ACTIVO | Datos base, goles, xG, alineaciones |
+| **Odds Scout** | The Odds API | ✅ ACTIVO | Detectar Value Bets y movimientos de mercado |
+| **Weather Scout** | OpenMeteo (Real-Time) | ✅ ACTIVO | Ajuste por Lluvia/Viento/Nieve |
+| **News Scout** | RSS Feeds (ESPN/BBC) | ✅ ACTIVO | Detección de lesiones y crisis de última hora |
+| **Referee Scout** | Internal DB | ✅ ACTIVO | Predicción de tarjetas y penaltis |
+| **Player Analyst** | TheSportsDB | ✅ ACTIVO | Palmarés, biografía y fotos HD |
+| **ROI Sentinel** | Supabase DB | ✅ ACTIVO | Auditoría financiera y memoria a largo plazo |
+
+---
+
+## 🔮 Siguientes Pasos (Futuro)
+El sistema está completo a nivel funcional. Para escalar comercialmente:
+1.  **Suscripción de Pago:** Activar pasarela real (Stripe ya está integrado en modo test).
+2.  **App Móvil:** Exportar el proyecto web a React Native (el núcleo lógico ya es compatible).
+
+**Omnibet AI ha alcanzado el nivel de "Super-App".**
+Gestión del riesgo, inteligencia en tiempo real y memoria financiera integradas.

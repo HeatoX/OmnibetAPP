@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary": "This plan details the expansion of the `real-data-service.js` to include more European soccer leagues (Eredivisie, Primeira Liga) and the tuning of `prediction-oracle.js` to improve prediction confidence levels (unlocking 'Gold' tier without odds). It includes verification steps using the browser to check for new leagues and proper confidence badges.",
+  "updatedAt": "2026-02-03T05:36:40.757054Z",
+  "version": "4"
+}

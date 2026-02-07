@@ -1,0 +1,123 @@
+# Landing Page Redesign - Walkthrough
+
+## Overview
+Completely redesigned the OmniBet AI landing page to match the futuristic cyberpunk mockup with premium aesthetics and proper use of viewport space.
+
+## Key Changes Made
+
+### 1. Full Viewport Layout
+- Changed from cramped layout to full `min-h-screen` with `justify-between`
+- Content now properly centered vertically and uses all available screen space
+- Proper spacing hierarchy throughout
+
+### 2. Significantly Increased Element Sizes
+
+**Title**
+- From: `text-5xl`
+- To: `text-8xl` (desktop)
+- Added neon text shadow effects
+
+**Prediction Card**
+- From: `max-w-xl p-6`
+- To: `max-w-4xl p-10`
+- Much wider card that uses more horizontal space
+
+**Stats Boxes**
+- From: `px-6 py-4` with `text-2xl`
+- To: `px-12 py-8` with `text-5xl`
+- Added triple glow shadows on borders
+
+**Buttons**
+- From: `px-8 py-3 text-base`
+- To: `px-16 py-5 text-xl`
+- Much more prominent CTAs
+
+### 3. Card Interior Redesign (Critical Fix)
+
+Changed from **vertical grid layout** to **horizontal rows** matching the mockup:
+
+**Before:**
+```
+Real Madrid    Empate    Barcelona
+  [bar]         [bar]      [bar]
+   65%           25%        10%
+```
+
+**After:**
+```
+Real Madrid - Ganador (65%)  ████████████░░░░░  65%
+Empate - (25%)               ████████░░░░░░░░░  25%
+Barcelona - (10%)            ██░░░░░░░░░░░░░░░  10%
+```
+
+**Implementation:**
+- Used `flex` layout with `items-center`
+- Fixed width label section (`w-44`)
+- Flexible progress bar container
+- Fixed width percentage at end (`w-20`)
+- Changed all team names to **white text** (`text-white`)
+
+### 4. Visual Effects Enhanced
+
+**Corner Brackets**
+- Increased thickness: `border-4` (was `border-2`)
+- Made more visible with proper emerald color
+
+**Borders**
+- Card: `3px solid #10b981` (was 2px)
+- Stats: `3px solid` with color-matched glows
+
+**Glow Effects**
+- Logo: `0 0 40px, 0 0 80px, 0 0 120px` triple shadow
+- Progress bars: `0 0 12px` bright glow
+- Stats numbers: `text-shadow` neon effect
+
+**Background**
+- Diagonal lines: Thicker (`w-px` → `2px`), more visible
+- Grid pattern: Increased opacity and size
+- Central glow: Expanded to full viewport
+
+### 5. Color Consistency
+
+**Text Colors Inside Card:**
+- Team names: `text-white` (was gray-200/gray-400)
+- Labels: `text-gray-500`
+- Percentages: Kept color-coded (green, teal, gray)
+
+**Background:**
+- Card: `rgba(15,30,24,0.98)` - slightly more opaque
+- Progress bars: `rgba(20,40,32,0.8)` - darker background
+
+## Files Modified
+
+- [page.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/page.jsx) - Complete redesign
+
+## Testing
+
+**What to Verify:**
+1. ✅ Page uses full viewport height
+2. ✅ All elements are significantly larger
+3. ✅ Card interior uses horizontal layout with bars
+4. ✅ Text inside card is white and readable
+5. ✅ Progress bars are smooth with proper glow
+6. ✅ Percentages align to the right of each bar
+7. ✅ Corner brackets visible on card
+8. ✅ Stats boxes have colored borders with glow
+
+**How to Test:**
+```bash
+# Navigate to project
+cd C:\Users\PABLO\.gemini\antigravity\scratch\omnibet-ai
+
+# Start dev server (if not running)
+npm run dev
+
+# Open browser to http://localhost:3000
+```
+
+## Next Steps
+
+If the current design matches the mockup, the landing page is ready. If there are still differences, please specify:
+- Which elements need adjustment
+- Specific spacing or sizing issues
+- Color or visual effect refinements needed

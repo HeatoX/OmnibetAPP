@@ -1,0 +1,66 @@
+# Omnibet AI: Project Status Report
+
+## Project Overview
+**Omnibet AI** is a professional-grade sports analysis and prediction platform. It leverages live data from the ESPN API to provide real-time scores, detailed match analytics, and AI-driven insights to help users make informed betting decisions (for educational purposes).
+
+## Architecture & Technology Stack
+- **Framework**: [Next.js](https://nextjs.org/) (React)
+- **Styling**: Vanilla CSS (Global and Component-level) for a premium, custom look.
+- **Data Source**: [ESPN API](https://site.api.espn.com/) (REST endpoints)
+- **AI Integration**: Custom reasoning logic for match predictions (intended for integration with LLMs).
+- **Backend / DB**: [Supabase](https://supabase.com/) (Ready for auth, logs, and user data).
+
+## Core Features Implemented
+
+### 1. Live Scoreboard
+- Real-time updates for multiple sports (Soccer, NBA, NFL, MLB, NHL, ATP).
+- Dynamic league slug mapping for accurate API calls.
+
+### 2. Detailed Match Analysis
+- **Head-to-Head (H2H)**: Visual history of past encounters.
+- **Recent Form**: Last 5 matches performance guide.
+- **Universal Roster**: Multi-strategy player listing that works even for cup matches and different league tiers.
+- **Injuries & Officials**: Real-time reporting of lineup availability and match officials.
+
+### 3. AI Predictions
+- Rule-based "Reasoning" engine for analyzing team trends and providing bet suggestions.
+- Professional match stories and "vantage points" generated for each game.
+
+### 4. Specialized Dashboards
+- **Performance Dashboard**: Tracks the success rate of AI predictions over time.
+- **Admin Panel**: Control center for app settings and debugging.
+- **History**: Archives of past predictions and outcomes.
+
+## Current State & Recent Improvements
+
+### Recently Completed
+- **Smart Roster Fetching**: Implemented [fetchRosterUniversal](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js#502-561) which uses three strategies (Match League, Home League, and Smart Guess) to ensure rosters are never empty.
+- **Form Fallback**: Fixed issues where Cup matches (like Coupe de France) lacked recent form by automatically fetching team schedules as a fallback.
+- **Sport Universalization**: Enhanced mapping for Baseball (MLB), Football (NFL), and Hockey (NHL) endpoints.
+
+### Work in Progress
+- **Player Statistics Integration**: I am currently researching and mapping endpoints for "Points Per Game" (PPG) and other key metrics to display within the roster view.
+- **NBA Stats Mapping**: Found `byathlete` statistics endpoint and verified data structure for NBA.
+- **Soccer Stats Mapping**: Testing similar athlete statistics for soccer leagues.
+
+## Project File Structure
+```text
+omnibet-ai/
+├── src/
+│   ├── app/                # Next.js App Router (Pages & API)
+│   ├── components/         # UI Components (Analysis, Dashboard, Modals)
+│   ├── context/            # Global State Management
+│   └── lib/                # Core Logic (API services, Utilities)
+├── public/                 # Static assets
+├── supabase/               # Database configurations
+└── docs/                   # Internal documentation
+```
+
+## Next Steps
+1.  **Complete Player Stats Mapping**: Finalize [formatRoster](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js#582-609) updates to include PPG and other metrics.
+2.  **UI Stats Display**: Update [DetailedMatchAnalysis.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/DetailedMatchAnalysis.jsx) to show stats in the roster table.
+3.  **Comprehensive Validation**: Perform a suite of tests across all sports to ensure data consistency.
+4.  **UI Polishing**: Final aesthetic refinements to the "Analysis" view.
+
+---
+*Report generated on February 3, 2026.*

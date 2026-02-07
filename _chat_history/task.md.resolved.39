@@ -1,0 +1,36 @@
+# Omnibet AI - Development Tasks
+
+## Phase 1: Foundation (COMPLETED)
+- [x] Integrate `WeatherService` (OpenMeteo)
+- [x] Integrate `ProfessionalOdds` (TheOddsAPI) -> **DONE**
+- [x] Setup [Supabase](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/history-tracker.js#14-23) for Persistence -> **DONE**
+- [x] Create `RefereeDatabase` -> **DONE**
+
+## Phase 2: Intelligence (COMPLETED)
+- [x] Implement [scout-agents.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/agents/scout-agents.js) (Weather, News, Referee)
+- [x] Create [ai-engine.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js) (The Brain)
+- [x] Connect [DetailedMatchAnalysis.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/DetailedMatchAnalysis.jsx) to AI Engine
+
+## Phase 3: Real Data Integration (COMPLETED)
+- [x] Connect `ESPN API` for Live Scores
+- [x] Connect `TheSportsDB` for Player Bios
+- [x] Implement [NewsScoutAgent](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/agents/scout-agents.js#137-231) with RSS Feeds (ESPN/BBC)
+
+## Phase 4: Verification & MVP (COMPLETED)
+- [x] Debug [calculatePrediction](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js#150-258)
+- [x] Verify API Keys
+- [x] Launch v5.0 "Sentient" Update
+
+## Phase 5: The "Supreme" Upgrade (Self-Learning) - COMPLETED
+- [x] **Implement ML Optimizer ([ml-optimizer.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ml-optimizer.js))**
+    - [x] Analyzes history (won/lost)
+    - [x] Returns dynamic weights (e.g. increase Form weight if Odds fail)
+- [x] **Unify Prediction Engines**
+    - [x] [ai-engine.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js) upgraded to accept dynamic ML weights
+    - [x] [prediction-oracle.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/prediction-oracle.js) refactored to use [ai-engine.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js) (No more split brain)
+- [x] **Self-Healing Mechanism**
+    - [x] System now queries optimization config before every prediction batch
+
+## Phase 6: Final Polish & Launch
+- [ ] Manual review of UI to ensure "Confidence" badges reflect new ML logic
+- [ ] User notification of upgrade

@@ -1,0 +1,29 @@
+# Omnibet AI - Development Tasks
+
+## Phase 1-5: Foundation & Intelligence (COMPLETED)
+- [x] All Core Agents & Prediction Engine
+- [x] ML Optimizer (v6.0)
+- [x] Real Data Service (ESPN/OpenMeteo)
+
+## Phase 7: "God Mode" Features (CURRENT)
+- [ ] **7.0: Reliability Fix (CRITICAL)**
+    - [ ] Update `prediction-oracle.js` to call `realDataService.getMatchDetails()` instead of using mock H2H/Injury placeholders.
+    - [ ] Ensure `ai-engine.js` receives the *actual* fetched analysis data.
+
+- [ ] **7.1: Personalized Risk Profile**
+    - [ ] Create `RiskProfileSelector.jsx` (Conservative, Balanced, Degen).
+    - [ ] Store preference in `localStorage` / Supabase.
+    - [ ] Modify `StakeCalculator.jsx` to adjust recommendations (e.g. Degen = High Stakes on Risky bets).
+
+- [ ] **7.2: Social Bet Cards**
+    - [ ] Create `SocialShareModal.jsx`.
+    - [ ] Use `html2canvas` to render a "Receipt" style image of the prediction.
+    - [ ] Add "Share to X/Insta" buttons.
+
+- [ ] **7.3: Shark Alerts (Value Bets)**
+    - [ ] Create `AlertContext.jsx`.
+    - [ ] Logic: If (AI Probability - Implied Market Probability > 15%), trigger Alert.
+    - [ ] Add "🔔" icon in Header for recent alerts.
+
+## Phase 8: Final Polish
+- [ ] Voice Interface (Optional/Postponed)

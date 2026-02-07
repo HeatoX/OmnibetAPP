@@ -1,0 +1,43 @@
+# OmniBet AI - Project Expansion
+
+## Overview
+Expand the application to include a comprehensive Admin Dashboard, detailed "Deep Analysis" match views with rich data (H2H, injuries, stats), and enhance the landing page with demo interactions.
+
+## Checklist
+
+### [x] Admin Dashboard
+- [x] Create `/admin` layout and protection (Admins only)
+- [x] User Management Table (View, Block, Delete)
+- [x] Sales & Revenue Analytics Chart
+- [x] Platform Stats (Active users, predictions generated)
+- [x] "God Mode" toggle (Access everything for free)
+
+### [x] Deep Match Analysis (The "Product")
+- [x] Create `DetailedMatchView` component
+    - [x] Head-to-Head History visualization
+    - [x] Team Form Guide (Last 5 matches)
+    - [x] Player Stats & Injuries Report
+    - [x] AI "Reasoning" Text Generation
+- [x] Implement `MockDeepDataService` to generate realistic stories for demo matches
+
+### [x] Landing Page Enhancements
+- [x] Integrate "Deep Analysis" demo into Landing Page (Modal or Inline)
+- [x] Ensure "Register" flows correctly to App
+- [x] Add "About the App" section explaining the tiers
+
+### [x] Tiered Content Gating
+- [x] Restrict predictions visibility (Silver/Gold/Diamond)
+- [x] Correct badge labels logic ('diamond', 'gold', 'silver')
+- [x] Implement "Unlock" prompt for lower tiers
+
+### [x] Multi-Sport & Data Reliability
+- [x] Enable and fix NFL, NBA, Tennis market predictions
+- [x] Implement tomorrow's games fetch for daily sports
+- [x] Fix "sportMarkets is not iterable" crash
+- [x] Remove "Partido muy igualado" fallback labels
+
+### [x] Verification
+- [x] Verify Admin controls works
+- [x] Verify Demo User experience
+- [x] Verify "Deep Analysis" looks impressive
+- [x] Verify upcoming games for all sports appear correctly

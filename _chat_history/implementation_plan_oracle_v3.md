@@ -1,0 +1,41 @@
+# Plan de Implementación: Oráculo v3.0 (Multimodal Agent System)
+
+Este plan detalla la transformación del motor de predicción de un modelo estocástico (aleatorio) a un sistema basado en datos reales integrando 4 agentes especializados.
+
+## Objetivos
+- Eliminar el uso de `Math.random()` como base del análisis.
+- Integrar datos reales de forma, enfrentamientos directos (H2H) y estadísticas de plantillas.
+- Aumentar la precisión de las predicciones integrando el impacto de bajas (lesiones).
+
+## Cambios Propuestos
+
+### 1. Núcleo de IA (`src/lib/ai-engine.js`)
+Transformar `calculatePrediction` para que procese datos reales del servicio de ESPN.
+
+#### [MODIFY] [ai-engine.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js)
+- **Agente de Forma**: Calculará un puntaje (0-1) basado en los resultados reales de los últimos 5 partidos.
+- **Agente H2H**: Analizará la dominancia histórica real.
+- **Agente de Alineación**: Penalizará la probabilidad si jugadores clave (líderes) están lesionados.
+- **Agente de Estadísticas**: Comparará los promedios de goles/puntos anotados vs recibidos.
+
+### 2. Servicio de Datos (`src/lib/real-data-service.js`)
+Asegurar que los datos entregados al motor tengan el formato numérico necesario.
+
+#### [MODIFY] [real-data-service.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/real-data-service.js)
+- Normalizar las puntuaciones de forma reciente (`W=3`, `D=1`, `L=0`) para facilitar el cálculo matemático.
+
+### 3. Interfaz de Usuario (`src/components/DetailedMatchAnalysis.jsx`)
+Actualizar la UI para reflejar que el Oráculo v3.0 está operando con datos multimodales.
+
+#### [MODIFY] [DetailedMatchAnalysis.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/DetailedMatchAnalysis.jsx)
+- Inyectar el objeto completo de `analysis` en la función de predicción.
+- Mostrar visualmente el "Consenso de Agentes".
+
+## Plan de Verificación
+
+### Pruebas Automatizadas
+- Crear un script `debug-oracle-v3.js` para comparar las predicciones antiguas (aleatorias) con las nuevas (basadas en datos).
+- Verificar que un equipo con 5 victorias seguidas tenga una probabilidad significativamente mayor que uno con 5 derrotas.
+
+### Verificación Manual
+- Abrir un partido con una estrella lesionada y verificar que la probabilidad se ajuste a la baja.

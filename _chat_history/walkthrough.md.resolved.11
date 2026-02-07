@@ -1,0 +1,45 @@
+# Dashboard Layout Refinement Walkthrough
+
+We have finalized the OmniBet AI dashboard with a centered, organized, and professional layout.
+
+## 🏁 Final Refinement Checklist
+
+### 1. Centered Sport Categories
+The **Categorías** (Sport Filter) are now perfectly centered on a single line. 
+- On desktop, they spread out for quick selection.
+- On mobile, they stay on one line with a smooth horizontal scroll to avoid clutter.
+
+### 2. Live Summary "Button"
+Located directly below the categories, the **Live Match Summary** has been redesigned as a sleek **centered pill-button**. 
+- It displays "EN VIVO", "Próximos Partidos", and "Última Actualización" in a compact, readable format.
+- It features a subtle pulse animation on the live indicator to draw attention.
+
+### 3. Full-Width Premium Zone
+The **Parlay Builder** and **Stats Analysis** now utilize the full horizontal space of the dashboard.
+- This prevents text overlap or clipping.
+- Team names like "San Francisco 49ers" and "Kansas City Chiefs" now fit perfectly even on smaller screens.
+
+### 4. Direct Prediction Text
+We replaced the "Probable:" prefix with a decisive **"GANA"** (e.g., "GANA Real Madrid").
+- This makes the predictions feel more confident and professional.
+
+## 🚀 Visual Flow
+1. **Performance Banner:** Quick check of yesterday's results.
+2. **Banker of the Day:** The single best bet of the day.
+3. **Premium Center:** Full-width Parlay Builder.
+4. **Análisis & Categorías:** Centered stats followed bycentered sport filters and the live status pill.
+5. **Match Grid:** All matches filtered by the selected sport.
+
+### 6. Tennis Data Restoration (Fix)
+We fixed a critical data extraction bug for Tennis. 
+- Tennis matches are now correctly extracted from ESPN's nested "groupings" structure.
+- Players' names are now properly retrieved from the "athlete" field (e.g., "Martin Damm vs Matteo Martineau").
+- **Result:** Found over 50 upcoming matches for ATP/WTA.
+
+### 7. Baseball Off-Season Messaging
+Since the MLB season is currently finished, we added a specific **"Fuera de Temporada"** (Off-season) view for Baseball.
+- This informs users that the league is in its break and will return in late February/March 2026.
+- Prevents the dashboard from looking empty or "broken".
+
+---
+*OmniBet AI - Sport Data Verified*

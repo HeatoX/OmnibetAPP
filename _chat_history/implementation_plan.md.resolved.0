@@ -1,0 +1,160 @@
+# 🎯 OmniBet AI - Plan de Implementación
+
+> La plataforma de predicciones deportivas más avanzada del mundo
+
+## Visión del Producto
+
+**OmniBet AI** será una aplicación web que combina:
+- 🤖 Inteligencia Artificial experta en análisis estadístico
+- ⚡ Datos en tiempo real de todos los deportes principales
+- 📊 Tabulador de certeza con historial de predicciones
+- 💎 Modelo de suscripción premium ($10/mes)
+
+---
+
+## Arquitectura Técnica
+
+```mermaid
+graph TB
+    subgraph Frontend["🖥️ Frontend (Next.js)"]
+        UI[React Components]
+        State[Zustand State]
+        WS[WebSocket Client]
+    end
+    
+    subgraph Backend["⚙️ Backend API"]
+        API[API Routes]
+        AI[AI Prediction Engine]
+        Cache[Redis Cache]
+    end
+    
+    subgraph Data["📡 Data Sources"]
+        Sports[Sports APIs]
+        Historical[Historical DB]
+        Live[Live Feed]
+    end
+    
+    UI --> API
+    WS --> Live
+    API --> AI
+    AI --> Sports
+    AI --> Historical
+```
+
+---
+
+## Propuestas de Cambios
+
+### Componente: Core Application
+
+#### [NEW] [package.json](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/package.json)
+Configuración del proyecto Next.js con todas las dependencias necesarias.
+
+#### [NEW] [tailwind.config.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/tailwind.config.js)
+Sistema de diseño personalizado con colores neón, glassmorphism y animaciones.
+
+---
+
+### Componente: Páginas Principales
+
+#### [NEW] [app/page.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/page.jsx)
+Dashboard principal con:
+- Feed en vivo de predicciones
+- Filtros por deporte
+- Resumen de rendimiento del día
+
+#### [NEW] [app/match/[id]/page.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/match/[id]/page.jsx)
+Página detallada de partido con:
+- Análisis completo de la IA
+- Estadísticas head-to-head
+- Predicciones de jugadores
+
+#### [NEW] [app/performance/page.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/performance/page.jsx)
+Tabulador de Certeza:
+- Historial de predicciones
+- Porcentaje de aciertos
+- Gráficos de rendimiento
+
+#### [NEW] [app/pricing/page.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/app/pricing/page.jsx)
+Página de suscripción con planes Free vs Pro.
+
+---
+
+### Componente: Motor de IA
+
+#### [NEW] [lib/ai-engine.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/ai-engine.js)
+Motor de predicciones con:
+- Agentes especializados por deporte
+- Análisis de factores (físico, clima, árbitro)
+- Generación de explicaciones
+
+#### [NEW] [lib/sports-data.js](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/lib/sports-data.js)
+Integración con APIs de datos deportivos:
+- API-Football para soccer
+- ESPN API para deportes americanos
+- Fallback con datos simulados
+
+---
+
+### Componente: UI Premium
+
+#### [NEW] [components/PredictionCard.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/PredictionCard.jsx)
+Tarjeta de predicción con:
+- Glassmorphism effect
+- Indicador de confianza (Diamante/Oro/Plata)
+- Animaciones micro-interactivas
+
+#### [NEW] [components/LiveScore.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/LiveScore.jsx)
+Marcador en vivo con actualizaciones WebSocket.
+
+#### [NEW] [components/PerformanceChart.jsx](file:///C:/Users/PABLO/.gemini/antigravity/scratch/omnibet-ai/src/components/PerformanceChart.jsx)
+Gráficos de rendimiento con Chart.js.
+
+---
+
+## Deportes Soportados
+
+| Deporte | Liga | Métricas Clave |
+|---------|------|----------------|
+| ⚽ Fútbol | LaLiga, Premier, Champions | xG, Posesión, Corners |
+| 🏀 Basketball | NBA, Euroleague | Pace, Eficiencia, Back-to-back |
+| ⚾ Baseball | MLB | Sabermetría, Matchup P-B |
+| 🏈 NFL | NFL | Yardas, Turnovers, Redzone |
+| 🎾 Tenis | ATP, WTA | Superficie, Break points |
+
+---
+
+## Modelo de Negocio
+
+### Plan Gratuito
+- ✅ Resultados en vivo
+- ✅ 1 predicción "Plata" al día
+- ✅ Estadísticas básicas
+
+### Plan PRO ($10/mes)
+- 💎 Predicciones Diamante ilimitadas
+- ⚡ Alertas "Sniper" en vivo
+- 📊 Tabulador de Certeza completo
+- 💰 Gestión de Bankroll con IA
+
+---
+
+## Plan de Verificación
+
+### Pruebas Automatizadas
+- Ejecutar `npm run dev` y verificar funcionamiento
+- Probar navegación entre páginas
+- Verificar responsive design
+
+### Verificación Visual
+- Interfaz premium con dark mode
+- Animaciones fluidas
+- Datos mock realistas
+
+---
+
+> [!IMPORTANT]
+> Este MVP demuestra la arquitectura completa. Para producción, se requiere:
+> - APIs de datos reales (Sportradar, API-Football Pro)
+> - Backend con Python para ML avanzado
+> - Infraestructura cloud (AWS/GCP)

@@ -1,0 +1,37 @@
+# OmniBet AI - Plataforma de Predicciones Deportivas
+
+## Objetivo Principal
+Crear la mejor aplicación de predicciones deportivas del mundo con IA experta, datos en tiempo real, y modelo de suscripción $10/mes.
+
+---
+
+## Fase 1: Fundamentos
+- [ ] Crear estructura del proyecto (Next.js + Tailwind CSS)
+- [ ] Diseñar sistema de diseño premium (dark mode, glassmorphism, neón)
+- [ ] Configurar arquitectura de componentes
+
+## Fase 2: Core Features
+- [ ] Dashboard principal con feed de predicciones
+- [ ] Sistema de predicción por deporte (Fútbol, Basketball, Baseball, NFL, Tenis)
+- [ ] Tarjetas de partido con análisis detallado
+- [ ] Motor de IA para predicciones (simulado con lógica estadística)
+
+## Fase 3: Datos en Tiempo Real
+- [ ] Integración con API de deportes (API-Football, ESPN, etc.)
+- [ ] Sistema de WebSocket para actualizaciones en vivo
+- [ ] Scores en tiempo real
+
+## Fase 4: Tabulador de Certeza
+- [ ] Dashboard de rendimiento de predicciones
+- [ ] Historial de aciertos/fallos
+- [ ] Gráficos de ROI y efectividad
+
+## Fase 5: Sistema de Suscripción
+- [ ] Página de pricing ($10/mes)
+- [ ] Niveles Free vs Pro
+- [ ] Mockup de autenticación
+
+## Fase 6: Polish & UX
+- [ ] Animaciones y transiciones premium
+- [ ] Responsive design (mobile-first)
+- [ ] Optimización de rendimiento
