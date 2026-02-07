@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import PlayerAnalysisCard, { AIAnalysisSummary } from '@/components/PlayerAnalysis';
-import OddsComparison, { WeatherWidget } from '@/components/OddsComparison';
-import { SPORTS } from '@/lib/mock-data';
+import OddsComparison from '@/components/OddsComparison';
+import WeatherWidget from '@/components/WeatherWidget';
+import { SPORTS, DEPORTES } from '@/lib/mock-data';
 
 export default function AnalysisPage() {
     const [selectedMatch, setSelectedMatch] = useState(null);
@@ -192,8 +193,8 @@ export default function AnalysisPage() {
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`px-4 py-2 rounded-xl whitespace-nowrap transition-all ${activeTab === tab.id
-                                                ? 'bg-gradient-to-r from-green-500 to-cyan-500 text-black font-bold'
-                                                : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                            ? 'bg-gradient-to-r from-green-500 to-cyan-500 text-black font-bold'
+                                            : 'bg-white/5 text-gray-400 hover:bg-white/10'
                                             }`}
                                     >
                                         {tab.label}
@@ -212,10 +213,10 @@ export default function AnalysisPage() {
 
                                         <div className="text-center mb-6">
                                             <span className={`inline-block px-4 py-2 rounded-full text-lg font-bold ${analysisResults.prediction.confidence === 'diamond'
-                                                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
-                                                    : analysisResults.prediction.confidence === 'gold'
-                                                        ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-black'
-                                                        : 'bg-gradient-to-r from-gray-400 to-gray-500 text-black'
+                                                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
+                                                : analysisResults.prediction.confidence === 'gold'
+                                                    ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-black'
+                                                    : 'bg-gradient-to-r from-gray-400 to-gray-500 text-black'
                                                 }`}>
                                                 {analysisResults.prediction.confidence === 'diamond' ? '💎' :
                                                     analysisResults.prediction.confidence === 'gold' ? '🥇' : '🥈'}
@@ -282,8 +283,8 @@ export default function AnalysisPage() {
                                             <div className="flex items-center justify-between mt-2">
                                                 <span className="text-gray-400">Nivel de riesgo:</span>
                                                 <span className={`font-bold ${analysisResults.prediction.risk === 'low' ? 'text-green-400' :
-                                                        analysisResults.prediction.risk === 'medium' ? 'text-yellow-400' :
-                                                            'text-red-400'
+                                                    analysisResults.prediction.risk === 'medium' ? 'text-yellow-400' :
+                                                        'text-red-400'
                                                     }`}>
                                                     {analysisResults.prediction.risk === 'low' ? 'Bajo' :
                                                         analysisResults.prediction.risk === 'medium' ? 'Medio' : 'Alto'}
@@ -302,8 +303,8 @@ export default function AnalysisPage() {
                                                 <div
                                                     key={idx}
                                                     className={`p-4 rounded-xl ${insight.type === 'positive' ? 'bg-green-500/10 border border-green-500/30' :
-                                                            insight.type === 'negative' ? 'bg-red-500/10 border border-red-500/30' :
-                                                                'bg-gray-500/10 border border-gray-500/30'
+                                                        insight.type === 'negative' ? 'bg-red-500/10 border border-red-500/30' :
+                                                            'bg-gray-500/10 border border-gray-500/30'
                                                         }`}
                                                 >
                                                     <div className="flex items-start gap-3">
@@ -335,8 +336,8 @@ export default function AnalysisPage() {
                                                     <div className="text-sm text-gray-400 mb-1">{market.name}</div>
                                                     <div className="text-lg font-bold text-white">{market.prediction}</div>
                                                     <div className={`text-xs mt-1 ${market.confidence === 'high' ? 'text-green-400' :
-                                                            market.confidence === 'medium' ? 'text-yellow-400' :
-                                                                'text-gray-500'
+                                                        market.confidence === 'medium' ? 'text-yellow-400' :
+                                                            'text-gray-500'
                                                         }`}>
                                                         {market.confidence === 'high' ? '⭐⭐⭐' :
                                                             market.confidence === 'medium' ? '⭐⭐' : '⭐'}
@@ -388,10 +389,10 @@ export default function AnalysisPage() {
                                                 <div className="flex items-center justify-between mb-2">
                                                     <span className="font-bold text-white">{factor.name}</span>
                                                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${factor.impact.includes('local') || factor.impact.includes('Local')
-                                                            ? 'bg-green-500/20 text-green-400'
-                                                            : factor.impact.includes('visitante') || factor.impact.includes('Visitante')
-                                                                ? 'bg-red-500/20 text-red-400'
-                                                                : 'bg-gray-500/20 text-gray-400'
+                                                        ? 'bg-green-500/20 text-green-400'
+                                                        : factor.impact.includes('visitante') || factor.impact.includes('Visitante')
+                                                            ? 'bg-red-500/20 text-red-400'
+                                                            : 'bg-gray-500/20 text-gray-400'
                                                         }`}>
                                                         {factor.impact}
                                                     </span>
