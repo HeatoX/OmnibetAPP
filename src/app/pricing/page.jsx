@@ -77,7 +77,8 @@ export default function PricingPage() {
     const [loading, setLoading] = useState(null);
     const [error, setError] = useState('');
 
-    // No handled checkout via Stripe anymore
+    // V30.36 - Fix ReferenceError: currentTier is not defined
+    const currentTier = profile?.subscription_tier || 'free';
 
     const handlePaymentSuccess = (details, tier) => {
         console.log('Payment Successful', details);
