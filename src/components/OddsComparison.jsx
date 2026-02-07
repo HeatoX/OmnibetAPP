@@ -112,3 +112,46 @@ function OddsCell({ value, isBest, isPredicted }) {
         </div>
     );
 }
+
+export function WeatherWidget({ city, venue }) {
+    return (
+        <div className="glass-card p-6 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 blur-3xl rounded-full -mr-16 -mt-16"></div>
+
+            <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                <span>🌦️</span> Condiciones Climáticas
+            </h3>
+
+            <div className="flex items-center gap-6">
+                <div className="text-center">
+                    <div className="text-4xl mb-1">☀️</div>
+                    <div className="text-2xl font-bold text-white">22°C</div>
+                    <div className="text-xs text-gray-400 capitalize">Despejado</div>
+                </div>
+
+                <div className="flex-1 grid grid-cols-2 gap-4">
+                    <div className="p-3 bg-black/30 rounded-xl">
+                        <div className="text-[10px] text-gray-500 uppercase font-bold">Viento</div>
+                        <div className="text-sm text-white font-medium">12 km/h NE</div>
+                    </div>
+                    <div className="p-3 bg-black/30 rounded-xl">
+                        <div className="text-[10px] text-gray-500 uppercase font-bold">Humedad</div>
+                        <div className="text-sm text-white font-medium">45%</div>
+                    </div>
+                    <div className="p-3 bg-black/30 rounded-xl">
+                        <div className="text-[10px] text-gray-500 uppercase font-bold">Lluvia</div>
+                        <div className="text-sm text-white font-medium">0%</div>
+                    </div>
+                    <div className="p-3 bg-black/30 rounded-xl">
+                        <div className="text-[10px] text-gray-500 uppercase font-bold">Visibilidad</div>
+                        <div className="text-sm text-white font-medium">Óptima</div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-white/5 text-[10px] text-gray-500 italic">
+                Predicción para {venue}, {city} a la hora del partido.
+            </div>
+        </div>
+    );
+}
