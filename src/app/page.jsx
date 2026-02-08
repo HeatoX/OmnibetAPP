@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import LoginModal from '@/components/LoginModal';
 import DetailedMatchAnalysis from '@/components/DetailedMatchAnalysis';
 
 export default function LandingPage() {
     const { user } = useAuth();
+    const router = useRouter();
     const [showLogin, setShowLogin] = useState(false);
     const [loginMode, setLoginMode] = useState('login'); // 'login' or 'register'
     const [showDemoAnalysis, setShowDemoAnalysis] = useState(false);
