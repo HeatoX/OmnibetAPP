@@ -191,6 +191,10 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
             const isUpcoming = state === 'pre' || status?.name === 'STATUS_SCHEDULED' || detail.includes('programado');
             const isFinished = state === 'post' || state === 'final' || event.status?.type?.completed === true || detail.includes('finalizado');
 
+            // Extract Minute (e.g., "75'")
+            const minMatch = detail.match(/(\d+)'/);
+            const matchMinute = minMatch ? parseInt(minMatch[1]) : (detail.includes('half') ? 45 : null);
+
             const matchDate = new Date(event.date);
             const now = new Date();
 
@@ -230,7 +234,7 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
             const matchOdds = extractOdds(competition);
 
             // V62: AWAIT ASYNC PREDICTION
-            const predictionData = await generateRealPrediction(homeTeam, awayTeam, sport, isLive || isFinished, leagueSlug, { odds: matchOdds });
+            const predictionData = await generateRealPrediction(homeTeam, awayTeam, sport, isLive || isFinished, leagueSlug, { odds: matchOdds, matchMinute });
 
             return {
                 id: event.id, // Stable Match ID
@@ -523,15 +527,21 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             const hScore = parseInt(homeTeam.score) || 0;
             const aScore = parseInt(awayTeam.score) || 0;
             const diff = hScore - aScore;
+            const matchMinute = extraData.matchMinute || 45;
+
+            // V63.2: Personalized Prediction Logic
+            // The closer to 90', the more the score matters. Before that, trust the tactical analysis.
+            const convergenceFactor = Math.min(1.0, (matchMinute / 90) * (matchMinute / 90)); // Parabolic curve
+            const intensity = 0.15 * convergenceFactor;
 
             if (diff > 0) {
-                liveBiasH = 1 + (diff * 0.35); // Boost leader significantly
-                liveBiasD = Math.max(0.1, 1 - (diff * 0.5)); // Drop draw
-                liveBiasA = Math.max(0.05, 1 - (diff * 0.7)); // Drop loser
+                liveBiasH = 1 + (diff * intensity);
+                liveBiasD = Math.max(0.3, 1 - (diff * intensity * 2)); // Less drastic drop
+                liveBiasA = Math.max(0.2, 1 - (diff * intensity * 3));
             } else if (diff < 0) {
-                liveBiasA = 1 + (Math.abs(diff) * 0.35);
-                liveBiasD = Math.max(0.1, 1 - (Math.abs(diff) * 0.5));
-                liveBiasH = Math.max(0.05, 1 - (Math.abs(diff) * 0.7));
+                liveBiasA = 1 + (Math.abs(diff) * intensity);
+                liveBiasD = Math.max(0.3, 1 - (Math.abs(diff) * intensity * 2));
+                liveBiasH = Math.max(0.2, 1 - (Math.abs(diff) * intensity * 3));
             }
         }
 
@@ -546,10 +556,16 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         let awayWinProb = 100 - homeWinProb - drawProbActual;
         let finalDrawProb = drawProbActual;
 
+        // V63.2: Analytical Winner (The persistent prediction)
+        // Calculated BEFORE live score bias to maintain Oracle's identity
+        let analyticalWinner = 'draw';
+        if (hFinal >= aFinal && hFinal >= dFinal) analyticalWinner = 'home';
+        else if (aFinal > hFinal && aFinal >= dFinal) analyticalWinner = 'away';
+
         const finalMax = Math.max(homeWinProb, awayWinProb, finalDrawProb);
-        let winner = 'draw';
-        if (homeWinProb >= awayWinProb && homeWinProb >= finalDrawProb) winner = 'home';
-        else if (awayWinProb > homeWinProb && awayWinProb >= finalDrawProb) winner = 'away';
+        let currentWinner = 'draw';
+        if (homeWinProb >= awayWinProb && homeWinProb >= finalDrawProb) currentWinner = 'home';
+        else if (awayWinProb > homeWinProb && awayWinProb >= finalDrawProb) currentWinner = 'away';
 
         let confidence = 'silver';
         if (finalMax >= 68) confidence = 'diamond';
@@ -560,13 +576,14 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
 
         let text = '';
         if (isTight && canDraw) {
-            if (winner === 'home') text = `1X (Local o Empate)`;
-            else if (winner === 'away') text = `X2 (Visita o Empate)`;
+            if (analyticalWinner === 'home') text = `1X (Local o Empate)`;
+            else if (analyticalWinner === 'away') text = `X2 (Visita o Empate)`;
             else text = 'Empate (Cerrado)';
             confidence = 'silver';
         } else {
-            text = winner === 'draw' ? 'Empate' :
-                winner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`;
+            // Priority to Analytical Winner to "maintain prediction"
+            text = analyticalWinner === 'draw' ? 'Empate' :
+                analyticalWinner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`;
         }
 
         const explanation = [
@@ -597,7 +614,8 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const kellyStake = decOdds ? calculateKellyStake(winProb, decOdds, 0.25) : 0;
 
         return {
-            winner,
+            winner: analyticalWinner,
+            currentWinner,
             text,
             homeWinProb,
             awayWinProb,
