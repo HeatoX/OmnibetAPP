@@ -169,14 +169,45 @@ export default function AppPage() {
         }
     }, [user, sessionResolved, router]);
 
-    useEffect(() => {
-        if (!sessionResolved || !user) return;
-        loadMatches();
+    // V50.9 Centralized Stability: Get tier info once to avoid ReferenceErrors during mapping
+    const authInfo = useMemo(() => {
+        if (!sessionResolved || !user) return { effectiveTier: 'free', isExpired: true };
+        try {
+            return getSubscriptionInfo();
+        } catch (e) {
+            console.warn('Auth info pending...');
+            return { effectiveTier: 'free', isExpired: true };
+        }
+    }, [user, sessionResolved, profile, getSubscriptionInfo]);
 
-        // Refresh scores every 2 minutes SILENTLY
+    const userTier = authInfo.effectiveTier;
+
+    // V50.9: SEQUENTIAL BOOT - Strict Network Prioritization
+    useEffect(() => {
+        // Phase 0: Explicit wait for Auth Context to finish
+        if (!sessionResolved) {
+            console.log('⏳ [Sequence] Fase 0: Esperando resolución de sesión...');
+            return;
+        }
+
+        // Phase 1: Security check
+        if (!user) {
+            console.log('🚫 [Sequence] Fase 1: Sin usuario. Bloreando carga de datos.');
+            return;
+        }
+
+        const runSequence = async () => {
+            console.log('🛡️ [Sequence] Fase 2: Sesión OK. Iniciando carga de partidos (Priorizada)...');
+            await loadMatches();
+        };
+
+        runSequence();
+
+        // Refresh scores every 3 minutes SILENTLY
         const interval = setInterval(() => {
             if (user) loadMatches(true);
-        }, 120000);
+        }, 180000);
+
         return () => clearInterval(interval);
     }, [user, sessionResolved]);
 
