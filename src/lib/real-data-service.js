@@ -493,6 +493,12 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const aFinal = Math.round((aW / totalW) * 100);
 
         // 6. --- FULL INTELLIGENCE ENGINE (800 MOTORS) ---
+        // V40.0: Tactical DNA & Stability Analysis
+        const homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence);
+        const awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence);
+        const tacticalAdv = getTacticalAdvantage(homeADN, awayADN);
+        const graphContext = calculateGraphStability(homeSequence, awaySequence);
+
         // V62.6: Applying Tactical, Environmental and Narrative Multipliers
         const weatherImpact = weather ? (weather.status === 'Rain' ? 0.95 : weather.status === 'Clear' ? 1.05 : 1.0) : 1.0;
         const stabilityFactor = graphContext.stability || 1.0;
