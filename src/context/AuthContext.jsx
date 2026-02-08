@@ -248,28 +248,73 @@ export function AuthProvider({ children }) {
         return true;
     }
 
+    const [showTrialModal, setShowTrialModal] = useState(false);
+
     // Get subscription tier display info
     function getSubscriptionInfo() {
         if (!profile) {
             return { tier: 'guest', label: 'Invitado', color: 'gray' };
         }
 
+        const tier = profile.subscription_tier || 'free';
+
+        // Calculate trial info
+        const createdAt = profile.created_at ? new Date(profile.created_at) : new Date();
+        const trialExpiry = new Date(createdAt.getTime() + (7 * 24 * 60 * 60 * 1000));
+        const now = new Date();
+        const trialTimeLeft = trialExpiry.getTime() - now.getTime();
+        const trialDaysLeft = Math.ceil(trialTimeLeft / (24 * 60 * 60 * 1000));
+        const isTrialActive = tier === 'free' && trialTimeLeft > 0;
+
+        // Calculate subscription expiry
+        const subExpiryDate = profile.subscription_end_date ? new Date(profile.subscription_end_date) : null;
+        const subTimeLeft = subExpiryDate ? subExpiryDate.getTime() - now.getTime() : 0;
+        const subDaysLeft = Math.ceil(subTimeLeft / (24 * 60 * 60 * 1000));
+        const isSubActive = tier !== 'free' && subTimeLeft > 0;
+
         const tiers = {
-            free: { label: 'Free', color: 'gray', limit: 2 },
-            gold: { label: 'Gold', color: 'yellow', limit: Infinity },
-            diamond: { label: 'Diamond', color: 'cyan', limit: Infinity },
+            free: {
+                label: isTrialActive ? 'Trial Gold' : 'Free',
+                color: isTrialActive ? 'yellow' : 'gray',
+                limit: isTrialActive ? Infinity : 2,
+                isTrial: isTrialActive,
+                daysLeft: isTrialActive ? trialDaysLeft : 0
+            },
+            gold: { label: 'Gold', color: 'yellow', limit: Infinity, daysLeft: subDaysLeft, isExpired: subTimeLeft <= 0 },
+            diamond: { label: 'Diamond', color: 'cyan', limit: Infinity, daysLeft: subDaysLeft, isExpired: subTimeLeft <= 0 },
         };
 
-        const tier = profile.subscription_tier || 'free';
         const info = tiers[tier] || tiers.free;
 
         return {
             tier,
             ...info,
             used: profile.predictions_used_this_month || 0,
-            remaining: Math.max(0, info.limit - (profile.predictions_used_this_month || 0)),
+            remaining: info.limit === Infinity ? Infinity : Math.max(0, info.limit - (profile.predictions_used_this_month || 0)),
+            isTrialActive,
+            isSubActive,
+            trialTimeLeft,
+            subTimeLeft
         };
     }
+
+    // Effect to handle trial modal auto-show
+    useEffect(() => {
+        if (profile && profile.subscription_tier === 'free') {
+            const hasSeenModal = localStorage.getItem(`hasSeenTrialModal_${profile.id}`);
+            const info = getSubscriptionInfo();
+            if (!hasSeenModal && info.isTrialActive) {
+                setShowTrialModal(true);
+            }
+        }
+    }, [profile]);
+
+    const markModalAsSeen = () => {
+        if (profile) {
+            localStorage.setItem(`hasSeenTrialModal_${profile.id}`, 'true');
+            setShowTrialModal(false);
+        }
+    };
 
     const value = {
         user,
@@ -286,6 +331,8 @@ export function AuthProvider({ children }) {
         setShowLoginModal,
         showUpgradeModal,
         setShowUpgradeModal,
+        showTrialModal,
+        setShowTrialModal: markModalAsSeen,
         isDemoMode,
     };
 

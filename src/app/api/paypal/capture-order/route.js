@@ -26,6 +26,7 @@ export async function POST(request) {
                 .update({
                     subscription_tier: tierId,
                     last_payment_date: new Date().toISOString(),
+                    subscription_end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
                     last_payment_id: orderID
                 })
                 .eq('id', userId)

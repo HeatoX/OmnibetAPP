@@ -329,28 +329,40 @@ export function canViewPrediction(user) {
 
     const tier = user.subscription_tier || 'free';
     const used = user.predictions_used_this_month || 0;
+    const now = new Date();
 
-    // Check subscription expiry
-    if (tier !== 'free' && user.subscription_end) {
-        const endDate = new Date(user.subscription_end);
-        if (endDate < new Date()) {
-            return { allowed: used < 2, reason: used >= 2 ? 'limit_reached' : 'ok', tier: 'free' };
+    // 1. Check Trial Access (if Free)
+    if (tier === 'free') {
+        const createdAt = user.created_at ? new Date(user.created_at) : new Date();
+        const trialExpiry = new Date(createdAt.getTime() + (7 * 24 * 60 * 60 * 1000));
+
+        if (now < trialExpiry) {
+            // TRIAL ACTIVE: Full access like Gold
+            return { allowed: true, reason: 'trial_active', tier: 'gold', trial: true };
+        } else {
+            // TRIAL EXPIRED: Total lockout (per USER request: "se bloquea todo")
+            return { allowed: false, reason: 'trial_expired', tier: 'free' };
         }
     }
 
+    // 2. Check Paid Subscription Expiry
+    if (user.subscription_end_date) {
+        const endDate = new Date(user.subscription_end_date);
+        if (now > endDate) {
+            return { allowed: false, reason: 'subscription_expired', tier };
+        }
+    }
+
+    // 3. Fallback to default limits (if trial or sub is active)
     const limits = {
-        free: 2,        // 2 per month
+        free: 0,        // Should already be handled by trial logic above
         gold: Infinity,
         diamond: Infinity,
     };
 
-    const limit = limits[tier] || 2;
+    const limit = limits[tier] || 0;
 
-    if (used >= limit) {
-        return { allowed: false, reason: 'limit_reached', tier, used, limit };
-    }
-
-    return { allowed: true, reason: 'ok', tier, used, limit, remaining: limit - used };
+    return { allowed: true, reason: 'ok', tier, used, limit };
 }
 
 /**

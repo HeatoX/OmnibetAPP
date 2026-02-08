@@ -133,14 +133,29 @@ export default function Header(props) {
                                             {user.email?.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="text-left">
-                                            <div className="text-sm text-white font-medium">
+                                            <div className="text-sm text-white font-medium flex items-center gap-2">
                                                 {userProfile?.name || user.email?.split('@')[0]}
+                                                {subscriptionInfo.isTrialActive && (
+                                                    <span className="text-[10px] bg-yellow-500/20 text-yellow-500 px-1.5 rounded-md border border-yellow-500/30">TRIAL</span>
+                                                )}
                                             </div>
-                                            <div className={`text-xs ${subscriptionInfo.tier === 'diamond' ? 'text-cyan-400' :
-                                                subscriptionInfo.tier === 'gold' ? 'text-yellow-400' : 'text-gray-400'
-                                                }`}>
-                                                {subscriptionInfo.tier === 'diamond' ? '💎 Diamond' :
-                                                    subscriptionInfo.tier === 'gold' ? '⭐ Gold' : '🆓 Free'}
+                                            <div className="flex items-center gap-2">
+                                                <div className={`text-xs ${subscriptionInfo.tier === 'diamond' ? 'text-cyan-400' :
+                                                    subscriptionInfo.tier === 'gold' || subscriptionInfo.isTrialActive ? 'text-yellow-400' : 'text-gray-400'
+                                                    }`}>
+                                                    {subscriptionInfo.tier === 'diamond' ? '💎 Diamond' :
+                                                        subscriptionInfo.tier === 'gold' || subscriptionInfo.isTrialActive ? '⭐ Gold' : '🆓 Free'}
+                                                </div>
+
+                                                {/* Timer Badge */}
+                                                {(subscriptionInfo.isTrialActive || subscriptionInfo.isSubActive) && (
+                                                    <div className={`text-[10px] px-1.5 py-0.5 rounded-md flex items-center gap-1 font-bold ${subscriptionInfo.daysLeft <= 2 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                                                            'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                                                        }`}>
+                                                        <span>⏳</span>
+                                                        {subscriptionInfo.daysLeft}d
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -295,6 +310,11 @@ export default function Header(props) {
             {showLoginModal && (
                 <LoginModal onClose={() => setShowLoginModal(false)} />
             )}
+            {/* Trial Welcome Modal */}
+            <TrialWelcomeModal
+                isOpen={showTrialModal}
+                onClose={() => setShowTrialModal(false)}
+            />
         </>
     );
 }
