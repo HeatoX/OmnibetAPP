@@ -165,7 +165,7 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
     const eventsCount = data.events.length;
     console.log(`📊 Processing ${eventsCount} raw events for ${leagueName}`);
 
-    return data.events.flatMap(event => {
+    const transformationPromises = data.events.flatMap(event => {
         // Support for sports that nest competitions inside groupings (e.g. Tennis)
         let competitions = event.competitions;
         if ((!competitions || competitions.length === 0) && event.groupings) {
