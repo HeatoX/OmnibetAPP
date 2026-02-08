@@ -188,14 +188,20 @@ async function calculateDeepPrediction(match) {
     const aiResult = calculatePrediction(match, analysisData, { weights: mlConfig });
     const marketHeat = detectSharpMoney(match);
 
+    const detailedAnalysis = aiResult.detailedAnalysis || [];
+    const projectedTotal = aiResult.projectedTotal || 0;
+
     // Supreme Metrics Calculation
+    const currentHomeOdd = match.odds?.home || 0;
+    const historyHomeOdd = (match.odds?.history && match.odds.history.length > 0) ? match.odds.history[0].home : currentHomeOdd;
+
     const supremeBayesian = refineWithBayesian({
         home: aiResult.homeWinProb,
         draw: aiResult.drawProb,
         away: aiResult.awayWinProb
     }, {
-        marketVelocity: (match.odds?.current?.home - match.odds?.history?.[0]?.home) || 0,
-        momentumScore: aiResult.confidence / 100
+        marketVelocity: (currentHomeOdd - historyHomeOdd) || 0,
+        momentumScore: (aiResult.homeWinProb / 100)
     });
 
     const vortexForce = calculateVortexForce(match);

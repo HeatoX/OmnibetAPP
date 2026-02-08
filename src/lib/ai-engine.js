@@ -5,6 +5,7 @@
 
 import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math';
 import { getRestAudit } from './matrix-engine';
+import { getEloWinProbability } from './elo-engine';
 
 /**
  * AI Engine for sports predictions
@@ -314,7 +315,6 @@ export function calculatePrediction(match, analysis, config = {}) {
                 const poi = calculatePoissonProbabilities(homeXG, awayXG);
 
                 // V30.3: ELO SYNC (Atomic Level Integration)
-                const { getEloWinProbability } = require('./elo-engine');
                 const elo = getEloWinProbability(match.home.id, match.away.id, sport);
 
                 // Weighted Assembly: 40% Poisson, 30% Form, 30% ELO
