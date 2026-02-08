@@ -195,11 +195,6 @@ async function calculateDeepPrediction(match, context = {}) {
         oddsPrediction
     };
 
-    // ML Weights
-    console.log('[Oracle] ⏱️ Getting ML Weights...');
-    const mlConfig = await getDynamicWeights().catch(() => ({}));
-    console.log('[Oracle] ✅ Weights Obtained');
-
     // Execute Brain Core
     const aiResult = calculatePrediction(match, analysisData, { weights: mlConfig });
     const marketHeat = detectSharpMoney(match);

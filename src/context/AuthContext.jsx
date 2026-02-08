@@ -23,92 +23,95 @@ export function AuthProvider({ children }) {
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-    // V50.7: Idempotent initialization
+    // V50.12: Idempotent initialization (Strict Mode Proof)
     useEffect(() => {
         let ignore = false;
 
         const initSession = async () => {
-            console.log('🔐 [Auth] Iniciando verificación de sesión (Idempotent)...');
+            try {
+                setLoading(true);
+                console.log('🛡️ [Idempotent Guard] Iniciando checkSession seguro...');
 
-            // Check session only if not ignored
-            await checkSession();
+                const { data: { session }, error } = await supabase.auth.getSession();
 
-            if (!ignore) {
-                console.log('🔐 [Auth] Verificación inicial completada.');
+                if (ignore) {
+                    console.log('✖️ [Idempotent Guard] Se ignoró un efecto de limpieza.');
+                    return;
+                }
+
+                if (error) {
+                    if (error.name !== 'AbortError' && !error.message?.includes('aborted')) {
+                        throw error;
+                    }
+                    return;
+                }
+
+                if (session?.user) {
+                    console.log('🔐 [Auth] Sesión activa encontrada:', session.user.email);
+                    setUser(session.user);
+                    await loadProfile(session.user.id, session.user);
+                } else {
+                    console.log('🔐 [Auth] No se encontró sesión activa.');
+                    setUser(null);
+                    setProfile(null);
+                }
+            } catch (error) {
+                console.error('🔥 [Auth] Error real en la sesión:', error);
+                setUser(null);
+                setProfile(null);
+            } finally {
+                if (!ignore) {
+                    setLoading(false);
+                    setSessionResolved(true);
+                    console.log('🛡️ [Idempotent Guard] Verificación inicial completada.');
+                }
             }
         };
 
         initSession();
 
-        // V50.12: Increased Failsafe (15s) to survive high Oracle congestion
-        const safetyTimer = setTimeout(() => {
-            if (loading && !ignore) {
-                console.warn('⚠️ [Auth] Failsafe activado: Forzando fin de carga por congestión.');
-                setLoading(false);
-                setSessionResolved(true);
-            }
-        }, 15000);
-
         return () => {
+            console.log('🧹 [Idempotent Guard] Efecto limpiado. Activando ignore.');
             ignore = true;
-            clearTimeout(safetyTimer);
         };
     }, []);
 
-    // Listen for auth changes (wrapped in try-catch for resilience)
+    // Listen for auth changes
     useEffect(() => {
-        let subscription = null;
-        try {
-            const { data } = supabase.auth.onAuthStateChange(
-                async (event, session) => {
-                    if (ignore) return;
+        let active = true;
+        const { data } = supabase.auth.onAuthStateChange(
+            async (event, session) => {
+                if (!active) return;
 
-                    console.log(`🔐 [Auth] Evento: ${event}`, session?.user ? 'Usuario detectado' : 'Sin usuario');
-                    if (session?.user) {
-                        setUser(session.user);
-                        await loadProfile(session.user.id, session.user);
-                    } else if (event === 'SIGNED_OUT' || !session) {
-                        setUser(null);
-                        setProfile(null);
-                    }
-                    setLoading(false);
-                    setSessionResolved(true);
+                console.log(`🔐 [Auth] Evento: ${event}`, session?.user ? 'Usuario detectado' : 'Sin usuario');
+                if (session?.user) {
+                    setUser(session.user);
+                    await loadProfile(session.user.id, session.user);
+                } else if (event === 'SIGNED_OUT' || !session) {
+                    setUser(null);
+                    setProfile(null);
                 }
-            );
-            subscription = data?.subscription;
-        } catch (error) {
-            console.error('Auth state change error:', error);
-        }
+                setLoading(false);
+                setSessionResolved(true);
+            }
+        );
 
-        return () => subscription?.unsubscribe?.();
+        return () => { active = false; data?.subscription?.unsubscribe(); };
     }, []);
 
+    // Standalone checkSession (for manual refreshes)
     async function checkSession() {
         try {
-            setLoading(true);
-            console.log('🔐 [Auth] Verificación unificada en curso...');
-
-            // V50.12: Use a longer timeout for the session fetch itself if possible
-            const { data: { session }, error } = await supabase.auth.getSession();
-
-            if (error) throw error;
-
+            const { data: { session } } = await supabase.auth.getSession();
             if (session?.user) {
-                console.log('🔐 [Auth] Sesión activa encontrada:', session.user.email);
                 setUser(session.user);
                 await loadProfile(session.user.id, session.user);
             } else {
-                console.log('🔐 [Auth] No se encontró sesión activa.');
+                setUser(null);
+                setProfile(null);
             }
-        } catch (error) {
-            // Silently handle aborts during Oracle heavy cycles
-            if (error.name === 'AbortError' || error.message?.includes('aborted')) {
-                console.log('🔐 [Auth] Petición abortada por congestión. Manteniendo estado.');
-                return;
-            }
-            console.error('🔥 [Auth] Error real en la sesión:', error);
-            setUser(null);
-            setProfile(null);
+        } catch (e) {
+            console.error('Manual checkSession error:', e);
         } finally {
             setLoading(false);
             setSessionResolved(true);
