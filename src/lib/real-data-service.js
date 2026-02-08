@@ -503,10 +503,10 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
 
         // Renormalize after 800 motors impact
         const totalWeight = hWeight + dWeight + aWeight;
-        const homeWinProb = Math.round((hWeight / totalWeight) * 100);
-        const drawProbActual = Math.round((dWeight / totalWeight) * 100);
-        const awayWinProb = 100 - homeWinProb - drawProbActual;
-        const finalDrawProb = drawProbActual;
+        let homeWinProb = Math.round((hWeight / totalWeight) * 100);
+        let drawProbActual = Math.round((dWeight / totalWeight) * 100);
+        let awayWinProb = 100 - homeWinProb - drawProbActual;
+        let finalDrawProb = drawProbActual;
 
         const finalMax = Math.max(homeWinProb, awayWinProb, finalDrawProb);
         let winner = 'draw';
@@ -596,7 +596,15 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         };
     } catch (e) {
         console.error("Prediction engine fatal error:", e);
-        return { winner: 'home', text: 'Error en predicción', homeWinProb: 33, awayWinProb: 33, drawProb: 34, confidence: 'silver' };
+        return {
+            winner: 'draw',
+            text: 'IA en mantenimiento',
+            homeWinProb: 0,
+            awayWinProb: 0,
+            drawProb: 0,
+            confidence: 'silver',
+            maxProb: 0
+        };
     }
 }
 
