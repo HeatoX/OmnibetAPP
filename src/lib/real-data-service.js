@@ -509,10 +509,29 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             (marketProb.away * finalWeights.market);
 
         // Final normalization (Robust against zero/NaN)
-        const totalW = (hW + dW + aW) || 100.0001;
-        const hFinal = Math.round((hW / totalW) * 100);
-        const dFinal = Math.round((dW / totalW) * 100);
-        const aFinal = Math.round((aW / totalW) * 100);
+        let totalW = (hW + dW + aW) || 100.0001;
+        let hFinal = (hW / totalW) * 100;
+        let dFinal = (dW / totalW) * 100;
+        let aFinal = (aW / totalW) * 100;
+
+        // V63.12: CONTRAST AMPLIFIER (Predictive Power Restoration)
+        // If one team is leading by even a bit, we amplify the gap to show a CLEAR favorite.
+        const gap = Math.abs(hFinal - aFinal);
+        const powerScale = gap > 2 ? 1.5 : 1.2; // Stronger push for clearer gaps
+
+        if (hFinal > aFinal + 1) {
+            hFinal *= powerScale;
+            aFinal /= powerScale;
+        } else if (aFinal > hFinal + 1) {
+            aFinal *= powerScale;
+            hFinal /= powerScale;
+        }
+
+        // Final Rounding after power boost
+        const finalSum = hFinal + dFinal + aFinal;
+        hFinal = Math.round((hFinal / finalSum) * 100);
+        dFinal = Math.round((dFinal / finalSum) * 100);
+        aFinal = 100 - hFinal - dFinal;
 
         // 6. --- FULL INTELLIGENCE ENGINE (800 MOTORS) ---
         // V40.0: Tactical DNA & Stability Analysis
