@@ -514,31 +514,47 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         let dFinal = (dW / totalW) * 100;
         let aFinal = (aW / totalW) * 100;
 
-        // V63.13: AGGRESSIVE CONTRAST AMPLIFIER (No more visual 50/50)
-        // If one team is even 0.1% better, we push it to a clear visible majority.
+        // V63.14: HIERARCHY TIE-BREAKER & NO-BIAS LOGIC
+        // Get absolute ELO ratings to break the 50/50 trap
+        const rHome = (eloData.homeElo || 1500);
+        const rAway = (eloData.awayElo || 1500);
+
         const gap = hFinal - aFinal;
         const absGap = Math.abs(gap);
 
-        // Dynamic push: if gap is tiny, force a "minimum predictive stand"
-        let boost = absGap > 5 ? 1.6 : absGap > 2 ? 2.0 : 2.5;
-
-        if (gap > 0.1) {
-            hFinal *= boost;
-            aFinal /= boost;
-        } else if (gap < -0.1) {
-            aFinal *= boost;
-            hFinal /= boost;
+        // 1. Break the 50/50 loop: If they are too close, use Hierarchy (ELO)
+        if (absGap < 0.5) {
+            if (rHome > rAway + 10) {
+                hFinal = 56; aFinal = 100 - dFinal - hFinal;
+            } else if (rAway > rHome + 10) {
+                aFinal = 56; hFinal = 100 - dFinal - aFinal;
+            } else {
+                // Absolute dead heat? Use matchId to be stable but not 50/50
+                const stableFlip = (matchId?.length || 0) % 2 === 0;
+                if (stableFlip) { hFinal = 53; aFinal = 47; }
+                else { aFinal = 53; hFinal = 47; }
+            }
+        } else {
+            // 2. High Contrast: Amplify real differences for a powerful Oracle view
+            let boost = absGap > 5 ? 1.7 : absGap > 2 ? 2.2 : 2.8;
+            if (gap > 0) {
+                hFinal *= boost;
+                aFinal /= boost;
+            } else {
+                aFinal *= boost;
+                hFinal /= boost;
+            }
         }
 
-        // Final Rounding: Ensure we don't round back to 50/50 if there's a winner
+        // Renormalize to 100%
         const finalSum = hFinal + dFinal + aFinal;
         hFinal = (hFinal / finalSum) * 100;
         dFinal = (dFinal / finalSum) * 100;
         aFinal = 100 - hFinal - dFinal;
 
-        // Apply a "Floor" for the winner to avoid 50/50 rounding
-        if (hFinal > aFinal && hFinal < 53) { hFinal = 54; aFinal = 100 - dFinal - hFinal; }
-        if (aFinal > hFinal && aFinal < 53) { aFinal = 54; hFinal = 100 - dFinal - aFinal; }
+        // Visual "Oracle Stand" Floor (Min 54% for labels)
+        if (hFinal > aFinal && hFinal < 54) { hFinal = 55; aFinal = 100 - dFinal - hFinal; }
+        if (aFinal > hFinal && aFinal < 54) { aFinal = 55; hFinal = 100 - dFinal - aFinal; }
 
         hFinal = Math.round(hFinal);
         dFinal = Math.round(dFinal);
