@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
                 async (event, session) => {
                     if (session?.user) {
                         setUser(session.user);
-                        await loadProfile(session.user.id);
+                        await loadProfile(session.user.id, session.user);
                     } else {
                         setUser(null);
                         setProfile(null);
@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
             const { data: { session } } = await supabase.auth.getSession();
             if (session?.user) {
                 setUser(session.user);
-                await loadProfile(session.user.id);
+                await loadProfile(session.user.id, session.user);
             }
         } catch (error) {
             console.error('Session check error:', error);
@@ -72,12 +72,13 @@ export function AuthProvider({ children }) {
         setLoading(false);
     }
 
-    async function loadProfile(userId) {
+    async function loadProfile(userId, currentUser = null) {
         try {
             const profileData = await getUserProfile(userId);
 
-            // Safety check for user email (especially in mock mode)
-            const userEmail = profileData?.email || user?.email || '';
+            // Use the passed user object or fallback to state
+            const activeUser = currentUser || user;
+            const userEmail = profileData?.email || activeUser?.email || '';
             const isAdmin = ADMIN_EMAILS.includes(userEmail);
 
             if (profileData) {
@@ -99,28 +100,32 @@ export function AuthProvider({ children }) {
         } catch (error) {
             // User might not have a profile yet, create one
             console.log('Creating new profile for user');
-            await createProfile(userId);
+            await createProfile(userId, currentUser);
         }
     }
 
-    async function createProfile(userId) {
-        const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email);
+    async function createProfile(userId, currentUser = null) {
+        const activeUser = currentUser || user;
+        const isAdmin = activeUser?.email && ADMIN_EMAILS.includes(activeUser.email);
 
         const { data, error } = await supabase
             .from('profiles')
             .insert({
                 id: userId,
-                email: user?.email,
+                email: activeUser?.email,
                 subscription_tier: isAdmin ? 'diamond' : 'free', // Admins get diamond
                 predictions_used_this_month: 0,
-                // is_admin column removed/handled by logic or need to ensure schema has it. 
-                // Schema has subscription_tier, let's treat diamond as admin for now or rely on email check.
             })
             .select()
             .single();
 
         if (!error) {
-            setProfile(data);
+            // Ensure the profile state also gets the diamond override immediately
+            setProfile({
+                ...data,
+                subscription_tier: isAdmin ? 'diamond' : data.subscription_tier,
+                is_admin: isAdmin
+            });
         }
     }
 
