@@ -270,52 +270,64 @@ function PayPalButtonWrapper({ tier, userId, onSuccess, onError }) {
     const [isRendered, setIsRendered] = useState(false);
     const containerId = `paypal-button-container-${tier.id}`;
 
-    useState(() => {
-        const timer = setTimeout(() => {
-            if (window.paypal && !isRendered) {
-                window.paypal.Buttons({
-                    createOrder: async () => {
-                        const res = await fetch('/api/paypal/create-order', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                tierId: tier.id,
-                                amount: tier.price
-                            })
-                        });
-                        const order = await res.json();
-                        return order.id;
-                    },
-                    onApprove: async (data) => {
-                        const res = await fetch('/api/paypal/capture-order', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                orderID: data.orderID,
-                                userId: userId,
-                                tierId: tier.id
-                            })
-                        });
-                        const result = await res.json();
-                        if (result.success) onSuccess(result);
-                        else onError(result.error || 'Error capturando el pago');
-                    },
-                    onError: (err) => {
-                        console.error('PayPal Button Error', err);
-                        onError('Hubo un error con el botón de PayPal');
-                    },
-                    style: {
-                        color: tier.color === 'yellow' ? 'gold' : 'blue',
-                        shape: 'rect',
-                        label: 'pay',
-                        height: 50
-                    }
-                }).render(`#${containerId}`);
-                setIsRendered(true);
+    useEffect(() => {
+        let timer;
+        let retries = 0;
+        const maxRetries = 10;
+
+        const renderButton = () => {
+            if (window.paypal) {
+                const container = document.getElementById(containerId);
+                if (container && container.innerHTML === '') {
+                    window.paypal.Buttons({
+                        createOrder: async () => {
+                            const res = await fetch('/api/paypal/create-order', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    tierId: tier.id,
+                                    amount: tier.price
+                                })
+                            });
+                            const order = await res.json();
+                            return order.id;
+                        },
+                        onApprove: async (data) => {
+                            const res = await fetch('/api/paypal/capture-order', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    orderID: data.orderID,
+                                    userId: userId,
+                                    tierId: tier.id
+                                })
+                            });
+                            const result = await res.json();
+                            if (result.success) onSuccess(result);
+                            else onError(result.error || 'Error capturando el pago');
+                        },
+                        onError: (err) => {
+                            console.error('PayPal Button Error', err);
+                            onError('Hubo un error con el botón de PayPal');
+                        },
+                        style: {
+                            color: tier.color === 'yellow' ? 'gold' : 'blue',
+                            shape: 'rect',
+                            label: 'pay',
+                            height: 50
+                        }
+                    }).render(`#${containerId}`);
+                    setIsRendered(true);
+                }
+            } else if (retries < maxRetries) {
+                retries++;
+                timer = setTimeout(renderButton, 1000);
             }
-        }, 500);
+        };
+
+        timer = setTimeout(renderButton, 500);
         return () => clearTimeout(timer);
-    }, [isRendered]);
+    }, [isRendered, containerId, tier, userId, onSuccess, onError]);
 
     return <div id={containerId} className="w-full"></div>;
 }

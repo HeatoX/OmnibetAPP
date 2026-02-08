@@ -164,7 +164,12 @@ export default function PredictionCard({ match, onClick, onDetailedAnalysis, use
                 {/* VS / Time / Date */}
                 <div className="flex flex-col items-center justify-center">
                     {match.isLive ? (
-                        <div className="score-vs text-2xl font-black italic text-gray-700/50">VS</div>
+                        <div className="flex flex-col items-center">
+                            <div className="score-vs text-2xl font-black italic text-gray-700/50">VS</div>
+                            <div className="live-minute-badge mt-1 px-2 py-0.5 bg-red-500/20 text-red-500 text-[10px] font-bold rounded-full animate-pulse border border-red-500/30">
+                                {match.liveMinute || 'LIVE'}
+                            </div>
+                        </div>
                     ) : (
                         <div className="text-center">
                             <div className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">

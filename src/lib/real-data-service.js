@@ -174,7 +174,7 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
 
         if (!competitions || !Array.isArray(competitions)) return [];
 
-        return competitions.map(competition => {
+        return Promise.all(competitions.map(async (competition) => {
             if (!competition) return null;
 
             const homeTeam = competition.competitors?.find(c => c.homeAway === 'home');
@@ -229,6 +229,9 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
 
             const matchOdds = extractOdds(competition);
 
+            // V62: AWAIT ASYNC PREDICTION
+            const predictionData = await generateRealPrediction(homeTeam, awayTeam, sport, isLive || isFinished, leagueSlug, { odds: matchOdds });
+
             return {
                 id: event.id, // Stable Match ID
                 uid: event.uid,
@@ -257,16 +260,19 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
                 sportIcon: getSportIcon(sport),
                 relativeDate: relativeDate,
                 odds: matchOdds,
-                prediction: generateRealPrediction(homeTeam, awayTeam, sport, isLive || isFinished, leagueSlug, { odds: matchOdds }),
+                prediction: predictionData,
                 playerPredictions: generatePlayerPredictions(homeTeam, awayTeam, sport, event.id, homeTeam, awayTeam)
             };
-        }).filter(match => {
-            if (!match) return false;
-            const invalidNames = ['TBD', 'To Be Decided', 'Undecided', 'Winner of'];
-            if (invalidNames.some(n => match.home.name.includes(n) || match.away.name.includes(n))) return false;
-            return true;
-        });
-    }).filter(Boolean);
+        }));
+    });
+
+    const nestedResults = await Promise.all(transformationPromises);
+    return nestedResults.flat().filter(match => {
+        if (!match) return false;
+        const invalidNames = ['TBD', 'To Be Decided', 'Undecided', 'Winner of'];
+        if (invalidNames.some(n => match.home.name.includes(n) || match.away.name.includes(n))) return false;
+        return true;
+    });
 }
 
 /**
@@ -486,22 +492,20 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const dFinal = Math.round((dW / totalW) * 100);
         const aFinal = Math.round((aW / totalW) * 100);
 
-        // Quantum V50 Output Structure
+        // Quantum V50 Output Structure - Flattened V62
         return {
-            prediction: {
-                homeWinProb: hFinal,
-                drawProb: dFinal,
-                awayWinProb: aFinal,
-                confidence: hFinal >= 65 || aFinal >= 65 ? 'diamond' : hFinal >= 55 || aFinal >= 55 ? 'gold' : 'silver',
-                isValueBet: hasMarketData && (hFinal > (marketProb.home + 5) || aFinal > (marketProb.away + 5)),
-                weather,
-                newsImpact,
-                marketHeat: hasMarketData ? (Math.abs(hFinal - marketProb.home) > 12 ? { level: 'critical', message: 'SHARK ATTACK: IA vs Mercado' } : { level: 'normal' }) : null,
-                sentinel: driftData, // V50 Feature
-                narrative: narrative, // V50 Feature
-                weights: finalWeights,
-                source: 'real-time-oracle-v50'
-            }
+            homeWinProb: hFinal,
+            drawProb: dFinal,
+            awayWinProb: aFinal,
+            confidence: hFinal >= 65 || aFinal >= 65 ? 'diamond' : hFinal >= 55 || aFinal >= 55 ? 'gold' : 'silver',
+            isValueBet: hasMarketData && (hFinal > (marketProb.home + 5) || aFinal > (marketProb.away + 5)),
+            weather,
+            newsImpact,
+            marketHeat: hasMarketData ? (Math.abs(hFinal - marketProb.home) > 12 ? { level: 'critical', message: 'SHARK ATTACK: IA vs Mercado' } : { level: 'normal' }) : null,
+            sentinel: driftData,
+            narrative: narrative,
+            weights: finalWeights,
+            source: 'real-time-oracle-v50'
         };
         // V40.0 QUANTUM ENGINE: TACTICAL DNA & STABILITY
         const homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence);

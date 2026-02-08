@@ -581,7 +581,7 @@ export default function AppPage() {
 
                     {/* Loading State */}
                     {isLoading && (
-                        <div className="flex items-center justify-center py-20">
+                        <div className="flex items-center justify-center py-40 min-h-[80vh]">
                             <div className="text-center">
                                 <div className="w-16 h-16 border-4 border-t-cyan-400 border-r-green-400 border-b-cyan-400 border-l-green-400 rounded-full animate-spin mx-auto mb-4"></div>
                                 <p className="text-gray-400">Cargando predicciones...</p>
