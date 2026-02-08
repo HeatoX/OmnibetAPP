@@ -163,7 +163,14 @@ export default function AppPage() {
     // Redirect to landing if not logged in
     useEffect(() => {
         if (!loading && !user) {
-            router.push('/');
+            // V50.2: Add a small delay for session resolution in production
+            const redirectTimer = setTimeout(() => {
+                if (!user) {
+                    console.log('🚫 [Auth] Acceso denegado: Redirigiendo a landing');
+                    router.push('/');
+                }
+            }, 500);
+            return () => clearTimeout(redirectTimer);
         }
     }, [user, loading, router]);
 

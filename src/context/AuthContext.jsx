@@ -24,12 +24,22 @@ export function AuthProvider({ children }) {
 
     // Check session on mount
     useEffect(() => {
-        checkSession();
+        const initSession = async () => {
+            console.log('🔐 [Auth] Iniciando verificación de sesión...');
+            await checkSession();
+            console.log('🔐 [Auth] Verificación inicial completada.');
+        };
 
-        // FAILSAFE: Force loading to false after 3s to prevent infinite spinner
+        initSession();
+
+        // FAILSAFE: Force loading to false after 5s to prevent infinite spinner
+        // Increased to 5s to allow Supabase to respond in slow network conditions
         const safetyTimer = setTimeout(() => {
-            setLoading(false);
-        }, 3000);
+            if (loading) {
+                console.warn('⚠️ [Auth] Failsafe activado: Forzando fin de carga.');
+                setLoading(false);
+            }
+        }, 5000);
 
         return () => clearTimeout(safetyTimer);
     }, []);
@@ -40,6 +50,7 @@ export function AuthProvider({ children }) {
         try {
             const result = supabase.auth.onAuthStateChange(
                 async (event, session) => {
+                    console.log(`🔐 [Auth] Evento: ${event}`, session?.user ? 'Usuario detectado' : 'Sin usuario');
                     if (session?.user) {
                         setUser(session.user);
                         await loadProfile(session.user.id, session.user);
@@ -63,13 +74,17 @@ export function AuthProvider({ children }) {
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (session?.user) {
+                console.log('🔐 [Auth] Sesión activa encontrada para:', session.user.email);
                 setUser(session.user);
                 await loadProfile(session.user.id, session.user);
+            } else {
+                console.log('🔐 [Auth] No se encontró sesión activa.');
             }
         } catch (error) {
-            console.error('Session check error:', error);
+            console.error('🔐 [Auth] Error crítico en checkSession:', error);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     async function loadProfile(userId, currentUser = null) {

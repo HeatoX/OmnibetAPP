@@ -68,12 +68,21 @@ function createMockSupabaseClient() {
         }
     };
 
+    const authCallbacks = new Set();
+
+    const notifyAuthChange = (event, session) => {
+        console.log(`🧪 [DemoAuth] Notificando: ${event}`);
+        authCallbacks.forEach(callback => callback(event, session));
+    };
+
     return {
         auth: {
             getSession: async () => ({ data: { session: currentUser ? { user: currentUser } : null } }),
             onAuthStateChange: (callback) => {
-                // Return a mock subscription
-                return { data: { subscription: { unsubscribe: () => { } } } };
+                authCallbacks.add(callback);
+                // Initial call
+                setTimeout(() => callback('INITIAL_SESSION', currentUser ? { user: currentUser } : null), 0);
+                return { data: { subscription: { unsubscribe: () => authCallbacks.delete(callback) } } };
             },
             signUp: async ({ email, password, options }) => {
                 const user = {
@@ -90,6 +99,7 @@ function createMockSupabaseClient() {
                 });
                 currentUser = user;
                 saveState();
+                notifyAuthChange('SIGNED_IN', { user });
                 return { data: { user }, error: null };
             },
             signInWithPassword: async ({ email, password }) => {
@@ -98,6 +108,7 @@ function createMockSupabaseClient() {
                 if (existingUser) {
                     currentUser = { id: existingUser.id, email, user_metadata: { name: existingUser.name } };
                     saveState();
+                    notifyAuthChange('SIGNED_IN', { user: currentUser });
                     return { data: { user: currentUser }, error: null };
                 }
                 // Auto-create user in demo mode
@@ -116,6 +127,7 @@ function createMockSupabaseClient() {
                 });
                 currentUser = user;
                 saveState();
+                notifyAuthChange('SIGNED_IN', { user });
                 return { data: { user }, error: null };
             },
             signInWithOAuth: async ({ provider }) => {
