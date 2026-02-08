@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import LoginModal from './LoginModal';
 import RiskProfileSelector, { useRiskProfile } from './RiskProfileSelector';
+import TrialWelcomeModal from './TrialWelcomeModal';
 
 // Admin emails
 const ADMIN_EMAILS = [
@@ -20,7 +21,7 @@ const ADMIN_EMAILS = [
  * Navigation Header Component with Auth
  */
 export default function Header(props) {
-    const { user, profile: userProfile, signOut, setShowLoginModal, showLoginModal, getSubscriptionInfo } = useAuth();
+    const { user, profile: userProfile, signOut, setShowLoginModal, showLoginModal, getSubscriptionInfo, showTrialModal, setShowTrialModal } = useAuth();
     const { profile: riskProfile, updateProfile } = useRiskProfile();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -150,7 +151,7 @@ export default function Header(props) {
                                                 {/* Timer Badge */}
                                                 {(subscriptionInfo.isTrialActive || subscriptionInfo.isSubActive) && (
                                                     <div className={`text-[10px] px-1.5 py-0.5 rounded-md flex items-center gap-1 font-bold ${subscriptionInfo.daysLeft <= 2 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                                                            'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                                                        'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
                                                         }`}>
                                                         <span>⏳</span>
                                                         {subscriptionInfo.daysLeft}d
