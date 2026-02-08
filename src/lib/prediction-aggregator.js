@@ -65,8 +65,10 @@ export function aggregateSupremePrediction(baseResult, supremeAgents, match) {
     // Winner update
     let winner = 'draw';
     if (isSoccer) {
-        if (normalizedHome > normalizedAway && normalizedHome > normalizedDraw) winner = 'home';
-        else if (normalizedAway > normalizedHome && normalizedAway > normalizedDraw) winner = 'away';
+        // V60: Reduced draw bias. If Home or Away have a clear edge (> 5%), they take the win.
+        if (normalizedHome > normalizedAway && normalizedHome > (normalizedDraw - 5)) winner = 'home';
+        else if (normalizedAway > normalizedHome && normalizedAway > (normalizedDraw - 5)) winner = 'away';
+        else winner = 'draw';
     } else {
         winner = normalizedHome > normalizedAway ? 'home' : 'away';
         normalizedDraw = 0;

@@ -360,7 +360,9 @@ export function calculatePrediction(match, analysis, config = {}) {
     }
 
     // --- V50.5: NORMALIZACIÓN MAESTRA (Audit Corrected) ---
-    const finalDrawProbValue = (sport === 'football' || sport === 'soccer') ? 22 : 0; // Baseline
+    // V60: Dynamic draw baseline based on parity
+    const parityFactor = Math.abs(mathHome - mathAway);
+    const finalDrawProbValue = (sport === 'football' || sport === 'soccer') ? Math.max(18, 25 - (parityFactor * 10)) : 0;
     const winProbTotal = 100 - finalDrawProbValue;
 
     // Normalizamos sobre el espacio de victoria restante

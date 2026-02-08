@@ -250,10 +250,7 @@ async function calculateDeepPrediction(match, context = {}) {
         omega: omegaData?.score || 0,
         isOmegaSingular: omegaData?.singular || false,
         marketHeat: marketHeat,
-        supremeVerdict: {
-            ...extendedAiResult.supremeVerdict,
-            ...unifiedResult
-        },
+        supremeVerdict: unifiedResult, // Fix: Use unifiedResult directly instead of extendedAiResult
         sentinelReport: {
             home: homeSentiment,
             away: awaySentiment
