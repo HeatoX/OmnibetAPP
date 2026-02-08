@@ -19,6 +19,7 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [sessionResolved, setSessionResolved] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
@@ -184,12 +185,22 @@ export function AuthProvider({ children }) {
     }
 
     async function signIn(email, password) {
+        // V50.3: Set session hint before sign in
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('omnibet_session_hint', 'true');
+        }
+
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
-        if (error) throw error;
+        if (error) {
+            if (typeof window !== 'undefined') {
+                sessionStorage.removeItem('omnibet_session_hint');
+            }
+            throw error;
+        }
 
         // In demo mode, set user immediately
         if (isDemoMode && data.user) {
@@ -214,6 +225,11 @@ export function AuthProvider({ children }) {
     }
 
     async function signInWithGoogle() {
+        // V50.3: Set session hint
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('omnibet_session_hint', 'true');
+        }
+
         const siteUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
@@ -348,6 +364,7 @@ export function AuthProvider({ children }) {
         user,
         profile,
         loading,
+        sessionResolved,
         signUp,
         signIn,
         signInWithGoogle,

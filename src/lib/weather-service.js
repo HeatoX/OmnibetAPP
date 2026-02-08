@@ -69,3 +69,5 @@ export async function getMatchWeather(league, venue = null) {
         return null;
     }
 }
+// Export alias for backward compatibility or different naming conventions
+export { getMatchWeather as getWeatherForecast };

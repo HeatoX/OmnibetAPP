@@ -34,7 +34,7 @@ const API_SOURCES = {
 // For now, removing complex imports assuming they might be missing on Desktop too
 // If they exist, good. If not, this file might need simplification.
 // Assuming user has these files since they were in list_dir.
-import { getWeatherForecast } from './weather-service.js';
+import { getMatchWeather as getWeatherForecast } from './weather-service.js';
 import { analyzeReferee } from './referee-database.js';
 import { analyzeVenue } from './venue-database.js';
 import { analyzeTactics } from './tactical-database.js';

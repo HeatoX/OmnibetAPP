@@ -35,12 +35,13 @@ export default function LandingPage() {
     };
 
     // Redirect if user is logged in
-    if (user) {
-        if (typeof window !== 'undefined') {
-            window.location.href = '/app';
+    useEffect(() => {
+        if (user) {
+            router.push('/app');
         }
-        return null;
-    }
+    }, [user, router]);
+
+    if (user) return null;
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-x-hidden">
