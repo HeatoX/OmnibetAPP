@@ -474,18 +474,26 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         if (narrative.factors.length > 0) finalWeights.narrative = 0.15; // Activate Narrative layer
 
         // Calculate Final Composite Probability (Bayesian-Style)
-        // V62.9 Fix: Use homeState.confidence from Oracle context (0-100)
-        let hW = (eloData.homeWinProb * finalWeights.elo) +
+        // V63.0 Fix: Map engine properties correctly (elo.home, poisson.homeWin*100)
+        let hW = (eloData.home * finalWeights.elo) +
             ((oracleContext.homeState?.confidence || 50) * finalWeights.oracle) +
-            (poissonProbs.home * finalWeights.poisson) +
+            ((poissonProbs.homeWin * 100) * finalWeights.poisson) +
             (marketProb.home * finalWeights.market);
 
         // Apply Narrative Multipliers
         hW *= narrative.multipliers.home;
 
         // Sincerity Factor: If it's a cup match or draw is likely
-        let dW = canDraw ? Math.max(25, (poissonProbs.draw * 0.7) + (marketProb.draw * 0.3)) : 5;
-        let aW = 100 - hW - dW;
+        // V63.0 Fix: Use ELO draw signal + Poisson draw signal
+        let dW = canDraw ? Math.max(25,
+            (eloData.draw * finalWeights.elo) +
+            (poissonProbs.draw * 100 * finalWeights.poisson) +
+            (marketProb.draw * finalWeights.market)
+        ) : 5;
+        let aW = (eloData.away * finalWeights.elo) +
+            ((oracleContext.awayState?.confidence || 50) * finalWeights.oracle) +
+            ((poissonProbs.awayWin * 100) * finalWeights.poisson) +
+            (marketProb.away * finalWeights.market);
 
         // Final normalization (Robust against zero/NaN)
         const totalW = (hW + dW + aW) || 100.0001;
