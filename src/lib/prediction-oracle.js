@@ -117,15 +117,17 @@ async function getTeamRecentForm(sport, league, teamName) {
 /**
  * Calculate DEEP prediction combining multiple factors
  */
-async function calculateDeepPrediction(match, prefetchedHistory = null) {
+async function calculateDeepPrediction(match, context = {}) {
     const { home, away, odds, sport, league } = match;
+    const { prefetchedHistory = null, prefetchedWeights = null } = context;
+
     console.log(`[Oracle] 🔮 Analyzing Match: ${home?.name} vs ${away?.name} (${match.id})`);
 
     // Step 1: Base prediction from ODDS
     const oddsPrediction = analyzeFromOdds(match);
     console.log('[Oracle] ✅ Odds Analysis Complete');
 
-    // Initial Calibration (V50.11: Use prefetched history if available)
+    // Initial Calibration (V50.12: Priority to Injected Context)
     let history = prefetchedHistory;
     if (!history) {
         console.log('[Oracle] ⏱️ Fetching History... (No batching detected)');
@@ -134,6 +136,15 @@ async function calculateDeepPrediction(match, prefetchedHistory = null) {
             new Promise((resolve) => setTimeout(() => resolve([]), 3000))
         ]).catch(() => []);
     }
+
+    // ML Weights (V50.12: Priority to Injected Context)
+    let mlConfig = prefetchedWeights;
+    if (!mlConfig) {
+        console.log('[Oracle] ⏱️ Getting ML Weights... (No batching detected)');
+        const { getDynamicWeights } = await import('./ml-optimizer.js');
+        mlConfig = await getDynamicWeights().catch(() => ({}));
+    }
+    console.log('[Oracle] ✅ Weights Obtained');
 
     const calibratedWeights = autoCalibrateWeights(history || []);
 
@@ -358,9 +369,9 @@ function generateSmartMarkets(match, prediction) {
 /**
  * MAIN EXPORT: Deep Analysis Engine
  */
-export async function analyzeMatchDeep(match, prefetchedHistory = null) {
+export async function analyzeMatchDeep(match, context = {}) {
     // Calculate deep prediction
-    const prediction = await calculateDeepPrediction(match, prefetchedHistory);
+    const prediction = await calculateDeepPrediction(match, context);
 
     // Generate smart market predictions
     const smartMarkets = generateSmartMarkets(match, prediction);

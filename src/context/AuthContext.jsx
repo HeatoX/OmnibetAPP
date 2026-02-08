@@ -40,14 +40,14 @@ export function AuthProvider({ children }) {
 
         initSession();
 
-        // FAILSAFE: Force loading to false after 5s to prevent infinite spinner
+        // V50.12: Increased Failsafe (15s) to survive high Oracle congestion
         const safetyTimer = setTimeout(() => {
             if (loading && !ignore) {
-                console.warn('⚠️ [Auth] Failsafe activado: Forzando fin de carga.');
+                console.warn('⚠️ [Auth] Failsafe activado: Forzando fin de carga por congestión.');
                 setLoading(false);
                 setSessionResolved(true);
             }
-        }, 5000);
+        }, 15000);
 
         return () => {
             ignore = true;
@@ -59,13 +59,15 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         let subscription = null;
         try {
-            const result = supabase.auth.onAuthStateChange(
+            const { data } = supabase.auth.onAuthStateChange(
                 async (event, session) => {
+                    if (ignore) return;
+
                     console.log(`🔐 [Auth] Evento: ${event}`, session?.user ? 'Usuario detectado' : 'Sin usuario');
                     if (session?.user) {
                         setUser(session.user);
                         await loadProfile(session.user.id, session.user);
-                    } else {
+                    } else if (event === 'SIGNED_OUT' || !session) {
                         setUser(null);
                         setProfile(null);
                     }
@@ -73,10 +75,9 @@ export function AuthProvider({ children }) {
                     setSessionResolved(true);
                 }
             );
-            subscription = result?.data?.subscription;
+            subscription = data?.subscription;
         } catch (error) {
             console.error('Auth state change error:', error);
-            setLoading(false);
         }
 
         return () => subscription?.unsubscribe?.();
@@ -87,6 +88,7 @@ export function AuthProvider({ children }) {
             setLoading(true);
             console.log('🔐 [Auth] Verificación unificada en curso...');
 
+            // V50.12: Use a longer timeout for the session fetch itself if possible
             const { data: { session }, error } = await supabase.auth.getSession();
 
             if (error) throw error;
@@ -99,12 +101,14 @@ export function AuthProvider({ children }) {
                 console.log('🔐 [Auth] No se encontró sesión activa.');
             }
         } catch (error) {
-            // V50.7: Ignore AbortErrors, as the useEffect 'ignore' flag handles lifecycle
-            if (error.name !== 'AbortError' && !error.message?.includes('aborted')) {
-                console.error('🔥 [Auth] Error real en la sesión:', error);
-                setUser(null);
-                setProfile(null);
+            // Silently handle aborts during Oracle heavy cycles
+            if (error.name === 'AbortError' || error.message?.includes('aborted')) {
+                console.log('🔐 [Auth] Petición abortada por congestión. Manteniendo estado.');
+                return;
             }
+            console.error('🔥 [Auth] Error real en la sesión:', error);
+            setUser(null);
+            setProfile(null);
         } finally {
             setLoading(false);
             setSessionResolved(true);

@@ -238,26 +238,32 @@ export default function AppPage() {
             // Fetch finished matches in background
             getFinishedMatches(12).then(data => setFinishedMatches(data || []));
 
-            // V50.11 PHASE 3: SECURE SEQUENTIAL ORACLE (BATCH-AWARE)
+            // V50.12 PHASE 3: STEALTH SEQUENTIAL ORACLE (BATCH-AWARE)
             setTimeout(async () => {
                 if (!user || document.visibilityState !== 'visible') return;
 
-                console.log('🔮 [Seq] Fase 3: Activando Oráculo (Modo Batching V50.11)...');
+                console.log('🔮 [Seq] Fase 3: Activando Oráculo (Protocolo Stealth V50.12)...');
 
-                // --- OPTIMIZATION: FETCH HISTORY ONCE FOR ALL MATCHES ---
+                // --- STEALTH BATCHING: FETCH GLOBAL DATA ONCE ---
                 const { getRecentPredictions } = await import('@/lib/history-tracker');
-                const history = await getRecentPredictions(30).catch(() => []);
-                console.log('📚 [Oráculo] Historial precargado para lote.');
+                const { getDynamicWeights } = await import('@/lib/ml-optimizer');
+
+                const [history, weights] = await Promise.all([
+                    getRecentPredictions(30).catch(() => []),
+                    getDynamicWeights().catch(() => ({}))
+                ]);
+
+                console.log('📚 [Oráculo] Contexto Global inyectado (Historial + Pesos ML).');
 
                 setOracleStats({ analyzed: 0, highConfidence: 0 });
 
-                // Analyze top 8 matches only for free-tier stability
-                for (const match of rawMatches.slice(0, 8)) {
+                // Analyze top 6 matches only for maximum session protection
+                for (const match of rawMatches.slice(0, 6)) {
                     if (!user) break;
 
                     try {
                         console.log(`🧠 [Oráculo] Analizando: ${match.home.name} vs ${match.away.name}`);
-                        const analysis = await analyzeMatchDeep(match, history); // Pass history!
+                        const analysis = await analyzeMatchDeep(match, { prefetchedHistory: history, prefetchedWeights: weights });
 
                         setMatches(current => current.map(m =>
                             m.id === match.id ? { ...m, ...analysis, isAnalyzed: true } : m
@@ -268,13 +274,14 @@ export default function AppPage() {
                             highConfidence: (analysis.prediction?.oracleConfidence >= 70) ? prev.highConfidence + 1 : prev.highConfidence
                         }));
 
-                        await new Promise(r => setTimeout(r, 1500));
+                        // V50.12: Increased delay to 2000ms to let the browser breathe
+                        await new Promise(r => setTimeout(r, 2000));
                     } catch (err) {
                         console.warn(`Skip match ${match.id}:`, err.message);
                     }
                 }
-                console.log('🏁 [Seq] Oráculo finalizado (Backend Protegido).');
-            }, 4500);
+                console.log('🏁 [Seq] Oráculo Stealth finalizado con éxito.');
+            }, 6000); // 6s Buffer for even more safety
 
         } catch (error) {
             console.error('Sequence Error:', error);
