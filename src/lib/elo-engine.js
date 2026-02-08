@@ -123,8 +123,8 @@ export function getEloWinProbability(homeId, awayId, sport = 'football') {
     const rAway = getTeamElo(awayId);
 
     // Home Advantage Bonus (Modern parity calibration)
-    const homeAdvantage = (sport === 'basketball' || sport === 'nba') ? 15 :
-        (sport === 'football' || sport === 'soccer') ? 10 : 5;
+    const homeAdvantage = (sport === 'basketball' || sport === 'nba') ? 3 :
+        (sport === 'football' || sport === 'soccer') ? 5 : 2;
 
     const netHomeElo = rHome + homeAdvantage;
 

@@ -67,6 +67,13 @@ export function calculatePoissonProbabilities(homeXG, awayXG) {
         }
     }
 
+    // V63.11: Add extreme parity jitter if values are identical
+    if (Math.abs(homeWin - awayWin) < 0.01) {
+        const jitter = (Math.random() - 0.5) * 0.02; // +/- 1%
+        homeWin += jitter;
+        awayWin -= jitter;
+    }
+
     return { homeWin, draw, awayWin };
 }
 
