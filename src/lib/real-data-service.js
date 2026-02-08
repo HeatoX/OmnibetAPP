@@ -590,9 +590,12 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             else text = 'Empate (Cerrado)';
             confidence = 'silver';
         } else {
-            // Priority to Analytical Winner to "maintain prediction"
-            text = analyticalWinner === 'draw' ? 'Empate' :
-                analyticalWinner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`;
+            // V63.6 Fix: Synchronize text with the team that actually HAS the probability
+            // If live scores or analytical shifts make another team the leader (>58%), favor them in text.
+            const textWinner = (finalMax > 58) ? currentWinner : analyticalWinner;
+
+            text = textWinner === 'draw' ? 'Empate' :
+                textWinner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`;
         }
 
         const explanation = [
