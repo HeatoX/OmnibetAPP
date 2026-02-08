@@ -74,21 +74,12 @@ export function AuthProvider({ children }) {
 
     async function checkSession() {
         try {
-            // V50.6.3: Double verification to avoid AbortError false negatives
-            const { data: { session }, error } = await supabase.auth.getSession();
+            // V50.6.5: Primary session check
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-            if (error) {
-                if (error.name === 'AbortError' || error.message?.includes('aborted')) {
-                    console.warn('⚠️ [Auth] checkSession abortado (probablemente Strict Mode), reintentando con getUser...');
-                    const { data: { user: forcedUser } } = await supabase.auth.getUser();
-                    if (forcedUser) {
-                        setUser(forcedUser);
-                        await loadProfile(forcedUser.id, forcedUser);
-                    }
-                } else {
-                    throw error;
-                }
-            } else if (session?.user) {
+            if (sessionError) throw sessionError;
+
+            if (session?.user) {
                 console.log('🔐 [Auth] Sesión activa encontrada:', session.user.email);
                 setUser(session.user);
                 await loadProfile(session.user.id, session.user);
@@ -96,7 +87,24 @@ export function AuthProvider({ children }) {
                 console.log('🔐 [Auth] No se encontró sesión activa.');
             }
         } catch (error) {
-            console.error('🔐 [Auth] Error crítico en checkSession:', error);
+            // Check if it's an AbortError (common in Strict Mode/Fast Refresh)
+            const isAbort = error.name === 'AbortError' || error.message?.includes('aborted');
+
+            if (isAbort) {
+                console.warn('⚠️ [Auth] checkSession abortado, intentando recuperación silenciosa...');
+                try {
+                    const { data: { user: recoveredUser } } = await supabase.auth.getUser();
+                    if (recoveredUser) {
+                        console.log('🔐 [Auth] Usuario recuperado tras aborto:', recoveredUser.email);
+                        setUser(recoveredUser);
+                        await loadProfile(recoveredUser.id, recoveredUser);
+                    }
+                } catch (retryError) {
+                    console.error('🔐 [Auth] Fallo recuperación tras aborto:', retryError);
+                }
+            } else {
+                console.error('🔐 [Auth] Error crítico en checkSession:', error);
+            }
         } finally {
             setLoading(false);
             setSessionResolved(true);
