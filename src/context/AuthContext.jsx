@@ -130,12 +130,13 @@ export function AuthProvider({ children }) {
     }
 
     async function signUp(email, password, name) {
+        const siteUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
                 data: { name },
-                emailRedirectTo: typeof window !== 'undefined' ? window.location.origin + '/auth/callback' : undefined,
+                emailRedirectTo: siteUrl + '/auth/callback',
             }
         });
 
@@ -167,9 +168,6 @@ export function AuthProvider({ children }) {
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
-            options: {
-                data: { name }
-            }
         });
 
         if (error) throw error;
@@ -197,10 +195,11 @@ export function AuthProvider({ children }) {
     }
 
     async function signInWithGoogle() {
+        const siteUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: typeof window !== 'undefined' ? window.location.origin + '/app' : undefined,
+                redirectTo: siteUrl + '/app',
             }
         });
 
