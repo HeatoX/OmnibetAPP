@@ -31,8 +31,8 @@ export function calculateGoalExpectancy(homeStats, awayStats, leagueAvg = LEAGUE
 
     // Fallbacks if no stats
     const homeScored = homeStats?.scoredAvg || 1.2;
-    const homeConceded = homeStats?.concededAvg || 1.1;
-    const awayScored = awayStats?.scoredAvg || 1.1;
+    const homeConceded = homeStats?.concededAvg || 1.2;
+    const awayScored = awayStats?.scoredAvg || 1.2;
     const awayConceded = awayStats?.concededAvg || 1.2;
 
     const homeAttack = homeScored / leagueAvg;
