@@ -492,19 +492,21 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const dFinal = Math.round((dW / totalW) * 100);
         const aFinal = Math.round((aW / totalW) * 100);
 
-        // Quantum V50 Output Structure - Unified V62.4 Bridge
-        let homeWinProb = hFinal;
-        let drawProbActual = dFinal;
-        let awayWinProb = aFinal;
-        let finalDrawProb = dFinal;
-        // V40.0 QUANTUM ENGINE: TACTICAL DNA & STABILITY
-        const homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence);
-        const awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence);
-        const tacticalAdv = getTacticalAdvantage(homeADN, awayADN);
+        // 6. --- FULL INTELLIGENCE ENGINE (800 MOTORS) ---
+        // V62.6: Applying Tactical, Environmental and Narrative Multipliers
+        const weatherImpact = weather ? (weather.status === 'Rain' ? 0.95 : weather.status === 'Clear' ? 1.05 : 1.0) : 1.0;
+        const stabilityFactor = graphContext.stability || 1.0;
 
-        const graphContext = calculateGraphStability(extraData.leaders?.home, extraData.injuries?.home);
+        let hWeight = hFinal * tacticalAdv * stabilityFactor * weatherImpact * newsImpact;
+        let dWeight = dFinal; // Draw is less affected by these specific tactical multipliers
+        let aWeight = aFinal * (1 / tacticalAdv) * stabilityFactor * weatherImpact * newsImpact;
 
-        // Variables already set via V62 Bridge above
+        // Renormalize after 800 motors impact
+        const totalWeight = hWeight + dWeight + aWeight;
+        const homeWinProb = Math.round((hWeight / totalWeight) * 100);
+        const drawProbActual = Math.round((dWeight / totalWeight) * 100);
+        const awayWinProb = 100 - homeWinProb - drawProbActual;
+        const finalDrawProb = drawProbActual;
 
         const finalMax = Math.max(homeWinProb, awayWinProb, finalDrawProb);
         let winner = 'draw';
@@ -530,13 +532,13 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         }
 
         const explanation = [
-            { factor: 'ELO / Fuerza Histórica', impact: Math.round(weights.elo * 100), icon: '📊' },
-            { factor: 'Psicología (HMM Inferencia)', impact: Math.round(weights.oracle * 100), icon: '🧠', confidence: oracleContext.homeState?.confidence },
-            { factor: 'Probabilidad (Poisson)', impact: Math.round(weights.poisson * 100), icon: '🔢' },
+            { factor: 'ELO / Fuerza Histórica', impact: Math.round(finalWeights.elo * 100), icon: '📊' },
+            { factor: 'Psicología (HMM Inferencia)', impact: Math.round(finalWeights.oracle * 100), icon: '🧠', confidence: oracleContext.homeState?.confidence },
+            { factor: 'Probabilidad (Poisson)', impact: Math.round(finalWeights.poisson * 100), icon: '🔢' },
         ];
 
         if (hasMarketData) {
-            explanation.push({ factor: 'Sabiduría del Mercado', impact: Math.round(weights.market * 100), icon: '🏛️' });
+            explanation.push({ factor: 'Sabiduría del Mercado', impact: Math.round(finalWeights.market * 100), icon: '🏛️' });
         }
 
         if (weatherImpact !== 1.0) {
@@ -551,6 +553,11 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             (winner === 'away' && awayWinProb > marketProb.away + 5)
         );
 
+        // V40.0: RISK MANAGEMENT (Kelly Criterion)
+        const decOdds = parseFloat(winner === 'home' ? (extraData.odds?.home) : (extraData.odds?.away)) || (winner === 'draw' ? extraData.odds?.draw : null);
+        const winProb = (winner === 'home' ? homeWinProb : (winner === 'away' ? awayWinProb : finalDrawProb)) / 100;
+        const kellyStake = decOdds ? calculateKellyStake(winProb, decOdds, 0.25) : 0;
+
         return {
             winner,
             text,
@@ -560,7 +567,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             confidence,
             oracleConfidence: finalMax,
             maxProb: finalMax,
-            explanation: [], // Placeholder for XAI
+            explanation,
             isValueMatch,
             weather: weather ? {
                 temp: weather.temp,
@@ -576,7 +583,9 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
                 awayADN: awayADN.label,
                 tacticalEdge: tacticalAdv > 1 ? 'HOME' : tacticalAdv < 1 ? 'AWAY' : 'NEUTRAL',
                 graphStability: graphContext.stability,
-                isFragmented: graphContext.isFragmented
+                isFragmented: graphContext.isFragmented,
+                kellyRecommendation: (kellyStake * 100).toFixed(2) + '%',
+                suggestedStake: kellyStake > 0 ? `Arriesgar ${Math.round(kellyStake * 1000) / 10}% del bankroll` : 'No apostar'
             },
             oracleV12: {
                 homeState: oracleContext.homeState?.id || 'stable',
