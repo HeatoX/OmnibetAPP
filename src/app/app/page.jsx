@@ -439,8 +439,7 @@ export default function AppPage() {
 
     // Handle detailed analysis click
     const handleDetailedAnalysis = (match) => {
-        const authInfo = getSubscriptionInfo();
-        const tier = authInfo.effectiveTier;
+        const tier = userTier;
 
         // Detailed analysis requires at least Gold
         if (tier === 'free') {
@@ -711,7 +710,7 @@ export default function AppPage() {
                                             match={match}
                                             onClick={handleMatchClick}
                                             onDetailedAnalysis={handleDetailedAnalysis}
-                                            userTier={getSubscriptionInfo().effectiveTier}
+                                            userTier={userTier}
                                             isUnlocked={unlockedMatches.includes(match.id)}
                                             onUnlock={handleUnlockPrediction}
                                         />
@@ -814,7 +813,7 @@ export default function AppPage() {
                                                                 match={match}
                                                                 onClick={handleMatchClick}
                                                                 onDetailedAnalysis={handleDetailedAnalysis}
-                                                                userTier={getSubscriptionInfo().effectiveTier}
+                                                                userTier={userTier}
                                                                 isUnlocked={unlockedMatches.includes(match.id)}
                                                                 onUnlock={handleUnlockPrediction}
                                                             />
