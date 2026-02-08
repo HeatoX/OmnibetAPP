@@ -13,7 +13,8 @@ export function predictMarketDrift(currentOdds, impliedProb) {
 
     // Simulated Time-Series Logic (LSTM-lite)
     // If IA prob is significantly higher than market, market usually corrects downwards
-    const marketH = 1 / (currentOdds.home || 2.0);
+    const marketH = currentOdds.home ? 1 / currentOdds.home : null;
+    if (marketH === null) return { level: 'low', direction: 'stable', message: 'No market data', volatility: 0 };
     const diff = impliedProb - marketH;
 
     let drift = 'STABLE';

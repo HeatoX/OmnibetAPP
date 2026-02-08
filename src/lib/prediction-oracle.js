@@ -48,6 +48,7 @@ import { detectSharpMoney } from './matrix-engine.js';
 import { calculateOmegaScore } from './omega-core.js';
 import { resilientFetch } from './db-redundancy.js';
 import { getRecentPredictions } from './history-tracker.js';
+import { aggregateSupremePrediction } from './prediction-aggregator.js';
 
 // --- SUPREME V30 IMPORTS ---
 import { getLikelyScores } from './supreme/aeternus-poisson.js';
@@ -183,25 +184,11 @@ async function calculateDeepPrediction(match) {
     const mlConfig = await getDynamicWeights().catch(() => ({}));
     console.log('[Oracle] ✅ Weights Obtained');
 
-    // Execute Brain
-    // Check if calculatePrediction exists
-    if (!calculatePrediction) return { ...oddsPrediction, maxProb: 50 }; // Failsafe
-
-    console.log('[Oracle] ⚙️ Calculating Final Prediction...');
+    // Execute Brain Core
     const aiResult = calculatePrediction(match, analysisData, { weights: mlConfig });
-    console.log('[Oracle] ✅ Calculation Complete');
-
-    // V29: Market Heatmap Integration
     const marketHeat = detectSharpMoney(match);
 
-    // ========================================
-    // V30: SUPREME EVOLUTION INTEGRATION 🌌
-    // ========================================
-
-    // 1. Aeternus Poisson (Exact Scores)
-    const likelyScores = getLikelyScores(aiResult.homeWinProb, aiResult.awayWinProb, aiResult.drawProb, match.sport, match.id);
-
-    // 2. Bayesian Bridge (Prob Refinement) - V30 Balanced Sync
+    // Supreme Metrics Calculation
     const supremeBayesian = refineWithBayesian({
         home: aiResult.homeWinProb,
         draw: aiResult.drawProb,
@@ -211,71 +198,33 @@ async function calculateDeepPrediction(match) {
         momentumScore: aiResult.confidence / 100
     });
 
-    const supremeShift = calculateSupremeShift(aiResult.homeWinProb, supremeBayesian.home);
-
-    // 3. Vortex Oscillator (Quant force)
     const vortexForce = calculateVortexForce(match);
 
-    // FINAL CONSOLIDATION
-    // We return an extended aiResult here, and the outer function will process it further.
-    // This structure allows for modular enhancements without breaking the core prediction flow.
-    const extendedAiResult = {
-        ...aiResult,
-        supremeVerdict: {
-            likelyScores,
-            bayesianProbs: supremeBayesian,
-            supremeShift,
-            vortexForce,
-            status: 'SUPREME_ACTIVE'
-        },
-        marketHeat
+    // 6. --- V50.5: UNIFIED SUPREME AGGREGATION (Refactor Maestro) ---
+    console.log('[Oracle] 🌌 Synchronizing Supreme Aggregator...');
+    const supremeAgents = {
+        bayesianBridge: supremeBayesian,
+        vortexForce: vortexForce,
+        marketHeat: marketHeat,
+        sentinel: { home: homeSentiment, away: awaySentiment }
     };
 
-    if (marketHeat.level === 'critical') {
-        extendedAiResult.swarmInsights.push(`🔥 SHARP MONEY: ${marketHeat.message}`);
-    }
-
-    // V16: Destructure Deep Analysis from AI Engine
-    let { homeWinProb, awayWinProb, drawProb, winner: aiWinner, detailedAnalysis, projectedTotal } = extendedAiResult;
+    const unifiedResult = aggregateSupremePrediction(aiResult, supremeAgents, match);
+    console.log('[Oracle] ✅ Unified Verdict Achieved:', unifiedResult.winner, unifiedResult.maxProb + '%');
 
     // V27: Omega Protocol calculation
-    const omegaData = calculateOmegaScore(match, aiResult, analysisData);
+    const omegaData = calculateOmegaScore(match, unifiedResult, analysisData);
 
-    // V30.1: ANCHOR DEPRECATED (Accuracy Rescue Protocol)
-    // We no longer anchor to initial winner to allow the deep analysis to catch upsets.
-    // The statistically superior team should always be the predicted winner.
-
-    const maxProb = Math.max(homeWinProb, awayWinProb, drawProb);
-
-    // V30: News Sentiment Injection (Non-destructive)
-    if (homeSentiment?.scoreModifier) homeWinProb += homeSentiment.scoreModifier;
-    if (awaySentiment?.scoreModifier) awayWinProb += awaySentiment.scoreModifier;
-
-    // Normalización post-ajuste (Sigmoid light)
-    const sum = homeWinProb + awayWinProb + drawProb;
-    const pHome = Math.round((homeWinProb / sum) * 100);
-    const pAway = Math.round((awayWinProb / sum) * 100);
-    const pDraw = Math.round((drawProb / sum) * 100);
-
-    const finalMax = Math.max(pHome, pAway, pDraw);
-    let confidence = 'silver';
-    if (finalMax >= 70) confidence = 'diamond';
-    else if (finalMax >= 55) confidence = 'gold';
-
-    // V24: Sync textual prediction with winner
+    const finalWinner = unifiedResult.winner;
     const homeName = match.home?.name || 'Local';
     const awayName = match.away?.name || 'Visita';
-    const finalWinner = aiWinner || 'draw';
     const text = finalWinner === 'draw' ? 'Empate' : (finalWinner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`);
 
     return {
-        homeWinProb: pHome,
-        awayWinProb: pAway,
-        drawProb: pDraw,
-        winner: finalWinner,
+        ...unifiedResult,
         text,
-        maxProb: finalMax,
-        confidence,
+        maxProb: unifiedResult.maxProb,
+        confidence: unifiedResult.confidence,
         basedOnOdds: !!oddsPrediction,
         swarmInsights: aiResult.swarmInsights || [],
         detailedAnalysis: detailedAnalysis || [],
@@ -284,8 +233,10 @@ async function calculateDeepPrediction(match) {
         omega: omegaData?.score || 0,
         isOmegaSingular: omegaData?.singular || false,
         marketHeat: marketHeat,
-        supremeVerdict: extendedAiResult.supremeVerdict,
-        // News Indicators for UI
+        supremeVerdict: {
+            ...extendedAiResult.supremeVerdict,
+            ...unifiedResult
+        },
         sentinelReport: {
             home: homeSentiment,
             away: awaySentiment

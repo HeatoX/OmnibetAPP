@@ -100,24 +100,26 @@ const RISK_FACTORS = {
 };
 
 /**
- * Agente de Análisis de Forma (Recent Form)
- * Calcula un puntaje de 0 a 1 basado en los últimos resultados reales (W, D, L)
+ * Agente de Forma Reciente (Decaimiento Exponencial - V50.5 Master Fix)
+ * Da un peso significativamente mayor a los resultados más recientes.
  */
-function analyzeForm(recentGames) {
+function analyzeForm(recentGames, decayFactor = 0.85) {
     if (!recentGames || recentGames.length === 0) return 0.5;
 
-    // Pesos: Victoria=1, Empate=0.5, Derrota=0
-    // V30.1: Mayor peso a victorias recientes (recency bias positivo)
+    let totalWeight = 0;
     const points = recentGames.reduce((acc, game, idx) => {
-        const recencyWeight = 1 + (idx / recentGames.length); // Más peso a los últimos juegos
+        // Ponderación exponencial: el partido más reciente (último en el array) tiene peso 1
+        const weight = Math.pow(decayFactor, (recentGames.length - 1 - idx));
+        totalWeight += weight;
+
         let val = 0;
         if (game.result === 'W') val = 1;
         else if (game.result === 'D') val = 0.5;
-        return acc + (val * recencyWeight);
+
+        return acc + (val * weight);
     }, 0);
 
-    const maxPossible = recentGames.reduce((acc, _, idx) => acc + (1 + (idx / recentGames.length)), 0);
-    return points / maxPossible;
+    return points / totalWeight;
 }
 
 /**
@@ -273,11 +275,12 @@ export function calculatePrediction(match, analysis, config = {}) {
     let drawProb = 0;
     if (sport === 'football' || sport === 'soccer') {
         const diff = Math.abs(homeFormScore - awayFormScore);
-        drawProb = 20 + (10 * (1 - diff)); // Dinámico basado en paridad
+        const dynamicDrawProb = 20 + (10 * (1 - diff)); // Dinámico basado en paridad
+        drawProb = dynamicDrawProb; // Sync global drawProb
 
         // Ajuste proporcional para mantener 100%
-        finalHomeProb *= (1 - (drawProb / 100));
-        finalAwayProb *= (1 - (drawProb / 100));
+        finalHomeProb *= (1 - (dynamicDrawProb / 100));
+        finalAwayProb *= (1 - (dynamicDrawProb / 100));
     }
 
     // --- MOTOR MULTIDEPORTE V15 (Decoupled Engine) ---
@@ -356,31 +359,29 @@ export function calculatePrediction(match, analysis, config = {}) {
         mathDraw = 0;
     }
 
-    // --- V24: PRECISION REBALANCE ---
-    let trueHome = mathHome * 100;
-    let trueAway = mathAway * 100;
-    let trueDraw = mathDraw * 100;
+    // --- V50.5: NORMALIZACIÓN MAESTRA (Audit Corrected) ---
+    const finalDrawProbValue = (sport === 'football' || sport === 'soccer') ? 22 : 0; // Baseline
+    const winProbTotal = 100 - finalDrawProbValue;
 
-    // V29: The "performSharpening" boost is now deprecated in favor of 
-    // Neural Calibration weights. We keep a light Sigmoid normalization.
-    const performNormalization = () => {
-        const sum = trueHome + trueAway + trueDraw;
-        if (sum > 0) {
-            trueHome = Math.round((trueHome / sum) * 100);
-            trueAway = Math.round((trueAway / sum) * 100);
-            trueDraw = Math.round((trueDraw / sum) * 100);
-        }
-    };
-    performNormalization();
+    // Normalizamos sobre el espacio de victoria restante
+    const totalWinMath = mathHome + mathAway;
+    let trueHome = Math.round((mathHome / totalWinMath) * winProbTotal);
+    let trueAway = Math.round((mathAway / totalWinMath) * winProbTotal);
+    let trueDrawValue = finalDrawProbValue;
+
+    // Ajuste final por redondeo
+    if (trueHome + trueAway + trueDrawValue !== 100) {
+        trueDrawValue = 100 - trueHome - trueAway;
+    }
 
     // --- V30.7: DECISION LOGIC (Ultra-Precision) ---
-    const finalMax = Math.max(trueHome, trueAway, trueDraw);
-    const sorted = [trueHome, trueAway, trueDraw].sort((a, b) => b - a);
+    const finalMax = Math.max(trueHome, trueAway, trueDrawValue);
+    const sorted = [trueHome, trueAway, trueDrawValue].sort((a, b) => b - a);
     const mMargin = sorted[0] - sorted[1];
 
     let winner = 'draw';
-    if (trueHome > trueAway && trueHome > trueDraw) winner = 'home';
-    else if (trueAway > trueHome && trueAway > trueDraw) winner = 'away';
+    if (trueHome > trueAway && trueHome > trueDrawValue) winner = 'home';
+    else if (trueAway > trueHome && trueAway > trueDrawValue) winner = 'away';
     else winner = 'draw';
 
     // Uncertainty detection
@@ -390,11 +391,11 @@ export function calculatePrediction(match, analysis, config = {}) {
     }
 
     // Asegurar que en deportes sin empate el ganador sea sí o sí H o A
-    if (mathDraw === 0 && winner === 'draw') {
+    if (finalDrawProbValue === 0 && winner === 'draw') {
         winner = trueHome >= trueAway ? 'home' : 'away';
     }
 
-    const maxP = Math.max(trueHome, trueAway, trueDraw);
+    const maxP = Math.max(trueHome, trueAway, trueDrawValue);
 
     // --- GENERACIÓN DE ANÁLISIS DETALLADO (V16 Paul the Octopus) ---
     // Usamos los datos REALES calculados arriba, cero invención.
@@ -469,7 +470,7 @@ export function calculatePrediction(match, analysis, config = {}) {
     return {
         homeWinProb: Math.round(trueHome),
         awayWinProb: Math.round(trueAway),
-        drawProb: Math.round(trueDraw),
+        drawProb: Math.round(trueDrawValue),
         winner,
         confidence: getConfidenceLevel(maxP),
         swarmInsights,

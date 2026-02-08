@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { analyzeMatchDeep } from '@/lib/prediction-oracle';
 import { getMatchDetails } from '@/lib/real-data-service';
 import { getTeamHonours } from '@/lib/visuals-service';
+import { generateAlphaNarrative } from '@/lib/narrative-engine';
 
 import OddsComparison from './OddsComparison';
 import SocialShareModal from './SocialShareModal';
@@ -291,8 +292,6 @@ export default function DetailedMatchAnalysis({ match, onClose }) {
                             {[
                                 { id: 'overview', icon: '📈', label: 'Resumen' },
                                 { id: 'stats', icon: '📊', label: 'Estadísticas' },
-                                { id: 'lineups', icon: '👕', label: 'Alineaciones' },
-                                { id: 'tools', icon: '🧮', label: 'Herramientas' },
                                 { id: 'supreme', icon: '🌌', label: 'Supremo' }
                             ].map(t => (
                                 <button
@@ -312,33 +311,54 @@ export default function DetailedMatchAnalysis({ match, onClose }) {
 
                     {/* Content Grid */}
                     <div className="animate-slideUp space-y-12 pb-20 w-full">
+                        {/* 1. OVERVIEW TAB */}
                         {activeTab === 'overview' && (
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                <div className="space-y-6">
-                                    <ContextCard weather={weather} venue={venue} referee={match.referee || officials?.[0]} sport={match.sport} />
-                                    <TeamHonoursCard teamName={match.home.name} side="Local" />
-                                    <TeamHonoursCard teamName={match.away.name} side="Visitante" />
-                                    <LeagueStandingCard homeForm={homeForm} awayForm={awayForm} league={match.league} isCup={isCupMatch} sport={match.sport} />
+                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                {/* Alpha Narrative (V50.5 Highlight) */}
+                                <div className="p-6 bg-slate-900/50 rounded-2xl border border-emerald-500/30 backdrop-blur-md relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-100 transition-opacity">
+                                        <div className="text-4xl">🔱</div>
+                                    </div>
+                                    <h3 className="text-emerald-400 font-black text-lg mb-3 flex items-center gap-2">
+                                        <span className="animate-pulse">🔥</span> ALPHA INSIGHT: EL "POR QUÉ" DEL ORÁCULO
+                                    </h3>
+                                    <div className="text-slate-200 leading-relaxed font-medium italic">
+                                        {generateAlphaNarrative(match, analysis)}
+                                    </div>
                                 </div>
-                                <div className="lg:col-span-2 space-y-6">
-                                    {leaders?.home && leaders?.away ? (
-                                        <div className="bg-[#151725] border border-white/5 rounded-2xl p-6 relative overflow-hidden">
-                                            <h3 className="text-gray-300 font-bold text-sm uppercase mb-6">🔥 Duelo de Figuras</h3>
-                                            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-                                                <PlayerSpotlight player={leaders.home[0]} side="left" color="cyan" team={match.home.name} />
-                                                <div className="text-gray-600 text-4xl font-black opacity-30">VS</div>
-                                                <PlayerSpotlight player={leaders.away[0]} side="right" color="purple" team={match.away.name} />
+                                <div className="bg-gradient-to-r from-cyan-600 to-blue-700 p-6 rounded-2xl shadow-xl flex flex-col items-center gap-4 text-center">
+                                    <h3 className="text-white font-bold text-lg">Matrix Scientific Audit (V26)</h3>
+                                    <button onClick={() => setShowScientificAudit(true)} className="w-full py-3 bg-white text-blue-900 font-black rounded-xl hover:scale-105 transition-transform uppercase">Iniciar Auditoría</button>
+                                </div>
+                                <StakeCalculator initialOdds={match.prediction?.odds ?? null} initialConfidence={match.prediction?.numericConfidence ?? 50} />
+                                <OddsComparison bookmakers={analysis?.bookmakers || []} prediction={match.prediction} />
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    <div className="space-y-6">
+                                        <ContextCard weather={weather} venue={venue} referee={match.referee || officials?.[0]} sport={match.sport} />
+                                        <TeamHonoursCard teamName={match.home.name} side="Local" />
+                                        <TeamHonoursCard teamName={match.away.name} side="Visitante" />
+                                        <LeagueStandingCard homeForm={homeForm} awayForm={awayForm} league={match.league} isCup={isCupMatch} sport={match.sport} />
+                                    </div>
+                                    <div className="lg:col-span-2 space-y-6">
+                                        {leaders?.home && leaders?.away ? (
+                                            <div className="bg-[#151725] border border-white/5 rounded-2xl p-6 relative overflow-hidden">
+                                                <h3 className="text-gray-300 font-bold text-sm uppercase mb-6">🔥 Duelo de Figuras</h3>
+                                                <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                                                    <PlayerSpotlight player={leaders.home[0]} side="left" color="cyan" team={match.home.name} />
+                                                    <div className="text-gray-600 text-4xl font-black opacity-30">VS</div>
+                                                    <PlayerSpotlight player={leaders.away[0]} side="right" color="purple" team={match.away.name} />
+                                                </div>
                                             </div>
-                                        </div>
-                                    ) : <div className="bg-[#151725] border border-white/5 rounded-2xl p-6 text-center text-gray-500">Datos de figuras no disponibles.</div>}
-                                    <HeadToHeadList h2h={h2h} homeId={match.home.id} />
+                                        ) : <div className="bg-[#151725] border border-white/5 rounded-2xl p-6 text-center text-gray-500">Datos de figuras no disponibles.</div>}
+                                        <HeadToHeadList h2h={h2h} homeId={match.home.id} />
+                                    </div>
                                 </div>
                             </div>
                         )}
 
                         {activeTab === 'stats' && <div className="grid md:grid-cols-2 gap-8"><FormTab homeForm={homeForm} awayForm={awayForm} /></div>}
 
-                        {activeTab === 'lineups' && (
+                        {activeTab === 'roster' && (
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div className="space-y-6">
                                     <TeamRosterList roster={rosters?.home} teamName={match.home.name} headerColor="cyan" />
@@ -353,12 +373,7 @@ export default function DetailedMatchAnalysis({ match, onClose }) {
 
                         {activeTab === 'tools' && (
                             <div className="max-w-4xl mx-auto space-y-10">
-                                <div className="bg-gradient-to-r from-cyan-600 to-blue-700 p-6 rounded-2xl shadow-xl flex flex-col items-center gap-4 text-center">
-                                    <h3 className="text-white font-bold text-lg">Matrix Scientific Audit (V26)</h3>
-                                    <button onClick={() => setShowScientificAudit(true)} className="w-full py-3 bg-white text-blue-900 font-black rounded-xl hover:scale-105 transition-transform uppercase">Iniciar Auditoría</button>
-                                </div>
-                                <StakeCalculator initialOdds={match.prediction?.odds || 2.0} initialConfidence={match.prediction?.numericConfidence || 50} />
-                                <OddsComparison bookmakers={analysis?.bookmakers || []} prediction={match.prediction} />
+                                {/* This content was moved to the overview tab */}
                             </div>
                         )}
 
@@ -510,6 +525,47 @@ export default function DetailedMatchAnalysis({ match, onClose }) {
                                                 {match.prediction?.quantum?.kellyRecommendation}
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {/* ALPHA SANDBOX TAB (V50.5) */}
+                        {activeTab === 'sandbox' && (
+                            <div className="animate-in zoom-in-95 duration-500 space-y-8">
+                                <div className="p-10 text-center bg-slate-900/80 rounded-3xl border-2 border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.15)] backdrop-blur-xl">
+                                    <div className="text-6xl mb-6">🧪</div>
+                                    <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Alpha Simulation Sandbox</h2>
+                                    <p className="text-cyan-400 font-bold mb-10 max-w-lg mx-auto leading-relaxed">
+                                        Modifica las variables en tiempo real y observa cómo reacciona el cerebro del Oráculo.
+                                    </p>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
+                                        <div className="p-6 bg-slate-800/50 rounded-2xl border border-slate-700 hover:border-cyan-400/50 transition-all cursor-not-allowed opacity-75">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <span className="font-bold text-white">Factor Climático</span>
+                                                <span className="text-xs bg-slate-700 px-2 py-1 rounded text-slate-400">PRÓXIMAMENTE</span>
+                                            </div>
+                                            <p className="text-xs text-slate-400">¿Y si llueve torrencialmente? El Oráculo ajustará el factor técnico.</p>
+                                        </div>
+                                        <div className="p-6 bg-slate-800/50 rounded-2xl border border-slate-700 hover:border-cyan-400/50 transition-all cursor-not-allowed opacity-75">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <span className="font-bold text-white">Baja de Estrella</span>
+                                                <span className="text-xs bg-slate-700 px-2 py-1 rounded text-slate-400">PRÓXIMAMENTE</span>
+                                            </div>
+                                            <p className="text-xs text-slate-400">Simula la ausencia del máximo goleador o asistente.</p>
+                                        </div>
+                                        <div className="p-6 bg-slate-800/50 rounded-2xl border border-slate-700 hover:border-cyan-400/50 transition-all cursor-not-allowed opacity-75 col-span-full">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <span className="font-bold text-white">Vortex Force Override</span>
+                                                <span className="text-xs bg-slate-700 px-2 py-1 rounded text-slate-400">CONTROL DE ÉLITE</span>
+                                            </div>
+                                            <p className="text-xs text-slate-400">Ajusta manualmente la intensidad de racha percibida para forzar un análisis de "Upset".</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-12 bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                                        <div className="text-xs font-mono text-cyan-500 mb-2 uppercase tracking-widest animate-pulse">Alpha System Status</div>
+                                        <div className="text-sm text-slate-400 italic">"Simulador en fase beta. Mejora tu plan a Diamond para acceso prioritario a la v2.0."</div>
                                     </div>
                                 </div>
                             </div>

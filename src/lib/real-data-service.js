@@ -609,7 +609,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         );
 
         // V40.0: RISK MANAGEMENT (Kelly Criterion)
-        const decOdds = parseFloat(winner === 'home' ? (extraData.odds?.home || 1.9) : (extraData.odds?.away || 2.0));
+        const decOdds = parseFloat(winner === 'home' ? (extraData.odds?.home) : (extraData.odds?.away)) || null;
         const winProb = (winner === 'home' ? homeWinProb : awayWinProb) / 100;
         const kellyStake = calculateKellyStake(winProb, decOdds, 0.25); // 1/4 Kelly for safety
 

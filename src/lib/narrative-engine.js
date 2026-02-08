@@ -58,3 +58,34 @@ export function getNarrativeWeight(homeName, awayName) {
         narrativeIntensity: activeFactors.length > 0 ? 'HIGH' : 'STANDARD'
     };
 }
+
+/**
+ * V50.5 ALPHA WHY ENGINE: Generates persuasive XAI narratives.
+ */
+export function generateAlphaNarrative(match, prediction) {
+    const { home, away, league } = match;
+    const p = prediction;
+
+    // Select dominant factor
+    let story = "";
+    const homeName = home?.name || 'Local';
+    const awayName = away?.name || 'Visita';
+
+    if (p.maxProb >= 70) {
+        story = `🚀 **VALOR CRÍTICO IDENTIFICADO EN ${league.toUpperCase()}**: El Oráculo ha detectado una ineficiencia en la valoración del mercado. Mientras que las cuotas sugieren paridad, nuestro análisis profundo revela una superioridad estructural del **${p.winner === 'home' ? homeName : awayName}**. `;
+
+        if (p.omega > 80) story += `El factor **Omega Singular** indica un desajuste del modelo de riesgo global. `;
+        if (p.marketHeat?.level === 'critical') story += `El flujo de **Sharp Money** confirma que los inversores institucionales están entrando en esta dirección. `;
+
+        story += `Esta es una oportunidad táctica basada en datos que aún no han sido plenamente cotizados.`;
+    } else if (p.maxProb >= 60) {
+        story = `📈 **ANÁLISIS DE MOMENTO**: La convergencia de los motores Bayesiano y de Vórtice favorece al ${p.winner === 'home' ? homeName : awayName}. `;
+        story += `La racha de forma reciente, ajustada por decaimiento exponencial, muestra una ventaja de consistencia que el modelo simple ignora. `;
+        story += `Recomendamos un enfoque estratégico con este pick de confianza media-alta.`;
+    } else {
+        story = `⚖️ **ANÁLISIS DE EQUILIBRIO**: Duelo de alta fricción técnica. El escenario más probable oscila hacia el **${p.text}**, pero la cercanía de los indicadores de ambos equipos sugiere un partido decidido por detalles mínimos. `;
+        story += `Ideal para traders que buscan valor en mercados de hándicap asiático.`;
+    }
+
+    return story;
+}

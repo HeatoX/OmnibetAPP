@@ -23,8 +23,8 @@ export default function ScientificAudit({ match, analysis, onClose }) {
             const travel = getTravelAudit(match.away, analysis?.gameInfo?.venue || { city: 'London' });
 
             // Market data from real match odds
-            const open = match.odds?.history?.[0]?.home || 2.0;
-            const current = match.odds?.home || 2.0;
+            const open = match.odds?.history?.[0]?.home ?? null;
+            const current = match.odds?.home ?? null;
             const market = getMarketAudit({ open, current }, 1250000);
             const ref = getRefereeAudit(analysis?.gameInfo?.officials?.[0]?.fullName || match.referee, match.home.name);
 
