@@ -162,28 +162,12 @@ export default function AppPage() {
 
     // Redirect to landing if not logged in
     useEffect(() => {
-        // V50.3: Use sessionResolved and Hinting to avoid race conditions
-        const hasSessionHint = typeof window !== 'undefined' && sessionStorage.getItem('omnibet_session_hint') === 'true';
-
-        if (!loading && !user) {
-            // If we have a hint, wait longer because we expect a session to appear
-            const waitTime = hasSessionHint ? 2500 : 800;
-
-            const redirectTimer = setTimeout(() => {
-                if (!user) {
-                    console.log('🚫 [Auth] Acceso denegado: No se encontró sesión tras espera.');
-                    router.push('/');
-                }
-            }, waitTime);
-
-            return () => clearTimeout(redirectTimer);
+        // V50.6.3: Use sessionResolved for accurate protection
+        if (sessionResolved && !user) {
+            console.log('🚫 [Auth] Acceso denegado: Sesión no encontrada tras resolución.');
+            router.push('/');
         }
-
-        // If user is found, clear the hint
-        if (user && hasSessionHint) {
-            sessionStorage.removeItem('omnibet_session_hint');
-        }
-    }, [user, loading, router]);
+    }, [user, sessionResolved, router]);
 
     useEffect(() => {
         async function loadMatches(isSilent = false) {

@@ -60,6 +60,7 @@ export function AuthProvider({ children }) {
                         setProfile(null);
                     }
                     setLoading(false);
+                    setSessionResolved(true);
                 }
             );
             subscription = result?.data?.subscription;
@@ -73,9 +74,22 @@ export function AuthProvider({ children }) {
 
     async function checkSession() {
         try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                console.log('🔐 [Auth] Sesión activa encontrada para:', session.user.email);
+            // V50.6.3: Double verification to avoid AbortError false negatives
+            const { data: { session }, error } = await supabase.auth.getSession();
+
+            if (error) {
+                if (error.name === 'AbortError' || error.message?.includes('aborted')) {
+                    console.warn('⚠️ [Auth] checkSession abortado (probablemente Strict Mode), reintentando con getUser...');
+                    const { data: { user: forcedUser } } = await supabase.auth.getUser();
+                    if (forcedUser) {
+                        setUser(forcedUser);
+                        await loadProfile(forcedUser.id, forcedUser);
+                    }
+                } else {
+                    throw error;
+                }
+            } else if (session?.user) {
+                console.log('🔐 [Auth] Sesión activa encontrada:', session.user.email);
                 setUser(session.user);
                 await loadProfile(session.user.id, session.user);
             } else {
@@ -85,6 +99,7 @@ export function AuthProvider({ children }) {
             console.error('🔐 [Auth] Error crítico en checkSession:', error);
         } finally {
             setLoading(false);
+            setSessionResolved(true);
         }
     }
 

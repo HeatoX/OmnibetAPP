@@ -30,12 +30,14 @@ export default function AdminPage() {
     const isAdmin = user && (ADMIN_EMAILS.includes(user.email) || profile?.is_admin);
 
     useEffect(() => {
-        if (!loading && !user) {
-            router.push('/');
-        } else if (!loading && user && !isAdmin) {
-            router.push('/app');
+        if (sessionResolved) {
+            if (!user) {
+                router.push('/');
+            } else if (!isAdmin) {
+                router.push('/app');
+            }
         }
-    }, [user, loading, isAdmin, router]);
+    }, [user, isAdmin, router, sessionResolved]);
 
     useEffect(() => {
         if (isAdmin) {
