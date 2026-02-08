@@ -205,6 +205,9 @@ export async function syncRecentResults() {
             if (recentHistory) autoCalibrateWeights(recentHistory);
         }
 
+        // 5. AUTO-PRUNING (V63.5 Sustainability Shield)
+        await pruneOldRecords();
+
         return { updated: updatedCount, resolvedMatches };
     } catch (err) {
         console.error('Failed to sync history results:', err);
