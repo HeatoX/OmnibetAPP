@@ -73,67 +73,134 @@ export default function ScientificAudit({ match, analysis, onClose }) {
                         {/* Elite Factor Breakdown (XAI) */}
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-4">
                             <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                🧠 Oráculo Elite V30.60: Desglose de Factores IA
+                                🧠 Oráculo Observer V50.0: Desglose de Factores IA
                             </h3>
                             <div className="space-y-5">
-                                {match.prediction?.explanation?.map((item, idx) => (
+                                {Object.entries(match.prediction?.weights || {}).map(([key, weight], idx) => (
                                     <div key={idx} className="space-y-2">
                                         <div className="flex justify-between items-center text-xs">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-lg">{item.icon}</span>
-                                                <span className="text-gray-300 font-medium uppercase tracking-tighter">{item.factor}</span>
+                                                <span className="text-gray-300 font-medium uppercase tracking-tighter">{key}</span>
                                             </div>
-                                            <span className="text-white font-black">{item.impact}%</span>
+                                            <span className="text-white font-black">{Math.round(weight * 100)}%</span>
                                         </div>
                                         <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                                             <div
                                                 className="h-full bg-gradient-to-r from-cyan-600 to-blue-400 transition-all duration-1000"
-                                                style={{ width: `${item.impact}%` }}
+                                                style={{ width: `${weight * 100}%` }}
                                             ></div>
                                         </div>
-                                        {item.confidence && (
-                                            <div className="text-[9px] text-cyan-400/60 font-mono italic">
-                                                Confidence Level: {item.confidence}% (Probabilidad Latente HMM)
-                                            </div>
-                                        )}
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Audit Grid */}
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* Fatigue Audit */}
-                            <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
-                                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">📍 Desgaste Físico</h3>
+                        {/* Sentinel: Market Anticipation (V50) */}
+                        <div className="bg-gradient-to-r from-blue-900/40 to-cyan-900/40 border border-cyan-500/30 rounded-2xl p-6 mb-4 relative overflow-hidden">
+                            <div className="absolute top-2 right-2 px-2 py-0.5 bg-cyan-500 text-[8px] font-bold text-black rounded uppercase animate-pulse">Sentinel Active</div>
+                            <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
+                                👁️ Anticipación de Mercado (Drift)
+                            </h3>
+                            <div className="flex items-center justify-between gap-6">
+                                <div className="flex-1">
+                                    <div className={`text-lg font-black ${match.prediction?.sentinel?.advice === 'BET_NOW' ? 'text-green-400' : match.prediction?.sentinel?.advice === 'WAIT' ? 'text-amber-400' : 'text-gray-300'}`}>
+                                        {match.prediction?.sentinel?.advice === 'BET_NOW' ? 'CORRECCIÓN INMINENTE' : match.prediction?.sentinel?.advice === 'WAIT' ? 'VALOR EN ASCENSO' : 'MERCADO ESTABLE'}
+                                    </div>
+                                    <p className="text-[10px] text-gray-400 mt-1">{match.prediction?.sentinel?.message}</p>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-xs font-mono text-cyan-400">FIABILIDAD</div>
+                                    <div className="text-2xl font-black text-white">{match.prediction?.sentinel?.confidence}%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Narrative Layer (V50) */}
+                        {match.prediction?.narrative?.factors?.length > 0 && (
+                            <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-purple-500/30 rounded-2xl p-6 mb-4">
+                                <h3 className="text-xs font-bold text-purple-300 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    🎭 Capa Narrativa (Grudge & Glory)
+                                </h3>
                                 <div className="space-y-3">
-                                    <div className="flex justify-between items-center text-[10px]">
-                                        <span className="text-gray-400">Rest Local</span>
-                                        <span className={`font-bold ${auditData.fatigue.homeRest.status === 'FRESH' ? 'text-green-400' : 'text-yellow-400'}`}>
-                                            {auditData.fatigue.homeRest.hours}h ({auditData.fatigue.homeRest.status})
-                                        </span>
+                                    {match.prediction.narrative.factors.map((f, i) => (
+                                        <div key={i} className="flex items-center gap-3 p-2 bg-black/20 rounded-xl border border-white/5">
+                                            <span className="text-xl">{f.icon}</span>
+                                            <div>
+                                                <div className="text-[10px] font-bold text-white uppercase">{f.label}</div>
+                                                <div className="text-[9px] text-gray-400">{f.detail}</div>
+                                            </div>
+                                            <div className="ml-auto text-[10px] font-black text-purple-400">+{Math.round(f.weight * 100)}%</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Quantum Layer (V40.0) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            {/* Tactical ADN & Chemistry */}
+                            <div className="bg-gradient-to-br from-purple-900/20 to-transparent border border-purple-500/20 rounded-2xl p-4">
+                                <h3 className="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    🧬 ADN Táctico & Química
+                                </h3>
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center text-xs">
+                                        <span className="text-gray-400 italic">ADN Local:</span>
+                                        <span className="text-white font-bold">{match.prediction?.quantum?.homeADN}</span>
                                     </div>
-                                    <div className="flex justify-between items-center text-[10px]">
-                                        <span className="text-gray-400">Transfer Visita</span>
-                                        <span className="font-bold text-white">{auditData.fatigue.travel.km} KM</span>
+                                    <div className="flex justify-between items-center text-xs">
+                                        <span className="text-gray-400 italic">ADN Visita:</span>
+                                        <span className="text-white font-bold">{match.prediction?.quantum?.awayADN}</span>
                                     </div>
+                                    <div className="h-1 w-full bg-white/5 rounded-full mt-2">
+                                        <div
+                                            className={`h-full transition-all duration-1000 ${match.prediction?.quantum?.isFragmented ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]'}`}
+                                            style={{ width: `${(match.prediction?.quantum?.graphStability || 1) * 100}%` }}
+                                        ></div>
+                                    </div>
+                                    <p className="text-[9px] text-gray-500 font-mono">
+                                        Estabilidad del Grafo: {Math.round((match.prediction?.quantum?.graphStability || 1) * 100)}%
+                                        {match.prediction?.quantum?.isFragmented ? ' (Conexión Crítica Perdida)' : ' (Cohesión Táctica Óptima)'}
+                                    </p>
                                 </div>
                             </div>
 
-                            {/* Market Audit */}
+                            {/* Risk Management (Kelly) */}
+                            <div className="bg-gradient-to-br from-emerald-900/20 to-transparent border border-emerald-500/20 rounded-2xl p-4">
+                                <h3 className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    ⚖️ Gestión de Riesgo (Kelly)
+                                </h3>
+                                <div className="space-y-4 text-center py-2">
+                                    <div className="text-2xl font-black text-white tracking-widest">
+                                        {match.prediction?.quantum?.kellyRecommendation || '0.00%'}
+                                    </div>
+                                    <p className="text-[10px] text-emerald-400/80 font-mono uppercase bg-emerald-500/10 py-1 rounded-lg border border-emerald-500/20">
+                                        Stake Sugerido (1/4 Kelly)
+                                    </p>
+                                    <p className="text-[9px] text-gray-500 italic">
+                                        Maximiza crecimiento geométrico del bankroll con riesgo controlado.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Audit Grid (Reduced) */}
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Physical Fatigue remains but smaller */}
                             <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
-                                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">💹 Market Wisdom</h3>
-                                <div className="space-y-3">
-                                    <div className="flex justify-between items-center text-[10px]">
-                                        <span className="text-gray-400">P. Implícita</span>
-                                        <span className="font-bold text-cyan-400">Sincronizada</span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-[10px]">
-                                        <span className="text-gray-400">Value Detect</span>
-                                        <span className={`font-bold ${match.prediction?.isValueMatch ? 'text-emerald-400' : 'text-gray-500'}`}>
-                                            {match.prediction?.isValueMatch ? 'POSITIVO' : 'NEUTRAL'}
-                                        </span>
-                                    </div>
+                                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">📍 Desgaste Físico</h3>
+                                <div className="flex justify-between items-center text-[10px]">
+                                    <span className="text-gray-400">Transfer Visita</span>
+                                    <span className="font-bold text-white">{auditData.fatigue.travel.km} KM</span>
+                                </div>
+                            </div>
+                            <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
+                                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">💹 Market Value</h3>
+                                <div className="flex justify-between items-center text-[10px]">
+                                    <span className="text-gray-400">Value Detect</span>
+                                    <span className={`font-bold ${match.prediction?.isValueMatch ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                        {match.prediction?.isValueMatch ? 'POSITIVO' : 'NEUTRAL'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -142,13 +209,13 @@ export default function ScientificAudit({ match, analysis, onClose }) {
                         <div className="pt-6 border-t border-white/5 text-center">
                             <div className="inline-block px-8 py-3 bg-cyan-500/10 border border-cyan-400/30 rounded-full mb-4">
                                 <span className="text-cyan-400 font-black tracking-widest text-xs uppercase">
-                                    {match.prediction?.isValueMatch ? 'Oportunidad de Valor Detectada por Oráculo Elite' : 'Control Estratégico Verificado'}
+                                    Soberanía Predictiva Confirmada • Oráculo Quantum V40.0
                                 </span>
                             </div>
                             <div className="flex justify-center gap-4 text-[9px] text-gray-500 font-mono italic">
-                                <span>Audit: MATRIX-{match.id?.toString().slice(-6).toUpperCase() || 'V30'}</span>
+                                <span>Audit: MATRIX-{match.id?.toString().slice(-6).toUpperCase() || 'V40'}</span>
                                 <span>•</span>
-                                <span>Modelo: Elite Bayes V30.60</span>
+                                <span>Engine: Cognitive Graph V40.0</span>
                             </div>
                         </div>
                     </div>

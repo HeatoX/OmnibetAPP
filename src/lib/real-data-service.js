@@ -12,7 +12,13 @@ import {
 } from './elo-engine.js';
 import { resilientFetch } from './db-redundancy';
 import { getMatchWeather } from './weather-service';
+import { getNarrativeWeight } from './narrative-engine';
+import { predictMarketDrift } from './observer-market';
+import { getOptimizedPolicy } from './reinforcement-core';
 import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math';
+import { calculateGraphStability } from './graph-engine';
+import { identifyTacticalADN, getTacticalAdvantage } from './tactical-adn';
+import { calculateKellyStake } from './risk-engine';
 
 /**
  * ESPN Public API Endpoints (free, no API key required)
@@ -442,39 +448,68 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const xG = calculateGoalExpectancy({ scoredAvg: 1.5, concededAvg: 1.2 }, { scoredAvg: 1.1, concededAvg: 1.4 }); // Baseline stats
         const poissonProbs = calculatePoissonProbabilities(xG.homeXG, xG.awayXG);
 
-        // 4. Market Wisdom (V30.60: Market Odds Implied Probabilities)
+        // 4. Market Wisdom (V30.60: Market Odds Implied Probabilities + V50 Sentinel)
         const marketProb = extraData?.odds?.impliedProbabilities || { home: 33, draw: 34, away: 33 };
         const hasMarketData = !!extraData?.odds?.impliedProbabilities;
+        const driftData = predictMarketDrift(extraData?.odds, marketProb.home);
 
-        const weatherImpact = weather?.impact || 1.0;
-        const baseWin = (sport === 'basketball' || sport === 'nba' || sport === 'baseball' || sport === 'mlb' || sport === 'tennis') ? 48 : 38;
-        const baseDraw = (sport === 'basketball' || sport === 'nba' || sport === 'baseball' || sport === 'mlb' || sport === 'tennis') ? 0 : 24;
+        // 5. V50 Narrative & Reinforcement Integration
+        const narrative = getNarrativeWeight(homeName, awayName);
 
-        // V30.60 ELITE META-MODEL: DYNAMIC WEIGHTING
-        // Rules: 
-        // 1. Giant matches => Strategic ELO has more weight (Class matters).
-        // 2. Balanced matches => Oracle Momentum has more weight (Streaks matter).
-        // 3. High Market Variance => Statistical Poisson gets a boost.
-
-        let weights = { elo: 0.25, oracle: 0.30, poisson: 0.20, market: 0.25 };
-
+        // Dynamic Weighting Protocol (V50 Core)
+        let baseWeights = { elo: 0.25, oracle: 0.25, poisson: 0.25, market: 0.25, narrative: 0.0 };
         if (homeIsGiant || awayIsGiant) {
-            weights.elo += 0.10;
-            weights.oracle -= 0.05;
-            weights.poisson -= 0.05;
-        } else {
-            // Balanced or small match => Psychology is key
-            weights.oracle += 0.10;
-            weights.elo -= 0.10;
+            baseWeights = { elo: 0.35, oracle: 0.25, poisson: 0.20, market: 0.20, narrative: 0.0 };
+        } else if (Math.abs(eloData.homeWinProb - eloData.awayWinProb) < 10) {
+            baseWeights = { elo: 0.15, oracle: 0.35, poisson: 0.25, market: 0.25, narrative: 0.0 };
         }
 
-        if (!hasMarketData) {
-            const spread = weights.market / 3;
-            weights.elo += spread;
-            weights.oracle += spread;
-            weights.poisson += spread;
-            weights.market = 0;
-        }
+        // Apply V50 Reinforcement Policy
+        const finalWeights = getOptimizedPolicy(league, baseWeights);
+        if (narrative.factors.length > 0) finalWeights.narrative = 0.15; // Activate Narrative layer
+
+        // Calculate Final Composite Probability (Bayesian-Style)
+        let hW = (eloData.homeWinProb * finalWeights.elo) +
+            (oracleContext.winProbability * finalWeights.oracle) +
+            (poissonProbs.home * finalWeights.poisson) +
+            (marketProb.home * finalWeights.market);
+
+        // Apply Narrative Multipliers
+        hW *= narrative.multipliers.home;
+
+        // Sincerity Factor: If it's a cup match or draw is likely
+        let dW = canDraw ? Math.max(25, (poissonProbs.draw * 0.7) + (marketProb.draw * 0.3)) : 5;
+        let aW = 100 - hW - dW;
+
+        // Final normalization
+        const totalW = hW + dW + aW;
+        const hFinal = Math.round((hW / totalW) * 100);
+        const dFinal = Math.round((dW / totalW) * 100);
+        const aFinal = Math.round((aW / totalW) * 100);
+
+        // Quantum V50 Output Structure
+        return {
+            prediction: {
+                homeWinProb: hFinal,
+                drawProb: dFinal,
+                awayWinProb: aFinal,
+                confidence: hFinal >= 65 || aFinal >= 65 ? 'diamond' : hFinal >= 55 || aFinal >= 55 ? 'gold' : 'silver',
+                isValueBet: hasMarketData && (hFinal > (marketProb.home + 5) || aFinal > (marketProb.away + 5)),
+                weather,
+                newsImpact,
+                marketHeat: hasMarketData ? (Math.abs(hFinal - marketProb.home) > 12 ? { level: 'critical', message: 'SHARK ATTACK: IA vs Mercado' } : { level: 'normal' }) : null,
+                sentinel: driftData, // V50 Feature
+                narrative: narrative, // V50 Feature
+                weights: finalWeights,
+                source: 'real-time-oracle-v50'
+            }
+        };
+        // V40.0 QUANTUM ENGINE: TACTICAL DNA & STABILITY
+        const homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence);
+        const awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence);
+        const tacticalAdv = getTacticalAdvantage(homeADN, awayADN);
+
+        const graphContext = calculateGraphStability(extraData.leaders?.home, extraData.injuries?.home);
 
         let hP = (eloData.home * weights.elo) +
             (oracleContext.homeState?.multiplier * baseWin * weights.oracle) +
@@ -485,6 +520,11 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             (oracleContext.awayState?.multiplier * baseWin * weights.oracle) +
             (poissonProbs.awayWin * 100 * weights.poisson) +
             (marketProb.away * weights.market);
+
+        // Apply Tactical Advantage (GNN/ADN Layer)
+        hP *= tacticalAdv;
+        // Apply Graph Stability (Chemistry Layer)
+        hP *= graphContext.stability;
 
         let dP = (canDraw ? (baseDraw * 0.3 * 0.7) + (poissonProbs.draw * 100 * weights.poisson) : 0) + (marketProb.draw * weights.market);
 
@@ -569,6 +609,11 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             (winner === 'away' && awayWinProb > marketProb.away + 5)
         );
 
+        // V40.0: RISK MANAGEMENT (Kelly Criterion)
+        const decOdds = parseFloat(winner === 'home' ? (extraData.odds?.home || 1.9) : (extraData.odds?.away || 2.0));
+        const winProb = (winner === 'home' ? homeWinProb : awayWinProb) / 100;
+        const kellyStake = calculateKellyStake(winProb, decOdds, 0.25); // 1/4 Kelly for safety
+
         return {
             winner,
             text,
@@ -580,6 +625,15 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             maxProb: finalMax,
             explanation, // V30.60: XAI Module
             isValueMatch, // V30.60: Professional Value Flag
+            quantum: { // V40.0: Quantum Features
+                homeADN: homeADN.label,
+                awayADN: awayADN.label,
+                tacticalEdge: tacticalAdv > 1 ? 'HOME' : tacticalAdv < 1 ? 'AWAY' : 'NEUTRAL',
+                graphStability: graphContext.stability,
+                isFragmented: graphContext.isFragmented,
+                kellyRecommendation: (kellyStake * 100).toFixed(2) + '%',
+                suggestedStake: kellyStake > 0 ? `Arriesgar ${Math.round(kellyStake * 1000) / 10}% del bankroll` : 'No apostar'
+            },
             oracleV12: {
                 homeState: oracleContext.homeState?.id || 'stable',
                 awayState: oracleContext.awayState?.id || 'stable',

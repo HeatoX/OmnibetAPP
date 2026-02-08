@@ -391,6 +391,129 @@ export default function DetailedMatchAnalysis({ match, onClose }) {
                                 </div>
                             )
                         )}
+                        {/* TAB CONTENT: SUPREME (V50.0 OBSERVER PROTOCOL) */}
+                        {activeTab === 'supreme' && (
+                            <div className="space-y-8 animate-fadeIn">
+                                {/* Sentinel Header */}
+                                <div className="bg-gradient-to-r from-cyan-900/60 via-blue-900/40 to-purple-900/60 border border-cyan-400/30 rounded-3xl p-8 text-center relative overflow-hidden group">
+                                    <div className="absolute inset-0 opacity-10 animate-pulse" style={{ backgroundImage: 'radial-gradient(circle, #22d3ee 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                                    <div className="relative z-10">
+                                        <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 text-[10px] font-black tracking-[0.2em] uppercase mb-4 inline-block border border-cyan-400/30">Protocolo Observador Activo</span>
+                                        <h2 className="text-4xl font-black text-white tracking-tighter mb-2 italic">ORÁCULO SENTIENTE V50.0</h2>
+                                        <p className="text-gray-400 text-xs font-mono tracking-widest uppercase">Evolución Autónoma: Nivel Sentinel</p>
+                                    </div>
+                                </div>
+
+                                {/* Sentinel Market Prediction */}
+                                <div className="bg-[#151725]/60 border border-cyan-500/20 rounded-3xl p-8 relative overflow-hidden">
+                                    <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                                        <div className="flex-1">
+                                            <h3 className="text-cyan-400 font-bold text-lg mb-2 flex items-center gap-2">
+                                                👁️ Quantum Sentinel: Deriva de Mercado
+                                            </h3>
+                                            <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                                                El Observador anticipa el movimiento de las cuotas basándose en el flujo de capital proyectado y la inercia institucional.
+                                            </p>
+                                            <div className="flex gap-4">
+                                                <div className={`px-4 py-2 rounded-xl border flex items-center gap-2 ${match.prediction?.sentinel?.advice === 'BET_NOW' ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-400'}`}>
+                                                    <span className="font-black animate-pulse">●</span>
+                                                    <span className="text-xs font-bold uppercase tracking-widest">{match.prediction?.sentinel?.advice === 'BET_NOW' ? 'BET NOW' : 'WAIT FOR VALUE'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-black/40 p-6 rounded-2xl border border-white/5 text-right min-w-[200px]">
+                                            <div className="text-[10px] text-cyan-400 font-mono mb-1 uppercase tracking-widest">Confianza Digital</div>
+                                            <div className="text-4xl font-black text-white">{match.prediction?.sentinel?.confidence}%</div>
+                                            <div className="text-[10px] text-gray-500 italic mt-2">LSTM Predictions Injected</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Narrative & Human Factor */}
+                                {match.prediction?.narrative?.factors?.length > 0 && (
+                                    <div className="bg-gradient-to-br from-purple-900/20 to-transparent border border-purple-500/20 rounded-3xl p-8 group">
+                                        <h3 className="text-purple-400 font-bold text-lg mb-6 flex items-center gap-2">
+                                            🎭 Motor Narrativo (Grudge & Glory)
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {match.prediction.narrative.factors.map((f, i) => (
+                                                <div key={i} className="bg-black/20 p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:border-purple-500/30 transition-all">
+                                                    <div className="text-3xl">{f.icon}</div>
+                                                    <div>
+                                                        <div className="text-xs font-black text-white uppercase">{f.label}</div>
+                                                        <div className="text-[10px] text-gray-400">{f.detail}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* V40 Components (Now as sub-layers of V50) */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Tactical Matchup ADN */}
+                                    <div className="bg-[#151725]/60 border border-white/5 rounded-3xl p-6">
+                                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 italic opacity-50">🧬 Capa Táctica V40</h3>
+                                        <div className="flex flex-col gap-6">
+                                            <div className="flex justify-between items-center">
+                                                <div className="text-center flex-1">
+                                                    <div className="text-2xl mb-2">🛡️</div>
+                                                    <div className="text-white font-bold">{match.prediction?.quantum?.homeADN}</div>
+                                                </div>
+                                                <div className="text-2xl font-black text-purple-500 animate-pulse">VS</div>
+                                                <div className="text-center flex-1">
+                                                    <div className="text-2xl mb-2">⚔️</div>
+                                                    <div className="text-white font-bold">{match.prediction?.quantum?.awayADN}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Graph Connectivity */}
+                                    <div className="bg-[#151725]/60 border border-white/5 rounded-3xl p-6">
+                                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 italic opacity-50">🕸️ Capa de Grafo V40</h3>
+                                        <div className="flex flex-col items-center justify-center py-4">
+                                            <div className="relative w-24 h-24 mb-4">
+                                                <svg className="w-full h-full transform -rotate-90">
+                                                    <circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/5" />
+                                                    <circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="6" fill="transparent"
+                                                        className={match.prediction?.quantum?.isFragmented ? 'text-red-500' : 'text-cyan-400'}
+                                                        strokeDasharray={264}
+                                                        strokeDashoffset={264 - (264 * (match.prediction?.quantum?.graphStability || 1))}
+                                                    />
+                                                </svg>
+                                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                    <span className="text-lg font-black text-white">{Math.round((match.prediction?.quantum?.graphStability || 1) * 100)}%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Risk Management (V50 Optimized) */}
+                                <div className="bg-gradient-to-br from-[#0c1a15] to-[#0a0a0f] border border-emerald-500/30 rounded-3xl p-8">
+                                    <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                                        <div className="max-w-md">
+                                            <h3 className="text-emerald-400 font-bold text-xl mb-4 flex items-center gap-2">
+                                                ⚖️ Quantum Risk Management (V50 Policy)
+                                            </h3>
+                                            <div className="flex gap-4">
+                                                <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                                                    <div className="text-[10px] text-emerald-400 font-mono">AUTONOMY</div>
+                                                    <div className="text-white font-black">RL-ACTIVE</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-black/40 p-8 rounded-2xl border border-white/5 text-center min-w-[280px]">
+                                            <div className="text-[11px] text-gray-500 font-bold uppercase tracking-widest mb-4">Recomendación Sentinel</div>
+                                            <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 mb-2">
+                                                {match.prediction?.quantum?.kellyRecommendation}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Overlay Modals */}
