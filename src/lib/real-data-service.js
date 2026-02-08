@@ -506,15 +506,38 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence);
         const awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence);
         const tacticalAdv = getTacticalAdvantage(homeADN, awayADN);
-        const graphContext = calculateGraphStability(homeSequence, awaySequence);
+
+        // V63.1 Fix: Use real roster/injury data to avoid default 40% penalty
+        const graphContext = calculateGraphStability(extraData.leaders?.home || [], extraData.injuries?.home || []);
 
         // V62.6: Applying Tactical, Environmental and Narrative Multipliers
         const weatherImpact = weather ? (weather.status === 'Rain' ? 0.95 : weather.status === 'Clear' ? 1.05 : 1.0) : 1.0;
         const stabilityFactor = graphContext.stability || 1.0;
 
-        let hWeight = hFinal * tacticalAdv * stabilityFactor * weatherImpact * newsImpact;
-        let dWeight = dFinal; // Draw is less affected by these specific tactical multipliers
-        let aWeight = aFinal * (1 / tacticalAdv) * stabilityFactor * weatherImpact * newsImpact;
+        // V63.1: LIVE Intelligence Layer (Marcador en Vivo)
+        let liveBiasH = 1.0;
+        let liveBiasA = 1.0;
+        let liveBiasD = 1.0;
+
+        if (isLive) {
+            const hScore = parseInt(homeTeam.score) || 0;
+            const aScore = parseInt(awayTeam.score) || 0;
+            const diff = hScore - aScore;
+
+            if (diff > 0) {
+                liveBiasH = 1 + (diff * 0.35); // Boost leader significantly
+                liveBiasD = Math.max(0.1, 1 - (diff * 0.5)); // Drop draw
+                liveBiasA = Math.max(0.05, 1 - (diff * 0.7)); // Drop loser
+            } else if (diff < 0) {
+                liveBiasA = 1 + (Math.abs(diff) * 0.35);
+                liveBiasD = Math.max(0.1, 1 - (Math.abs(diff) * 0.5));
+                liveBiasH = Math.max(0.05, 1 - (Math.abs(diff) * 0.7));
+            }
+        }
+
+        let hWeight = hFinal * tacticalAdv * stabilityFactor * weatherImpact * newsImpact * liveBiasH;
+        let dWeight = dFinal * stabilityFactor * weatherImpact * newsImpact * liveBiasD;
+        let aWeight = aFinal * (1 / tacticalAdv) * stabilityFactor * weatherImpact * newsImpact * liveBiasA;
 
         // Renormalize after 800 motors impact (Robust against zero/NaN)
         const totalWeight = (hWeight + dWeight + aWeight) || 100.0001;
