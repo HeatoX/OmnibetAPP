@@ -454,7 +454,16 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const oracleContext = detectOraclePatterns(homeSequence, awaySequence, homeIsGiant, awayIsGiant);
 
         // 3. Mathematical Probability (Poisson + xG)
-        const xG = calculateGoalExpectancy({ scoredAvg: 1.5, concededAvg: 1.2 }, { scoredAvg: 1.1, concededAvg: 1.4 }); // Baseline stats
+        // V63.6: Dynamics Stats from Sequence (No more hardcoded 1.5/1.1)
+        const getAvgFromSeq = (seq) => {
+            const wins = seq.filter(r => r === 'W').length;
+            const draws = seq.filter(r => r === 'D').length;
+            return 1.0 + (wins * 0.2) + (draws * 0.05); // Dynamic Expected Goals
+        };
+        const hScoredAvg = getAvgFromSeq(homeSequence);
+        const aScoredAvg = getAvgFromSeq(awaySequence);
+
+        const xG = calculateGoalExpectancy({ scoredAvg: hScoredAvg, concededAvg: 1.2 }, { scoredAvg: aScoredAvg, concededAvg: 1.2 });
         const poissonProbs = calculatePoissonProbabilities(xG.homeXG, xG.awayXG);
 
         // 4. Market Wisdom (V30.60: Market Odds Implied Probabilities + V50 Sentinel)
