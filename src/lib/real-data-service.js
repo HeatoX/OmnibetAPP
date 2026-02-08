@@ -514,24 +514,35 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         let dFinal = (dW / totalW) * 100;
         let aFinal = (aW / totalW) * 100;
 
-        // V63.12: CONTRAST AMPLIFIER (Predictive Power Restoration)
-        // If one team is leading by even a bit, we amplify the gap to show a CLEAR favorite.
-        const gap = Math.abs(hFinal - aFinal);
-        const powerScale = gap > 2 ? 1.5 : 1.2; // Stronger push for clearer gaps
+        // V63.13: AGGRESSIVE CONTRAST AMPLIFIER (No more visual 50/50)
+        // If one team is even 0.1% better, we push it to a clear visible majority.
+        const gap = hFinal - aFinal;
+        const absGap = Math.abs(gap);
 
-        if (hFinal > aFinal + 1) {
-            hFinal *= powerScale;
-            aFinal /= powerScale;
-        } else if (aFinal > hFinal + 1) {
-            aFinal *= powerScale;
-            hFinal /= powerScale;
+        // Dynamic push: if gap is tiny, force a "minimum predictive stand"
+        let boost = absGap > 5 ? 1.6 : absGap > 2 ? 2.0 : 2.5;
+
+        if (gap > 0.1) {
+            hFinal *= boost;
+            aFinal /= boost;
+        } else if (gap < -0.1) {
+            aFinal *= boost;
+            hFinal /= boost;
         }
 
-        // Final Rounding after power boost
+        // Final Rounding: Ensure we don't round back to 50/50 if there's a winner
         const finalSum = hFinal + dFinal + aFinal;
-        hFinal = Math.round((hFinal / finalSum) * 100);
-        dFinal = Math.round((dFinal / finalSum) * 100);
+        hFinal = (hFinal / finalSum) * 100;
+        dFinal = (dFinal / finalSum) * 100;
         aFinal = 100 - hFinal - dFinal;
+
+        // Apply a "Floor" for the winner to avoid 50/50 rounding
+        if (hFinal > aFinal && hFinal < 53) { hFinal = 54; aFinal = 100 - dFinal - hFinal; }
+        if (aFinal > hFinal && aFinal < 53) { aFinal = 54; hFinal = 100 - dFinal - aFinal; }
+
+        hFinal = Math.round(hFinal);
+        dFinal = Math.round(dFinal);
+        aFinal = Math.round(aFinal);
 
         // 6. --- FULL INTELLIGENCE ENGINE (800 MOTORS) ---
         // V40.0: Tactical DNA & Stability Analysis
