@@ -92,7 +92,6 @@ function calculateBrierScore(prediction, outcome) {
 
 export {
     fetchESPNEndpoint,
-    transformESPNData, // Existing export
     calculateBrierScore // V30.60: Backtesting Engine
 };
 
