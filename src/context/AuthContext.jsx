@@ -23,26 +23,36 @@ export function AuthProvider({ children }) {
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-    // Check session on mount
+    // V50.7: Idempotent initialization
     useEffect(() => {
+        let ignore = false;
+
         const initSession = async () => {
-            console.log('🔐 [Auth] Iniciando verificación de sesión...');
+            console.log('🔐 [Auth] Iniciando verificación de sesión (Idempotent)...');
+
+            // Check session only if not ignored
             await checkSession();
-            console.log('🔐 [Auth] Verificación inicial completada.');
+
+            if (!ignore) {
+                console.log('🔐 [Auth] Verificación inicial completada.');
+            }
         };
 
         initSession();
 
         // FAILSAFE: Force loading to false after 5s to prevent infinite spinner
-        // Increased to 5s to allow Supabase to respond in slow network conditions
         const safetyTimer = setTimeout(() => {
-            if (loading) {
+            if (loading && !ignore) {
                 console.warn('⚠️ [Auth] Failsafe activado: Forzando fin de carga.');
                 setLoading(false);
+                setSessionResolved(true);
             }
         }, 5000);
 
-        return () => clearTimeout(safetyTimer);
+        return () => {
+            ignore = true;
+            clearTimeout(safetyTimer);
+        };
     }, []);
 
     // Listen for auth changes (wrapped in try-catch for resilience)
@@ -74,10 +84,12 @@ export function AuthProvider({ children }) {
 
     async function checkSession() {
         try {
-            // V50.6.5: Primary session check
-            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            setLoading(true);
+            console.log('🔐 [Auth] Verificación unificada en curso...');
 
-            if (sessionError) throw sessionError;
+            const { data: { session }, error } = await supabase.auth.getSession();
+
+            if (error) throw error;
 
             if (session?.user) {
                 console.log('🔐 [Auth] Sesión activa encontrada:', session.user.email);
@@ -87,23 +99,11 @@ export function AuthProvider({ children }) {
                 console.log('🔐 [Auth] No se encontró sesión activa.');
             }
         } catch (error) {
-            // Check if it's an AbortError (common in Strict Mode/Fast Refresh)
-            const isAbort = error.name === 'AbortError' || error.message?.includes('aborted');
-
-            if (isAbort) {
-                console.warn('⚠️ [Auth] checkSession abortado, intentando recuperación silenciosa...');
-                try {
-                    const { data: { user: recoveredUser } } = await supabase.auth.getUser();
-                    if (recoveredUser) {
-                        console.log('🔐 [Auth] Usuario recuperado tras aborto:', recoveredUser.email);
-                        setUser(recoveredUser);
-                        await loadProfile(recoveredUser.id, recoveredUser);
-                    }
-                } catch (retryError) {
-                    console.error('🔐 [Auth] Fallo recuperación tras aborto:', retryError);
-                }
-            } else {
-                console.error('🔐 [Auth] Error crítico en checkSession:', error);
+            // V50.7: Ignore AbortErrors, as the useEffect 'ignore' flag handles lifecycle
+            if (error.name !== 'AbortError' && !error.message?.includes('aborted')) {
+                console.error('🔥 [Auth] Error real en la sesión:', error);
+                setUser(null);
+                setProfile(null);
             }
         } finally {
             setLoading(false);
