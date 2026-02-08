@@ -502,7 +502,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             (eloData.draw * finalWeights.elo) +
             (poissonProbs.draw * 100 * finalWeights.poisson) +
             (marketProb.draw * finalWeights.market)
-        ) : 5;
+        ) : 0;
         let aW = (eloData.away * finalWeights.elo) +
             ((oracleContext.awayState?.confidence || 50) * finalWeights.oracle) +
             ((poissonProbs.awayWin * 100) * finalWeights.poisson) +
