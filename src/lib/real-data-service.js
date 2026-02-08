@@ -623,7 +623,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const kellyStake = decOdds ? calculateKellyStake(winProb, decOdds, 0.25) : 0;
 
         return {
-            winner: analyticalWinner,
+            winner: currentWinner, // V63.9 Fixed: Brain-to-UI Sync
             currentWinner,
             text,
             homeWinProb,
