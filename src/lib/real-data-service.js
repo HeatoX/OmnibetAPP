@@ -234,7 +234,11 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
             const matchOdds = extractOdds(competition);
 
             // V62: AWAIT ASYNC PREDICTION
-            const predictionData = await generateRealPrediction(homeTeam, awayTeam, sport, isLive || isFinished, leagueSlug, { odds: matchOdds, matchMinute });
+            const predictionData = await generateRealPrediction(homeTeam, awayTeam, sport, isLive || isFinished, leagueSlug, {
+                odds: matchOdds,
+                matchMinute,
+                matchId: event.id // V63.15 Fixed: Pass ID to engine
+            });
 
             return {
                 id: event.id, // Stable Match ID
@@ -518,6 +522,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         // Get absolute ELO ratings to break the 50/50 trap
         const rHome = (eloData.homeElo || 1500);
         const rAway = (eloData.awayElo || 1500);
+        const mId = extraData.matchId || '0'; // V63.15 Fixed: Use ID from extraData
 
         const gap = hFinal - aFinal;
         const absGap = Math.abs(gap);
@@ -530,7 +535,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
                 aFinal = 56; hFinal = 100 - dFinal - aFinal;
             } else {
                 // Absolute dead heat? Use matchId to be stable but not 50/50
-                const stableFlip = (matchId?.length || 0) % 2 === 0;
+                const stableFlip = (mId?.length || 0) % 2 === 0;
                 if (stableFlip) { hFinal = 53; aFinal = 47; }
                 else { aFinal = 53; hFinal = 47; }
             }
