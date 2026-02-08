@@ -10,7 +10,7 @@ const ADMIN_EMAILS = ['pablo@admin.com', 'admin@omnibet.ai', 'kesp230590@gmail.c
 
 export default function AdminPage() {
     const router = useRouter();
-    const { user, profile, loading } = useAuth();
+    const { user, profile, loading, sessionResolved } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const [users, setUsers] = useState([]);
     const [purchases, setPurchases] = useState([]);
