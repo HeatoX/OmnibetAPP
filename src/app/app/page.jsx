@@ -375,48 +375,38 @@ export default function AppPage() {
 
     // Handle match click with access control
     const handleMatchClick = async (match) => {
-        // Check prediction access
-        const access = checkPredictionAccess ? checkPredictionAccess() : { allowed: true };
+        const authInfo = getSubscriptionInfo();
+        const tier = authInfo.effectiveTier;
 
-        if (!access.allowed) {
-            if (access.reason === 'limit_reached') {
-                setShowUpgradeModal(true);
-                return;
-            }
-        }
-
-        // Use a prediction slot (for free users)
-        if (usePrediction && access.tier === 'free') {
-            await usePrediction();
+        // Check prediction access (for free users who aren't in trial)
+        if (tier === 'free' && authInfo.isExpired) {
+            setShowUpgradeModal(true);
+            return;
         }
 
         // Open the match details
         setSelectedMatch(match);
     };
 
-    // Handle prediction unlock
+    // Handle prediction unlock (for restricted free users)
     const handleUnlockPrediction = (matchId) => {
-        // 1. Check if user is free
-        const tier = profile?.subscription_tier || 'free';
-
-        if (tier === 'free') {
-            // Check quota
+        const authInfo = getSubscriptionInfo();
+        if (authInfo.effectiveTier === 'free') {
             if (unlockedMatches.length >= 3) {
                 setShowUpgradeModal(true);
                 return;
             }
-            // Unlock
             setUnlockedMatches(prev => [...prev, matchId]);
         }
-        // Gold/Diamond users don't need this manual unlock generic flow, 
-        // but for Diamond Cards, Gold users might need a separate flow (handled in card logic)
     };
 
     // Handle detailed analysis click
     const handleDetailedAnalysis = (match) => {
+        const authInfo = getSubscriptionInfo();
+        const tier = authInfo.effectiveTier;
+
         // Detailed analysis requires at least Gold
-        const access = checkPredictionAccess ? checkPredictionAccess() : { tier: 'free' };
-        if (access.tier === 'free') {
+        if (tier === 'free') {
             setShowUpgradeModal(true);
             return;
         }
@@ -684,7 +674,7 @@ export default function AppPage() {
                                             match={match}
                                             onClick={handleMatchClick}
                                             onDetailedAnalysis={handleDetailedAnalysis}
-                                            userTier={profile?.subscription_tier || 'free'}
+                                            userTier={getSubscriptionInfo().effectiveTier}
                                             isUnlocked={unlockedMatches.includes(match.id)}
                                             onUnlock={handleUnlockPrediction}
                                         />
@@ -787,7 +777,7 @@ export default function AppPage() {
                                                                 match={match}
                                                                 onClick={handleMatchClick}
                                                                 onDetailedAnalysis={handleDetailedAnalysis}
-                                                                userTier={profile?.subscription_tier || 'free'}
+                                                                userTier={getSubscriptionInfo().effectiveTier}
                                                                 isUnlocked={unlockedMatches.includes(match.id)}
                                                                 onUnlock={handleUnlockPrediction}
                                                             />

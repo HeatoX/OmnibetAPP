@@ -130,7 +130,11 @@ export function AuthProvider({ children }) {
     }
 
     async function signUp(email, password, name) {
-        const siteUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+        // Force production URL if available, otherwise fallback to current origin
+        const siteUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://omnibet-app.vercel.app');
+
+        console.log('Using redirect URL:', siteUrl + '/auth/callback');
+
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -252,10 +256,12 @@ export function AuthProvider({ children }) {
     // Get subscription tier display info
     function getSubscriptionInfo() {
         if (!profile) {
-            return { tier: 'guest', label: 'Invitado', color: 'gray' };
+            return { tier: 'guest', label: 'Invitado', color: 'gray', effectiveTier: 'guest' };
         }
 
-        const tier = profile.subscription_tier || 'free';
+        const rawTier = profile.subscription_tier || 'free';
+        const userEmail = profile.email || user?.email || '';
+        const isAdmin = profile.is_admin || ADMIN_EMAILS.includes(userEmail);
 
         // Calculate trial info
         const createdAt = profile.created_at ? new Date(profile.created_at) : new Date();
@@ -263,13 +269,18 @@ export function AuthProvider({ children }) {
         const now = new Date();
         const trialTimeLeft = trialExpiry.getTime() - now.getTime();
         const trialDaysLeft = Math.ceil(trialTimeLeft / (24 * 60 * 60 * 1000));
-        const isTrialActive = tier === 'free' && trialTimeLeft > 0;
+        const isTrialActive = rawTier === 'free' && trialTimeLeft > 0;
 
         // Calculate subscription expiry
         const subExpiryDate = profile.subscription_end_date ? new Date(profile.subscription_end_date) : null;
         const subTimeLeft = subExpiryDate ? subExpiryDate.getTime() - now.getTime() : 0;
         const subDaysLeft = Math.ceil(subTimeLeft / (24 * 60 * 60 * 1000));
-        const isSubActive = tier !== 'free' && subTimeLeft > 0;
+        const isSubActive = rawTier !== 'free' && (isAdmin || subTimeLeft > 0);
+
+        // Deterministic effective tier for UI
+        let effectiveTier = rawTier;
+        if (isAdmin) effectiveTier = 'diamond';
+        else if (isTrialActive) effectiveTier = 'gold';
 
         const tiers = {
             free: {
@@ -277,23 +288,26 @@ export function AuthProvider({ children }) {
                 color: isTrialActive ? 'yellow' : 'gray',
                 limit: isTrialActive ? Infinity : 2,
                 isTrial: isTrialActive,
-                daysLeft: isTrialActive ? trialDaysLeft : 0
+                daysLeft: isTrialActive ? trialDaysLeft : 0,
+                isExpired: !isTrialActive && !isAdmin
             },
-            gold: { label: 'Gold', color: 'yellow', limit: Infinity, daysLeft: subDaysLeft, isExpired: subTimeLeft <= 0 },
-            diamond: { label: 'Diamond', color: 'cyan', limit: Infinity, daysLeft: subDaysLeft, isExpired: subTimeLeft <= 0 },
+            gold: { label: 'Gold', color: 'yellow', limit: Infinity, daysLeft: subDaysLeft, isExpired: !isAdmin && subTimeLeft <= 0 },
+            diamond: { label: 'Diamond', color: 'cyan', limit: Infinity, daysLeft: subDaysLeft, isExpired: !isAdmin && subTimeLeft <= 0 },
         };
 
-        const info = tiers[tier] || tiers.free;
+        const info = tiers[effectiveTier] || tiers.free;
 
         return {
-            tier,
+            tier: rawTier,
+            effectiveTier,
             ...info,
             used: profile.predictions_used_this_month || 0,
             remaining: info.limit === Infinity ? Infinity : Math.max(0, info.limit - (profile.predictions_used_this_month || 0)),
             isTrialActive,
             isSubActive,
             trialTimeLeft,
-            subTimeLeft
+            subTimeLeft,
+            isAdmin
         };
     }
 

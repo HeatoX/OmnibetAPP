@@ -358,7 +358,7 @@ function getEmptyStats() {
  * Get recent predictions for public display
  * V24 Improvement: Bridge Live matches into History automatically
  */
-export async function getRecentPredictions(limit = 20) {
+export async function getRecentPredictions(limit = 20, includeBridge = true) {
     const db = getSupabase();
     if (!db) return [];
 
@@ -372,8 +372,9 @@ export async function getRecentPredictions(limit = 20) {
 
         const history = dbHistory || [];
 
-        // 2. GET RECENT DATA BRIDGE: Only fetch finished matches for the last 48h
-        // This avoids the heavy getRealMatches call which fetches everything.
+        // 2. GET RECENT DATA BRIDGE
+        if (!includeBridge) return history;
+
         const { getFinishedMatches } = await import('./real-data-service');
         const finishedMatches = await getFinishedMatches(48).catch(() => []);
 

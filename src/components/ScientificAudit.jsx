@@ -65,80 +65,91 @@ export default function ScientificAudit({ match, analysis, onClose }) {
                             <div className="absolute inset-0 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
                             <div className="absolute inset-4 rounded-full bg-cyan-400/10 animate-pulse"></div>
                         </div>
-                        <p className="text-cyan-400 font-mono text-xs animate-pulse">Processing physical variables and market rhythms...</p>
+                        <p className="text-cyan-400 font-mono text-xs animate-pulse tracking-widest">Sincronizando Pesos del Meta-Modelo Elite...</p>
                     </div>
                 ) : (
                     <div className="space-y-6 relative z-10 animate-fadeIn">
+
+                        {/* Elite Factor Breakdown (XAI) */}
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-4">
+                            <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                🧠 Oráculo Elite V30.60: Desglose de Factores IA
+                            </h3>
+                            <div className="space-y-5">
+                                {match.prediction?.explanation?.map((item, idx) => (
+                                    <div key={idx} className="space-y-2">
+                                        <div className="flex justify-between items-center text-xs">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-lg">{item.icon}</span>
+                                                <span className="text-gray-300 font-medium uppercase tracking-tighter">{item.factor}</span>
+                                            </div>
+                                            <span className="text-white font-black">{item.impact}%</span>
+                                        </div>
+                                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-cyan-600 to-blue-400 transition-all duration-1000"
+                                                style={{ width: `${item.impact}%` }}
+                                            ></div>
+                                        </div>
+                                        {item.confidence && (
+                                            <div className="text-[9px] text-cyan-400/60 font-mono italic">
+                                                Confidence Level: {item.confidence}% (Probabilidad Latente HMM)
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Audit Grid */}
                         <div className="grid grid-cols-2 gap-4">
                             {/* Fatigue Audit */}
                             <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
                                 <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">📍 Desgaste Físico</h3>
                                 <div className="space-y-3">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs text-gray-400">Descanso Local</span>
-                                        <span className={`text-xs font-bold ${auditData.fatigue.homeRest.status === 'FRESH' ? 'text-green-400' : 'text-yellow-400'}`}>
+                                    <div className="flex justify-between items-center text-[10px]">
+                                        <span className="text-gray-400">Rest Local</span>
+                                        <span className={`font-bold ${auditData.fatigue.homeRest.status === 'FRESH' ? 'text-green-400' : 'text-yellow-400'}`}>
                                             {auditData.fatigue.homeRest.hours}h ({auditData.fatigue.homeRest.status})
                                         </span>
                                     </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs text-gray-400">Desplazamiento Visita</span>
-                                        <span className="text-xs font-bold text-white">{auditData.fatigue.travel.km} KM</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs text-gray-400">Impacto Oxígeno</span>
-                                        <span className={`text-xs font-bold ${auditData.fatigue.travel.altitude > 2000 ? 'text-red-400' : 'text-gray-500'}`}>
-                                            {auditData.fatigue.travel.oxygenImpact} (Altitud)
-                                        </span>
+                                    <div className="flex justify-between items-center text-[10px]">
+                                        <span className="text-gray-400">Transfer Visita</span>
+                                        <span className="font-bold text-white">{auditData.fatigue.travel.km} KM</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Market Audit */}
                             <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
-                                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">💹 Verdad del Mercado</h3>
+                                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">💹 Market Wisdom</h3>
                                 <div className="space-y-3">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs text-gray-400">Flujo de Dinero</span>
-                                        <span className="text-xs font-bold text-cyan-400">{auditData.market.liquidity}</span>
+                                    <div className="flex justify-between items-center text-[10px]">
+                                        <span className="text-gray-400">P. Implícita</span>
+                                        <span className="font-bold text-cyan-400">Sincronizada</span>
                                     </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs text-gray-400">Deriva de Cuota</span>
-                                        <span className="text-xs font-bold text-white">{auditData.market.drift}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xs text-gray-400">Sentimiento Pro</span>
-                                        <span className="text-xs font-bold text-purple-400">{auditData.market.sentiment}</span>
+                                    <div className="flex justify-between items-center text-[10px]">
+                                        <span className="text-gray-400">Value Detect</span>
+                                        <span className={`font-bold ${match.prediction?.isValueMatch ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                            {match.prediction?.isValueMatch ? 'POSITIVO' : 'NEUTRAL'}
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        {/* Referee Bias Row */}
-                        <div className="bg-gradient-to-r from-cyan-900/20 to-transparent border border-cyan-500/20 rounded-2xl p-4 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="text-2xl">⚖️</div>
-                                <div>
-                                    <div className="text-xs text-cyan-400 font-bold uppercase tracking-tighter">Mano Invisible (Réferi)</div>
-                                    <div className="text-white text-sm font-medium">{analysis?.gameInfo?.officials?.[0]?.fullName || match.referee || 'Oficial Estándar'}</div>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-[10px] text-gray-500 uppercase">Bias Detection</div>
-                                <div className="text-sm font-bold text-white">{auditData.ref.homeAdvantage} Home Bias</div>
                             </div>
                         </div>
 
                         {/* Final Verification Seal */}
                         <div className="pt-6 border-t border-white/5 text-center">
                             <div className="inline-block px-8 py-3 bg-cyan-500/10 border border-cyan-400/30 rounded-full mb-4">
-                                <span className="text-cyan-400 font-black tracking-widest text-sm">
-                                    CONFIRMACIÓN MATRIX: {match.prediction?.winner === 'home' ? match.home.name : match.away.name} TIENE EL CONTROL FÍSICO
+                                <span className="text-cyan-400 font-black tracking-widest text-xs uppercase">
+                                    {match.prediction?.isValueMatch ? 'Oportunidad de Valor Detectada por Oráculo Elite' : 'Control Estratégico Verificado'}
                                 </span>
                             </div>
-                            <p className="text-[9px] text-gray-500 font-mono italic">
-                                Audit Hash: {match.id ? `MATRIX-${match.id.toString().slice(-6).toUpperCase()}` : 'LIVE-CONNECTION'} • Real-Time Data Connection: Verified
-                            </p>
+                            <div className="flex justify-center gap-4 text-[9px] text-gray-500 font-mono italic">
+                                <span>Audit: MATRIX-{match.id?.toString().slice(-6).toUpperCase() || 'V30'}</span>
+                                <span>•</span>
+                                <span>Modelo: Elite Bayes V30.60</span>
+                            </div>
                         </div>
                     </div>
                 )}

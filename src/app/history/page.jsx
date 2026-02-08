@@ -21,72 +21,90 @@ export default function HistoryPage() {
     async function loadData() {
         setLoading(true);
         try {
-            // STEP 1: Sync recent results first (Auto-Resolution)
-            await syncRecentResults();
-
-            // STEP 2: Get REAL history from DB
+            // STEP 1: Get REAL history from DB immediately
             const historyData = await getRealHistory();
-            setPredictions(historyData || []);
-
-            // STEP 3: Calculate dynamic stats from real data
-            if (historyData && historyData.length > 0) {
-                const resolved = historyData.filter(p => p.status === 'won' || p.status === 'lost');
-                const total = resolved.length;
-                const correct = resolved.filter(p => p.status === 'won').length;
-                const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-
-                // Calculate ROI based on odds and profit/loss
-                const totalProfit = resolved.reduce((sum, p) => sum + (parseFloat(p.profit_loss) || 0), 0);
-                const totalStaked = total * 10; // Assuming $10 flat stake as per history-tracker.js
-                const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
-
-                // Confidence Tier Accuracy
-                const tiers = {
-                    diamond: historyData.filter(p => p.confidence >= 70),
-                    gold: historyData.filter(p => p.confidence >= 55 && p.confidence < 70),
-                    silver: historyData.filter(p => p.confidence < 55)
-                };
-
-                const calcAcc = (list) => {
-                    const res = list.filter(p => p.status === 'won' || p.status === 'lost');
-                    if (res.length === 0) return { percentage: 0, count: 0, total: 0 };
-                    const won = res.filter(p => p.status === 'won').length;
-                    return {
-                        percentage: Math.round((won / res.length) * 100),
-                        count: won,
-                        total: res.length
-                    };
-                };
-
-                setStats({
-                    total,
-                    correct,
-                    accuracy,
-                    roi: roi.toFixed(1),
-                    tierStats: {
-                        diamond: calcAcc(tiers.diamond),
-                        gold: calcAcc(tiers.gold),
-                        silver: calcAcc(tiers.silver)
-                    }
-                });
-            } else {
-                setStats({
-                    total: 0,
-                    correct: 0,
-                    accuracy: 0,
-                    roi: 0,
-                    tierStats: {
-                        diamond: { percentage: 0, count: 0, total: 0 },
-                        gold: { percentage: 0, count: 0, total: 0 },
-                        silver: { percentage: 0, count: 0, total: 0 }
-                    }
-                });
+            if (historyData) {
+                setPredictions(historyData);
+                updateStats(historyData);
             }
+            setLoading(false); // Show data to user now
+
+            // STEP 2: Sync in background (don't block UI)
+            console.log('🔄 Background sync starting...');
+            syncRecentResults().then(async (result) => {
+                if (result?.updated > 0) {
+                    console.log(`✅ Background sync updated ${result.updated} matches. Refreshing...`);
+                    const freshData = await getRealHistory();
+                    setPredictions(freshData);
+                    updateStats(freshData);
+                }
+            }).catch(e => console.warn('Background sync error:', e));
 
         } catch (error) {
             console.error('Error loading history:', error);
+            setLoading(false);
         }
-        setLoading(false);
+    }
+
+    // Extracted stats calculation for reuse
+    function updateStats(historyData) {
+        if (!historyData || historyData.length === 0) {
+            setStats(getEmptyStats());
+            return;
+        }
+        const resolved = historyData.filter(p => p.status === 'won' || p.status === 'lost');
+        const total = resolved.length;
+        const correct = resolved.filter(p => p.status === 'won').length;
+        const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+        // Calculate ROI based on odds and profit/loss
+        const totalProfit = resolved.reduce((sum, p) => sum + (parseFloat(p.profit_loss) || 0), 0);
+        const totalStaked = total * 10; // Assuming $10 flat stake as per history-tracker.js
+        const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
+
+        // Confidence Tier Accuracy
+        const tiers = {
+            diamond: historyData.filter(p => p.confidence >= 70),
+            gold: historyData.filter(p => p.confidence >= 55 && p.confidence < 70),
+            silver: historyData.filter(p => p.confidence < 55)
+        };
+
+        const calcAcc = (list) => {
+            const res = list.filter(p => p.status === 'won' || p.status === 'lost');
+            if (res.length === 0) return { percentage: 0, count: 0, total: 0 };
+            const won = res.filter(p => p.status === 'won').length;
+            return {
+                percentage: Math.round((won / res.length) * 100),
+                count: won,
+                total: res.length
+            };
+        };
+
+        setStats({
+            total,
+            correct,
+            accuracy,
+            roi: roi.toFixed(1),
+            tierStats: {
+                diamond: calcAcc(tiers.diamond),
+                gold: calcAcc(tiers.gold),
+                silver: calcAcc(tiers.silver)
+            }
+        });
+    }
+
+    function getEmptyStats() {
+        return {
+            total: 0,
+            correct: 0,
+            accuracy: 0,
+            roi: 0,
+            tierStats: {
+                diamond: { percentage: 0, count: 0, total: 0 },
+                gold: { percentage: 0, count: 0, total: 0 },
+                silver: { percentage: 0, count: 0, total: 0 }
+            }
+        };
     }
 
     const filteredPredictions = predictions.filter(p => {

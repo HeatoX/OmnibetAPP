@@ -113,12 +113,11 @@ export default function PredictionCard({ match, onClick, onDetailedAnalysis, use
                         )}
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    {match.isLive && (
-                        <div className="live-indicator">
-                            <span className="live-dot"></span>
-                            <span>{match.liveMinute}</span>
-                        </div>
+                <div className="flex items-center gap-2">
+                    {match.prediction?.isValueMatch && (
+                        <span className="bg-gradient-to-r from-emerald-500 to-teal-400 text-[10px] font-black text-black px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.5)] animate-bounce whitespace-nowrap">
+                            🔥 VALOR ELITE
+                        </span>
                     )}
                     <span className={style.badge}>{style.label}</span>
                 </div>
@@ -218,9 +217,9 @@ export default function PredictionCard({ match, onClick, onDetailedAnalysis, use
             {/* AI Prediction Section (LOCKED LOGIC) */}
             <div className={`relative bg-gradient-to-br from-black/40 to-black/20 rounded-2xl p-5 mb-5 border border-white/5 overflow-hidden group/card`}>
 
-                {/* --- LOCK LAYERS --- */}
+                {/* --- SMART LOCK LAYERS --- */}
 
-                {/* 1. Free Tier Lock (Blurs everything unless unlocked) */}
+                {/* 1. RESTRICTED LOCK (Free users NOT in trial) */}
                 {userTier === 'free' && !isUnlocked && (
                     <div className="absolute inset-0 bg-black/80 backdrop-blur-md z-20 flex flex-col items-center justify-center p-4 text-center">
                         <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mb-3 border border-white/10">
@@ -242,8 +241,8 @@ export default function PredictionCard({ match, onClick, onDetailedAnalysis, use
                     </div>
                 )}
 
-                {/* 2. Gold Tier Lock (Blurs ONLY Diamond Picks) */}
-                {(userTier === 'gold' && match.isDiamondPick) && (
+                {/* 2. DIAMOND EXCLUSIVE LOCK (Gold users) - Doesn't show for Admins/Diamond */}
+                {userTier === 'gold' && match.isDiamondPick && (
                     <div className="absolute inset-0 bg-black/80 backdrop-blur-md z-20 flex flex-col items-center justify-center p-4 text-center border-2 border-[#00d4ff]/30">
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00d4ff]/20 to-blue-900/40 flex items-center justify-center mb-3 animate-pulse">
                             <span className="text-2xl">💎</span>
@@ -255,7 +254,11 @@ export default function PredictionCard({ match, onClick, onDetailedAnalysis, use
                             Esta es una de las 4 predicciones exclusivas del día.
                         </p>
                         <button
-                            onClick={(e) => { e.stopPropagation(); /* Show Upgrade Modal */ }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                // This usually triggers upgrade modal in page.jsx via prop if passed, 
+                                // but for now let's just make it clear it's a lock only for true Gold users
+                            }}
                             className="border border-[#00d4ff] text-[#00d4ff] hover:bg-[#00d4ff] hover:text-black text-xs font-bold py-2 px-4 rounded-full transition-all"
                         >
                             🚀 Actualizar a Diamond

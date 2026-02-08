@@ -11,6 +11,8 @@ import {
     isEloTrainingNeeded
 } from './elo-engine.js';
 import { resilientFetch } from './db-redundancy';
+import { getMatchWeather } from './weather-service';
+import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math';
 
 /**
  * ESPN Public API Endpoints (free, no API key required)
@@ -51,6 +53,41 @@ const ESPN_ENDPOINTS = {
         atp: 'https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard',
         wta: 'https://site.api.espn.com/apis/site/v2/sports/tennis/wta/scoreboard',
     }
+};
+
+/**
+ * V30.60: Brier Score Calculation (Mathematical Sincerity)
+ * Measures the accuracy of probabilistic predictions.
+ * BS = (probability - outcome)^2
+ */
+function calculateBrierScore(prediction, outcome) {
+    if (!prediction || !outcome) return null;
+
+    // Normalize probabilities to 0.0 - 1.0 range
+    const pH = (prediction.homeWinProb || 0) / 100;
+    const pD = (prediction.drawProb || 0) / 100;
+    const pA = (prediction.awayWinProb || 0) / 100;
+
+    // Outcome vectors
+    let oH = 0, oD = 0, oA = 0;
+    if (outcome === 'home') oH = 1;
+    else if (outcome === 'draw') oD = 1;
+    else if (outcome === 'away') oA = 1;
+
+    // Multi-class Brier Score component
+    const score = Math.pow(pH - oH, 2) + Math.pow(pD - oD, 2) + Math.pow(pA - oA, 2);
+
+    return {
+        score: Number(score.toFixed(4)),
+        calibration: score < 0.25 ? 'EXCELLENT' : score < 0.4 ? 'GOOD' : 'MARGINAL',
+        status: (score < 0.25 && ((prediction.winner === outcome) || (prediction.winner === 'draw' && outcome === 'draw'))) ? 'ACCURATE_CALIBRATION' : 'RECALIBRATING'
+    };
+}
+
+export {
+    fetchESPNEndpoint,
+    transformESPNData, // Existing export
+    calculateBrierScore // V30.60: Backtesting Engine
 };
 
 /**
@@ -185,6 +222,8 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
             // V30.24: Use real league name from ESPN if available to avoid mapping errors
             const realLeagueName = competition.league?.name || leagueName;
 
+            const matchOdds = extractOdds(competition);
+
             return {
                 id: event.id, // Stable Match ID
                 uid: event.uid,
@@ -212,8 +251,8 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
                 sport: getSportType(sport),
                 sportIcon: getSportIcon(sport),
                 relativeDate: relativeDate,
-                odds: extractOdds(competition),
-                prediction: generateRealPrediction(homeTeam, awayTeam, sport, isLive || isFinished),
+                odds: matchOdds,
+                prediction: generateRealPrediction(homeTeam, awayTeam, sport, isLive || isFinished, leagueSlug, { odds: matchOdds }),
                 playerPredictions: generatePlayerPredictions(homeTeam, awayTeam, sport, event.id, homeTeam, awayTeam)
             };
         }).filter(match => {
@@ -294,18 +333,36 @@ function getSportIcon(sport) {
 function extractOdds(competition) {
     const odds = competition.odds?.[0];
     if (odds) {
+        const homeDec = odds.homeTeamOdds?.moneyLine ? convertMoneyLine(odds.homeTeamOdds.moneyLine) : null;
+        const drawDec = odds.drawOdds?.moneyLine ? convertMoneyLine(odds.drawOdds.moneyLine) : null;
+        const awayDec = odds.awayTeamOdds?.moneyLine ? convertMoneyLine(odds.awayTeamOdds.moneyLine) : null;
+
+        // Calculate Implied Probabilities (1/odds)
+        let hP = homeDec ? (1 / homeDec) : 0;
+        let dP = drawDec ? (1 / drawDec) : 0;
+        let aP = awayDec ? (1 / awayDec) : 0;
+
+        // Normalize (Remove Overround)
+        const total = hP + dP + aP;
+        if (total > 0) {
+            hP = Math.round((hP / total) * 100);
+            dP = Math.round((dP / total) * 100);
+            aP = 100 - hP - dP;
+        }
+
         return {
-            home: odds.homeTeamOdds?.moneyLine ? convertMoneyLine(odds.homeTeamOdds.moneyLine) : null,
-            draw: odds.drawOdds?.moneyLine ? convertMoneyLine(odds.drawOdds.moneyLine) : null,
-            away: odds.awayTeamOdds?.moneyLine ? convertMoneyLine(odds.awayTeamOdds.moneyLine) : null,
+            home: homeDec,
+            draw: drawDec,
+            away: awayDec,
+            impliedProbabilities: total > 0 ? { home: hP, draw: dP, away: aP } : null
         };
     }
 
-    // STRICT: No random odds. Return null if not available.
     return {
         home: null,
         draw: null,
         away: null,
+        impliedProbabilities: null
     };
 }
 
@@ -319,197 +376,228 @@ function convertMoneyLine(ml) {
 }
 
 /**
- * Generate AI prediction based on real team data (V19 ELO ENGINE)
+ * Generate match prediction using REAL DATA agents (v3.0 - Multimodal)
+ * V30.55: Async Oracle Upgrade (Weather + News + Sincerity)
  */
-function generateRealPrediction(homeTeam, awayTeam, sport, isLive) {
-    // REVERT TO V18 AGGRESSIVE BIAS (User Preference: "Anterior estaba mejor")
-    // ELO was too biased towards Home teams. Returning to Oracle + Leader Boost.
+async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league = null, extraData = {}) {
+    try {
+        const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.name || homeTeam.athlete?.shortName || homeTeam.athlete?.displayName || "Local";
+        const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.name || awayTeam.athlete?.shortName || awayTeam.athlete?.displayName || "Visitante";
 
-    const canDraw = sport === 'soccer' || sport === 'football';
+        // 1. Environmental Analysis (Weather)
+        const weather = await getMatchWeather(league).catch(() => null);
 
-    // V12.0: Extract form from scoreboard if available (e.g. "WWLDL")
-    const homeFormStr = homeTeam.form || "";
-    const awayFormStr = awayTeam.form || "";
-    const homeSequence = homeFormStr.split("").reverse();
-    const awaySequence = awayFormStr.split("").reverse();
+        // 2. News/Sentiment Analysis
+        const newsImpact = await (async () => {
+            try {
+                const leaguePart = league?.toLowerCase().includes('laliga') ? 'esp.1' :
+                    league?.toLowerCase().includes('premier') ? 'eng.1' :
+                        league?.toLowerCase().includes('nba') ? 'nba' : 'eng.1';
+                const newsUrl = `https://site.api.espn.com/apis/site/v2/sports/${sport === 'football' ? 'soccer' : sport}/${leaguePart}/news`;
+                const res = await fetch(newsUrl, { next: { revalidate: 3600 } });
+                if (!res.ok) return 1.0;
+                const data = await res.json();
+                const allNews = (data.articles || []).map(a => a.description + ' ' + a.headline).join(' ').toLowerCase();
 
-    const giants = [
-        'Real Madrid', 'Manchester City', 'Bayern München', 'Barcelona', 'Liverpool',
-        'Paris Saint-Germain', 'Inter Milano', 'Napoli', 'Boca Juniors', 'River Plate',
-        'Juventus', 'AC Milan', 'Arsenal', 'Manchester United', 'Monaco', 'AS Roma', 'Atletico Madrid',
-        'Bayer Leverkusen', 'Aston Villa', 'Sporting CP', 'Benfica', 'Girona', // V30.3: Modern Elites
-        'Celtics', 'Nuggets', 'Chiefs', 'Eagles' // Multi-sport giants
-    ];
-    const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.name || homeTeam.athlete?.shortName || homeTeam.athlete?.displayName || "Local";
-    const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.name || awayTeam.athlete?.shortName || awayTeam.athlete?.displayName || "Visitante";
+                let impact = 1.0;
+                const keywords = {
+                    negative: ['lesion', 'baja', 'duda', 'ausente', 'crisis', 'problema', 'suspendido', 'out', 'injury', 'doubt'],
+                    positive: ['recupera', 'vuelve', 'regreso', 'fit', 'ready', 'back']
+                };
 
-    const homeIsGiant = giants.some(g => homeName.includes(g));
-    const awayIsGiant = giants.some(g => awayName.includes(g));
+                const homeLower = homeName.toLowerCase();
+                const awayLower = awayName.toLowerCase();
 
-    // V30.3: REAL ELO INTEGRATION (Brain Sync)
-    // Using already imported function from top level
-    const eloData = getEloWinProbability(homeTeam.id, awayTeam.id, sport);
+                // Detect sentiment for Home
+                if (keywords.negative.some(k => allNews.includes(homeLower) && allNews.includes(k))) impact -= 0.05;
+                if (keywords.positive.some(k => allNews.includes(homeLower) && allNews.includes(k))) impact += 0.03;
 
-    // Run Oracle V12 Scout
-    const oracleContext = detectOraclePatterns(homeSequence, awaySequence, homeIsGiant, awayIsGiant);
+                // Detect sentiment for Away
+                if (keywords.negative.some(k => allNews.includes(awayLower) && allNews.includes(k))) impact += 0.05; // Beneficial for Home
 
-    // Use actual scores if live to adjust prediction
-    const homeScore = Number(homeTeam.score) || 0;
-    const awayScore = Number(awayTeam.score) || 0;
+                return Math.max(0.85, Math.min(1.15, impact));
+            } catch { return 1.0; }
+        })();
 
-    // V12.0 Rebalanced Distribution Logic
-    let baseWin = 38;
-    let baseDraw = 24;
+        const canDraw = sport === 'soccer' || sport === 'football';
+        const homeFormStr = homeTeam.form || "";
+        const awayFormStr = awayTeam.form || "";
+        const homeSequence = homeFormStr.split("").reverse();
+        const awaySequence = awayFormStr.split("").reverse();
 
-    if (sport === 'basketball' || sport === 'nba' || sport === 'baseball' || sport === 'mlb' || sport === 'tennis') {
-        baseWin = 48;
-        baseDraw = 0;
-    } else if (sport === 'nfl') {
-        baseWin = 49;
-        baseDraw = 2;
-    }
+        const giants = [
+            'Real Madrid', 'Manchester City', 'Bayern München', 'Barcelona', 'Liverpool',
+            'Paris Saint-Germain', 'Inter Milano', 'Napoli', 'Boca Juniors', 'River Plate',
+            'Juventus', 'AC Milan', 'Arsenal', 'Manchester United', 'Monaco', 'AS Roma', 'Atletico Madrid',
+            'Bayer Leverkusen', 'Aston Villa', 'Sporting CP', 'Benfica', 'Girona',
+            'Celtics', 'Nuggets', 'Chiefs', 'Eagles'
+        ];
+        const homeIsGiant = giants.some(g => homeName.includes(g));
+        const awayIsGiant = giants.some(g => awayName.includes(g));
 
-    // Apply Oracle V12 Multipliers + ELO Baseline
-    // ELO acts as a 40% anchor for the base probability
-    let homeScoreWeight = (baseWin * 0.6 * (oracleContext.homeState?.multiplier || 1)) + (eloData.home * 0.4);
-    let awayScoreWeight = (baseWin * 0.6 * (oracleContext.awayState?.multiplier || 1)) + (eloData.away * 0.4);
+        const eloData = getEloWinProbability(homeTeam.id, awayTeam.id, sport);
+        const oracleContext = detectOraclePatterns(homeSequence, awaySequence, homeIsGiant, awayIsGiant);
 
+        // 3. Mathematical Probability (Poisson + xG)
+        const xG = calculateGoalExpectancy({ scoredAvg: 1.5, concededAvg: 1.2 }, { scoredAvg: 1.1, concededAvg: 1.4 }); // Baseline stats
+        const poissonProbs = calculatePoissonProbabilities(xG.homeXG, xG.awayXG);
 
-    // Pseudo-random generator seeded by Match/Team IDs to ensure consistency across refreshes
-    const seedStr = (homeTeam.id || homeName) + (awayTeam.id || awayName);
-    const seededRandom = (seed) => {
-        let h = 0xdeadbeef;
-        for (let i = 0; i < seed.length; i++)
-            h = Math.imul(h ^ seed.charCodeAt(i), 2654435761);
-        return ((h ^ h >>> 16) >>> 0) / 4294967296;
-    }
+        // 4. Market Wisdom (V30.60: Market Odds Implied Probabilities)
+        const marketProb = extraData?.odds?.impliedProbabilities || { home: 33, draw: 34, away: 33 };
+        const hasMarketData = !!extraData?.odds?.impliedProbabilities;
 
-    // Add random variance (DETERMINISTIC based on seed)
-    const variance = (sport === 'basketball' || sport === 'nba' || sport === 'tennis') ? 15 : 8;
-    // Use slightly different seeds for home/away to avoid identical variance
-    const r1 = seededRandom(seedStr + 'home');
-    const r2 = seededRandom(seedStr + 'away');
+        const weatherImpact = weather?.impact || 1.0;
+        const baseWin = (sport === 'basketball' || sport === 'nba' || sport === 'baseball' || sport === 'mlb' || sport === 'tennis') ? 48 : 38;
+        const baseDraw = (sport === 'basketball' || sport === 'nba' || sport === 'baseball' || sport === 'mlb' || sport === 'tennis') ? 0 : 24;
 
-    homeScoreWeight += Math.floor(r1 * variance * 2) - variance;
-    awayScoreWeight += Math.floor(r2 * variance * 2) - variance;
+        // V30.60 ELITE META-MODEL: DYNAMIC WEIGHTING
+        // Rules: 
+        // 1. Giant matches => Strategic ELO has more weight (Class matters).
+        // 2. Balanced matches => Oracle Momentum has more weight (Streaks matter).
+        // 3. High Market Variance => Statistical Poisson gets a boost.
 
+        let weights = { elo: 0.25, oracle: 0.30, poisson: 0.20, market: 0.25 };
 
-    // Normalize draw probability
-    const diff = Math.abs(homeScoreWeight - awayScoreWeight);
-    const drawProb = canDraw ? Math.round(baseDraw + (10 - diff)) : 0;
-
-    // First Pass Probabilities
-    let hP = Math.round(homeScoreWeight);
-    let aP = Math.round(awayScoreWeight);
-    let dP = drawProb;
-
-    const currentTotal = hP + aP + dP;
-    const factor = 100 / currentTotal;
-
-    let homeWinProb = Math.round(hP * factor);
-    let drawProbActual = Math.round(dP * factor);
-    let awayWinProb = 100 - homeWinProb - drawProbActual;
-    let finalDrawProb = drawProbActual;
-
-    // V30.14: CONVICTION SHARPENING ENGINE
-    const performSharpening = () => {
-        let trueHome = homeWinProb;
-        let trueAway = awayWinProb;
-        let trueDraw = canDraw ? finalDrawProb : 0;
-
-        // 1. Identify Leader
-        const maxVal = Math.max(trueHome, trueAway, trueDraw);
-        const sortedProbs = [trueHome, trueAway, trueDraw].sort((a, b) => b - a);
-        const margin = sortedProbs[0] - sortedProbs[1];
-
-        // V30.14 conviction: even tiny leads (1%) get amplified to avoid 50/50
-        // Use a deterministic seed for tie-breaking
-        const tieBreaker = (seededRandom(seedStr) > 0.5) ? 'home' : 'away';
-        const effectiveWinner = (margin > 0) ? (maxVal === trueHome ? 'home' : (maxVal === trueAway ? 'away' : 'draw')) : tieBreaker;
-
-        // Adjust boost: Tight games (margin < 5) get a +12% bump to create clarity
-        // Clearer games (margin >= 5) get +10%
-        const boost = (maxVal >= 33) ? (margin < 5 ? 12 : 10) : 0;
-
-        if (boost > 0) {
-            if (effectiveWinner === 'home') {
-                trueHome += boost;
-                trueAway -= (boost / (canDraw ? 2 : 1));
-                if (canDraw) trueDraw -= (boost / 2);
-            } else if (effectiveWinner === 'away') {
-                trueAway += boost;
-                trueHome -= (boost / (canDraw ? 2 : 1));
-                if (canDraw) trueDraw -= (boost / 2);
-            } else if (canDraw && effectiveWinner === 'draw') {
-                trueDraw += 8;
-                trueHome -= 4;
-                trueAway -= 4;
-            }
+        if (homeIsGiant || awayIsGiant) {
+            weights.elo += 0.10;
+            weights.oracle -= 0.05;
+            weights.poisson -= 0.05;
+        } else {
+            // Balanced or small match => Psychology is key
+            weights.oracle += 0.10;
+            weights.elo -= 0.10;
         }
 
-        // Normalize and Re-Sum
-        trueHome = Math.max(5, trueHome); // Floor at 5% to keep bars visible
-        trueAway = Math.max(5, trueAway);
-        trueDraw = Math.max(0, trueDraw);
-
-        const sum = trueHome + trueAway + trueDraw;
-        if (sum > 0) {
-            homeWinProb = Math.round((trueHome / sum) * 100);
-            awayWinProb = Math.round((trueAway / sum) * 100);
-            finalDrawProb = 100 - homeWinProb - awayWinProb;
+        if (!hasMarketData) {
+            const spread = weights.market / 3;
+            weights.elo += spread;
+            weights.oracle += spread;
+            weights.poisson += spread;
+            weights.market = 0;
         }
-    };
 
-    // Apply Boosting
-    performSharpening();
+        let hP = (eloData.home * weights.elo) +
+            (oracleContext.homeState?.multiplier * baseWin * weights.oracle) +
+            (poissonProbs.homeWin * 100 * weights.poisson) +
+            (marketProb.home * weights.market);
 
-    // V30.14: Finalize Prediction Metrics (Re-calculated after sharpening)
-    const finalMax = Math.max(homeWinProb, awayWinProb, finalDrawProb);
-    let winner = 'draw';
-    if (homeWinProb >= awayWinProb && homeWinProb >= finalDrawProb) winner = 'home';
-    else if (awayWinProb > homeWinProb && awayWinProb >= finalDrawProb) winner = 'away';
+        let aP = (eloData.away * weights.elo) +
+            (oracleContext.awayState?.multiplier * baseWin * weights.oracle) +
+            (poissonProbs.awayWin * 100 * weights.poisson) +
+            (marketProb.away * weights.market);
 
-    let confidence = 'silver';
-    // Scaled thresholds for higher conviction: 68%+ Diamond, 55%+ Gold
-    if (finalMax >= 68) confidence = 'diamond';
-    else if (finalMax >= 55) confidence = 'gold';
+        let dP = (canDraw ? (baseDraw * 0.3 * 0.7) + (poissonProbs.draw * 100 * weights.poisson) : 0) + (marketProb.draw * weights.market);
 
-    // V30.7: SINCERITY PROTOCOL (Anti-Fake Wins)
-    const margin = Math.abs(homeWinProb - awayWinProb);
-    const isTight = margin < 8 && finalMax < 42;
+        // V30.60: Apply Injury Impact if provided in extraData
+        // If team has high injury impact, reduce their probability
+        const hInjury = extraData.homeInjuryImpact || 0;
+        const aInjury = extraData.awayInjuryImpact || 0;
 
-    let text = '';
-    if (isTight && canDraw) {
-        if (winner === 'home') text = `1X (Local o Empate)`;
-        else if (winner === 'away') text = `X2 (Visita o Empate)`;
-        else text = 'Empate (Cerrado)';
-        confidence = 'silver';
-    } else {
-        text = winner === 'draw' ? 'Empate' :
-            winner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`;
+        hP *= (1 - hInjury);
+        aP *= (1 - aInjury);
+
+        hP *= (weatherImpact * newsImpact);
+        aP *= (weatherImpact * newsImpact);
+
+        const seedStr = (homeTeam.id || homeName) + (awayTeam.id || awayName);
+        const seededRandom = (seed) => {
+            let h = 0xdeadbeef;
+            for (let i = 0; i < seed.length; i++)
+                h = Math.imul(h ^ seed.charCodeAt(i), 2654435761);
+            return ((h ^ h >>> 16) >>> 0) / 4294967296;
+        }
+
+        const variance = (sport === 'basketball' || sport === 'nba' || sport === 'tennis') ? 12 : 6;
+        const r1 = seededRandom(seedStr + 'home');
+        const r2 = seededRandom(seedStr + 'away');
+
+        hP += Math.floor(r1 * variance * 2) - variance;
+        aP += Math.floor(r2 * variance * 2) - variance;
+
+        const currentTotal = hP + aP + dP;
+        const factor = 100 / currentTotal;
+
+        let homeWinProb = Math.round(hP * factor);
+        let drawProbActual = Math.round(dP * factor);
+        let awayWinProb = 100 - homeWinProb - drawProbActual;
+        let finalDrawProb = drawProbActual;
+
+        const finalMax = Math.max(homeWinProb, awayWinProb, finalDrawProb);
+        let winner = 'draw';
+        if (homeWinProb >= awayWinProb && homeWinProb >= finalDrawProb) winner = 'home';
+        else if (awayWinProb > homeWinProb && awayWinProb >= finalDrawProb) winner = 'away';
+
+        let confidence = 'silver';
+        if (finalMax >= 68) confidence = 'diamond';
+        else if (finalMax >= 55) confidence = 'gold';
+
+        const margin = Math.abs(homeWinProb - awayWinProb);
+        const isTight = margin < 8 && finalMax < 42;
+
+        let text = '';
+        if (isTight && canDraw) {
+            if (winner === 'home') text = `1X (Local o Empate)`;
+            else if (winner === 'away') text = `X2 (Visita o Empate)`;
+            else text = 'Empate (Cerrado)';
+            confidence = 'silver';
+        } else {
+            text = winner === 'draw' ? 'Empate' :
+                winner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`;
+        }
+
+        const explanation = [
+            { factor: 'ELO / Fuerza Histórica', impact: Math.round(weights.elo * 100), icon: '📊' },
+            { factor: 'Psicología (HMM Inferencia)', impact: Math.round(weights.oracle * 100), icon: '🧠', confidence: oracleContext.homeState?.confidence },
+            { factor: 'Probabilidad (Poisson)', impact: Math.round(weights.poisson * 100), icon: '🔢' },
+        ];
+
+        if (hasMarketData) {
+            explanation.push({ factor: 'Sabiduría del Mercado', impact: Math.round(weights.market * 100), icon: '🏛️' });
+        }
+
+        if (weatherImpact !== 1.0) {
+            explanation.push({ factor: 'Factor Ambiental', impact: weatherImpact > 1 ? `+${Math.round((weatherImpact - 1) * 100)}%` : `-${Math.round((1 - weatherImpact) * 100)}%`, icon: '🌡️' });
+        }
+        if (newsImpact !== 1.0) {
+            explanation.push({ factor: 'Análisis de Noticias', impact: newsImpact > 1 ? `+${Math.round((newsImpact - 1) * 100)}%` : `-${Math.round((1 - newsImpact) * 100)}%`, icon: '📰' });
+        }
+
+        // V30.60: VALUE DETECTION
+        // If IA probability is > 5% higher than Market, it's a "Value Match"
+        const isValueMatch = hasMarketData && (
+            (winner === 'home' && homeWinProb > marketProb.home + 5) ||
+            (winner === 'away' && awayWinProb > marketProb.away + 5)
+        );
+
+        return {
+            winner,
+            text,
+            homeWinProb,
+            awayWinProb,
+            drawProb: finalDrawProb,
+            confidence,
+            oracleConfidence: finalMax,
+            maxProb: finalMax,
+            explanation, // V30.60: XAI Module
+            isValueMatch, // V30.60: Professional Value Flag
+            oracleV12: {
+                homeState: oracleContext.homeState?.id || 'stable',
+                awayState: oracleContext.awayState?.id || 'stable',
+                momentumConfidence: oracleContext.homeState?.confidence || 0,
+                hasPattern: (oracleContext.patterns || []).length > 0
+            },
+            weather: weather ? {
+                temp: weather.temp,
+                status: weather.status,
+                description: weather.description
+            } : null
+        };
+    } catch (e) {
+        console.error("Prediction engine fatal error:", e);
+        return { winner: 'home', text: 'Error en predicción', homeWinProb: 33, awayWinProb: 33, drawProb: 34, confidence: 'silver' };
     }
-
-    return {
-        winner,
-        text,
-        homeWinProb,
-        awayWinProb,
-        drawProb: finalDrawProb,
-        confidence,
-        oracleConfidence: finalMax, // V30 Compatibility
-        maxProb: finalMax,
-        oracleV12: {
-            homeState: oracleContext.homeState?.id || 'stable',
-            awayState: oracleContext.awayState?.id || 'stable',
-            hasPattern: (oracleContext.patterns || []).length > 0
-        }
-    };
 }
 
-/**
- * Generate VARIED market predictions based on sport
- * More options for users to choose from
- */
 /**
  * Generate VARIED market predictions based on sport
  * V30.24: Anchor probabilities to match context and Oracle findings
@@ -735,6 +823,25 @@ async function fetchMatchDetailsFromAPI(matchId, sport = 'soccer', paramLeagueSl
         const injuries = data.injuries || [];
         const homeInjuries = injuries.find(i => i.team?.id === homeTeamId)?.injuries || [];
         const awayInjuries = injuries.find(i => i.team?.id === awayTeamId)?.injuries || [];
+
+        // V30.60: KEY PLAYER ABSENCE DETECTION (Elite Feature)
+        const calculateInjuryImpact = (teamInjuries, teamLeaders) => {
+            if (!teamInjuries.length || !teamLeaders.length) return 0;
+            let impact = 0;
+            const leaderNames = teamLeaders.map(l => l.leader?.toLowerCase() || "");
+            teamInjuries.forEach(injury => {
+                const pName = injury.athlete?.displayName?.toLowerCase() || "";
+                if (leaderNames.some(ln => ln && pName.includes(ln))) {
+                    impact += 0.08; // 8% impact for a key leader absent
+                } else {
+                    impact += 0.02; // 2% for bench/squad player
+                }
+            });
+            return Math.min(0.20, impact); // Cap impact at 20%
+        };
+
+        const homeInjuryImpact = calculateInjuryImpact(homeInjuries, homeLeaders);
+        const awayInjuryImpact = calculateInjuryImpact(awayInjuries, awayLeaders);
 
         const formatRoster = (rawRoster) => {
             return rawRoster.map(p => {
