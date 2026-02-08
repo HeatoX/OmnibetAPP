@@ -129,7 +129,8 @@ export function AuthProvider({ children }) {
             email,
             password,
             options: {
-                data: { name }
+                data: { name },
+                emailRedirectTo: typeof window !== 'undefined' ? window.location.origin + '/auth/callback' : undefined,
             }
         });
 
