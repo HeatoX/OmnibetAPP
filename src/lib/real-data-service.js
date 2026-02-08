@@ -474,8 +474,9 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         if (narrative.factors.length > 0) finalWeights.narrative = 0.15; // Activate Narrative layer
 
         // Calculate Final Composite Probability (Bayesian-Style)
+        // V62.9 Fix: Use homeState.confidence from Oracle context (0-100)
         let hW = (eloData.homeWinProb * finalWeights.elo) +
-            (oracleContext.winProbability * finalWeights.oracle) +
+            ((oracleContext.homeState?.confidence || 50) * finalWeights.oracle) +
             (poissonProbs.home * finalWeights.poisson) +
             (marketProb.home * finalWeights.market);
 
@@ -486,8 +487,8 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         let dW = canDraw ? Math.max(25, (poissonProbs.draw * 0.7) + (marketProb.draw * 0.3)) : 5;
         let aW = 100 - hW - dW;
 
-        // Final normalization
-        const totalW = hW + dW + aW;
+        // Final normalization (Robust against zero/NaN)
+        const totalW = (hW + dW + aW) || 100.0001;
         const hFinal = Math.round((hW / totalW) * 100);
         const dFinal = Math.round((dW / totalW) * 100);
         const aFinal = Math.round((aW / totalW) * 100);
@@ -507,8 +508,8 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         let dWeight = dFinal; // Draw is less affected by these specific tactical multipliers
         let aWeight = aFinal * (1 / tacticalAdv) * stabilityFactor * weatherImpact * newsImpact;
 
-        // Renormalize after 800 motors impact
-        const totalWeight = hWeight + dWeight + aWeight;
+        // Renormalize after 800 motors impact (Robust against zero/NaN)
+        const totalWeight = (hWeight + dWeight + aWeight) || 100.0001;
         let homeWinProb = Math.round((hWeight / totalWeight) * 100);
         let drawProbActual = Math.round((dWeight / totalWeight) * 100);
         let awayWinProb = 100 - homeWinProb - drawProbActual;
