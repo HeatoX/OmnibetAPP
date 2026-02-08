@@ -38,7 +38,7 @@ const groupMatchesByLeague = (matches) => {
 
 export default function AppPage() {
     const router = useRouter();
-    const { user, profile, checkPredictionAccess, usePrediction, setShowLoginModal, loading, sessionResolved } = useAuth();
+    const { user, profile, checkPredictionAccess, usePrediction, getSubscriptionInfo, setShowLoginModal, loading, sessionResolved } = useAuth();
     const [matches, setMatches] = useState([]);
     const [finishedMatches, setFinishedMatches] = useState([]);
     const [showRecent, setShowRecent] = useState(false);
