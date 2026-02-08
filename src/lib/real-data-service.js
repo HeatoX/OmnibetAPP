@@ -604,13 +604,13 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         }
 
         const isValueMatch = hasMarketData && (
-            (winner === 'home' && homeWinProb > marketProb.home + 5) ||
-            (winner === 'away' && awayWinProb > marketProb.away + 5)
+            (analyticalWinner === 'home' && homeWinProb > marketProb.home + 5) ||
+            (analyticalWinner === 'away' && awayWinProb > marketProb.away + 5)
         );
 
         // V40.0: RISK MANAGEMENT (Kelly Criterion)
-        const decOdds = parseFloat(winner === 'home' ? (extraData.odds?.home) : (extraData.odds?.away)) || (winner === 'draw' ? extraData.odds?.draw : null);
-        const winProb = (winner === 'home' ? homeWinProb : (winner === 'away' ? awayWinProb : finalDrawProb)) / 100;
+        const decOdds = parseFloat(analyticalWinner === 'home' ? (extraData.odds?.home) : (extraData.odds?.away)) || (analyticalWinner === 'draw' ? extraData.odds?.draw : null);
+        const winProb = (analyticalWinner === 'home' ? homeWinProb : (analyticalWinner === 'away' ? awayWinProb : finalDrawProb)) / 100;
         const kellyStake = decOdds ? calculateKellyStake(winProb, decOdds, 0.25) : 0;
 
         return {
