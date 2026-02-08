@@ -55,11 +55,22 @@ export function AuthProvider({ children }) {
                     setUser(null);
                     setProfile(null);
                 }
-            } catch (error) {
-                console.error('🔥 [Auth] Error real en la sesión:', error);
-                setUser(null);
-                setProfile(null);
+            } catch (err) {
+                // V50.13: SILENCE ABORT ERRORS - These are internal React/Browser noise
+                const isAbort = err.name === 'AbortError' || err.message?.includes('aborted');
+
+                if (!isAbort && !ignore) {
+                    console.error('🔥 [Auth] Error real en la sesión:', err);
+                    setUser(null);
+                    setProfile(null);
+                } else {
+                    console.log('🛡️ [Auth] AbortError detectado y silenciado.');
+                    // Don't modify user state if it was aborted
+                    return;
+                }
             } finally {
+                // V50.13: ONLY resolve session if it wasn't aborted
+                // This forces the app to keep waiting for a stable mount/fetch
                 if (!ignore) {
                     setLoading(false);
                     setSessionResolved(true);

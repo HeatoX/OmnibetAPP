@@ -182,28 +182,32 @@ export default function AppPage() {
 
     const userTier = authInfo.effectiveTier;
 
-    // V50.9: SEQUENTIAL BOOT - Strict Network Prioritization
+    // Unified Sequence Boot (V50.6.3 Ghost Protocol)
     useEffect(() => {
-        // Phase 0: Explicit wait for Auth Context to finish
+        // Fase 0: Esperar a que el AuthContext resuelva la sesión
         if (!sessionResolved) {
             console.log('⏳ [Sequence] Fase 0: Esperando resolución de sesión...');
             return;
         }
 
-        // Phase 1: Security check
-        if (!user) {
-            console.log('🚫 [Sequence] Fase 1: Sin usuario. Bloreando carga de datos.');
-            return;
-        }
+        // V50.13: Give it a tiny bit more grace for profile to hydrate
+        const syncTimer = setTimeout(() => {
+            if (!user) {
+                console.log('🛑 [Auth] Acceso denegado: Sesión no encontrada tras resolución.');
+                setIsLoading(false);
+                return;
+            }
 
-        const runSequence = async () => {
-            console.log('🛡️ [Sequence] Fase 2: Sesión OK. Iniciando carga de partidos (Priorizada)...');
-            await loadMatches();
-        };
+            // Fase 1: Sesión activa. Iniciando carga de datos.
+            console.log('🚀 [Sequence] Fase 1: Sesión activa. Iniciando carga de datos.');
+            loadMatches();
+        }, 1200);
 
-        runSequence();
+        return () => clearTimeout(syncTimer);
+    }, [sessionResolved, user]);
 
-        // Refresh scores every 3 minutes SILENTLY
+    // Refresh scores every 3 minutes SILENTLY
+    useEffect(() => {
         const interval = setInterval(() => {
             if (user) loadMatches(true);
         }, 180000);
