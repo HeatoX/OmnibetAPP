@@ -71,13 +71,13 @@ export function LiveSummary({ liveCount, upcomingCount, lastUpdated }) {
 /**
  * Match Detail Modal
  */
-import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
 
 /**
  * Match Detail Modal
  */
 export function MatchDetailModal({ match, onClose, onDetailedAnalysis }) {
-    const { profile } = useAuth();
+    const { profile } = useProfile();
     const userProfile = profile; // Alias for compatibility with existing logic
 
     // Handler when user clicks upgrade button

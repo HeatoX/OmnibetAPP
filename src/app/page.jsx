@@ -3,14 +3,15 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useUI } from '@/context/UIContext';
 import { useRouter } from 'next/navigation';
 import LoginModal from '@/components/LoginModal';
 import DetailedMatchAnalysis from '@/components/DetailedMatchAnalysis';
 
 export default function LandingPage() {
     const { user } = useAuth();
+    const { showLoginModal, setShowLoginModal } = useUI();
     const router = useRouter();
-    const [showLogin, setShowLogin] = useState(false);
     const [loginMode, setLoginMode] = useState('login'); // 'login' or 'register'
     const [showDemoAnalysis, setShowDemoAnalysis] = useState(false);
 
@@ -28,12 +29,12 @@ export default function LandingPage() {
 
     const openLogin = () => {
         setLoginMode('login');
-        setShowLogin(true);
+        setShowLoginModal(true);
     };
 
     const openRegister = () => {
         setLoginMode('register');
-        setShowLogin(true);
+        setShowLoginModal(true);
     };
 
     // Redirect if user is logged in
@@ -395,7 +396,7 @@ export default function LandingPage() {
                                 </li>
                             </ul>
                             <button
-                                onClick={() => setShowLogin(true)}
+                                onClick={() => setShowLoginModal(true)}
                                 className="w-full py-4 bg-slate-700 text-white font-semibold rounded-xl hover:bg-slate-600 transition-all"
                             >
                                 Empezar Gratis
@@ -431,7 +432,7 @@ export default function LandingPage() {
                                 </li>
                             </ul>
                             <button
-                                onClick={() => setShowLogin(true)}
+                                onClick={() => setShowLoginModal(true)}
                                 className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/40 hover:shadow-emerald-500/60 transition-all"
                             >
                                 Probar 7 Días Gratis
@@ -472,7 +473,7 @@ export default function LandingPage() {
                                 </li>
                             </ul>
                             <button
-                                onClick={() => setShowLogin(true)}
+                                onClick={() => setShowLoginModal(true)}
                                 className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-amber-500/30 transition-all"
                             >
                                 Ir Premium
@@ -525,8 +526,8 @@ export default function LandingPage() {
 
             {/* Login Modal */}
             <LoginModal
-                isOpen={showLogin}
-                onClose={() => setShowLogin(false)}
+                isOpen={showLoginModal}
+                onClose={() => setShowLoginModal(false)}
                 initialMode={loginMode}
             />
 

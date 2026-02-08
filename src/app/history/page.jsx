@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
 import Header from '@/components/Header';
 import { getRealHistory, syncRecentResults } from '@/lib/history-tracker';
 
 export default function HistoryPage() {
-    const { user, profile } = useAuth();
+    const { user } = useAuth();
+    const { profile } = useProfile();
     const [predictions, setPredictions] = useState([]);
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);

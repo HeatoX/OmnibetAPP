@@ -22,6 +22,9 @@ import { SPORTS } from '@/lib/mock-data';
 import { getRealMatches, getFinishedMatches } from '@/lib/real-data-service';
 import { analyzeMatchDeep } from '@/lib/prediction-oracle';
 import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
+import { useSubscription } from '@/context/SubscriptionContext';
+import { useUI } from '@/context/UIContext';
 import { getRealHistory, getBankerStats } from '@/lib/history-tracker';
 
 /**
@@ -38,7 +41,11 @@ const groupMatchesByLeague = (matches) => {
 
 export default function AppPage() {
     const router = useRouter();
-    const { user, profile, checkPredictionAccess, usePrediction, getSubscriptionInfo, setShowLoginModal, loading, sessionResolved } = useAuth();
+    const { user, loading, sessionResolved } = useAuth();
+    const { profile } = useProfile();
+    const { checkPredictionAccess, usePrediction, getSubscriptionInfo } = useSubscription();
+    const { setShowLoginModal, showUpgradeModal, setShowUpgradeModal } = useUI();
+
     const [matches, setMatches] = useState([]);
     const [finishedMatches, setFinishedMatches] = useState([]);
     const [showRecent, setShowRecent] = useState(false);
@@ -46,7 +53,7 @@ export default function AppPage() {
     const [activeSport, setActiveSport] = useState('all');
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [showDetailedAnalysis, setShowDetailedAnalysis] = useState(null);
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    // Remove local showUpgradeModal state as it's now in UIContext
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
     const [isBankrollOpen, setIsBankrollOpen] = useState(false);
@@ -350,7 +357,7 @@ export default function AppPage() {
         };
         window.addEventListener('open-match-details', handleSearchSelect);
         return () => window.removeEventListener('open-match-details', handleSearchSelect);
-    }, [checkPredictionAccess]); // Add deps if needed
+    }, [checkPredictionAccess]);
 
     // Loading state
     // Loading state

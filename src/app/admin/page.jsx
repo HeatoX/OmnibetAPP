@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
 import { supabase } from '@/lib/supabase-config';
 
 // Admin emails that have access
@@ -10,7 +11,8 @@ const ADMIN_EMAILS = ['pablo@admin.com', 'admin@omnibet.ai', 'kesp230590@gmail.c
 
 export default function AdminPage() {
     const router = useRouter();
-    const { user, profile, loading, sessionResolved } = useAuth();
+    const { user, loading, sessionResolved } = useAuth();
+    const { profile } = useProfile();
     const [activeTab, setActiveTab] = useState('dashboard');
     const [users, setUsers] = useState([]);
     const [purchases, setPurchases] = useState([]);

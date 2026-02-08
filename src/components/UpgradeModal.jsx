@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
+import { useSubscription } from '@/context/SubscriptionContext';
 
 /**
  * Modal shown when free user reaches prediction limit
  */
 export default function UpgradeModal({ onClose }) {
-    const { getSubscriptionInfo } = useAuth();
+    const { getSubscriptionInfo } = useSubscription();
     const subInfo = getSubscriptionInfo ? getSubscriptionInfo() : {};
 
     return (

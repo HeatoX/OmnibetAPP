@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
+import { useSubscription } from '@/context/SubscriptionContext';
+import { useUI } from '@/context/UIContext';
 import LoginModal from './LoginModal';
 import RiskProfileSelector, { useRiskProfile } from './RiskProfileSelector';
 import TrialWelcomeModal from './TrialWelcomeModal';
 
-// Admin emails
+// Admin emails (keeping for extra UI safety if profile is loading)
 const ADMIN_EMAILS = [
     'pablo@admin.com',
     'admin@omnibet.ai',
@@ -21,7 +24,10 @@ const ADMIN_EMAILS = [
  * Navigation Header Component with Auth
  */
 export default function Header(props) {
-    const { user, profile: userProfile, signOut, setShowLoginModal, showLoginModal, getSubscriptionInfo, showTrialModal, setShowTrialModal } = useAuth();
+    const { user, signOut } = useAuth();
+    const { profile: userProfile } = useProfile();
+    const { getSubscriptionInfo } = useSubscription();
+    const { showLoginModal, setShowLoginModal, showTrialModal, setShowTrialModal } = useUI();
     const { profile: riskProfile, updateProfile } = useRiskProfile();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

@@ -21,6 +21,9 @@ export const metadata = {
 };
 
 import { SelectionProvider } from "@/context/SelectionContext";
+import { ProfileProvider } from "@/context/ProfileContext";
+import { SubscriptionProvider } from "@/context/SubscriptionContext";
+import { UIProvider } from "@/context/UIContext";
 
 export default function RootLayout({ children }) {
     return (
@@ -35,11 +38,17 @@ export default function RootLayout({ children }) {
             </head>
             <body className={inter.className}>
                 <AuthProvider>
-                    <AlertProvider>
-                        <SelectionProvider>
-                            {children}
-                        </SelectionProvider>
-                    </AlertProvider>
+                    <ProfileProvider>
+                        <SubscriptionProvider>
+                            <UIProvider>
+                                <AlertProvider>
+                                    <SelectionProvider>
+                                        {children}
+                                    </SelectionProvider>
+                                </AlertProvider>
+                            </UIProvider>
+                        </SubscriptionProvider>
+                    </ProfileProvider>
                 </AuthProvider>
             </body>
         </html>

@@ -4,10 +4,12 @@ import Header from '@/components/Header';
 import MiniPredictionCard from '@/components/MiniPredictionCard';
 import TicketGenerator from '@/components/TicketGenerator';
 import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
 import { useSelection } from '@/context/SelectionContext';
 
 export default function PrivateRoomPage() {
-    const { user, profile } = useAuth();
+    const { user } = useAuth();
+    const { profile } = useProfile();
     const { selections: savedPicks, removeMatch: removePick, clearSelection: clearAll } = useSelection();
     const [isTicketOpen, setIsTicketOpen] = useState(false);
 
