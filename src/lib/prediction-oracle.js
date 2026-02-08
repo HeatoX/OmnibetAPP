@@ -117,7 +117,7 @@ async function getTeamRecentForm(sport, league, teamName) {
 /**
  * Calculate DEEP prediction combining multiple factors
  */
-async function calculateDeepPrediction(match) {
+async function calculateDeepPrediction(match, prefetchedHistory = null) {
     const { home, away, odds, sport, league } = match;
     console.log(`[Oracle] 🔮 Analyzing Match: ${home?.name} vs ${away?.name} (${match.id})`);
 
@@ -125,15 +125,20 @@ async function calculateDeepPrediction(match) {
     const oddsPrediction = analyzeFromOdds(match);
     console.log('[Oracle] ✅ Odds Analysis Complete');
 
-    // Initial Calibration (V29 Neural Sync)
-    console.log('[Oracle] ⏱️ Fetching History & Calibrating...');
-    const history = await Promise.race([
-        getRecentPredictions(),
-        new Promise((resolve) => setTimeout(() => resolve([]), 2000)) // 2s timeout
-    ]).catch((e) => { console.error('[Oracle] History Error:', e); return []; });
-    const calibratedWeights = autoCalibrateWeights(history);
+    // Initial Calibration (V50.11: Use prefetched history if available)
+    let history = prefetchedHistory;
+    if (!history) {
+        console.log('[Oracle] ⏱️ Fetching History... (No batching detected)');
+        history = await Promise.race([
+            getRecentPredictions(),
+            new Promise((resolve) => setTimeout(() => resolve([]), 3000))
+        ]).catch(() => []);
+    }
+
+    const calibratedWeights = autoCalibrateWeights(history || []);
 
     // Step 2: Context Swarm & Deep Data (Resilient)
+    // ...
     const deepData = await Promise.race([
         getMatchDetails(match.id, match.sport),
         new Promise((resolve) => setTimeout(() => resolve(null), 6000)) // 6s timeout for deep data
@@ -353,9 +358,9 @@ function generateSmartMarkets(match, prediction) {
 /**
  * MAIN EXPORT: Deep Analysis Engine
  */
-export async function analyzeMatchDeep(match) {
+export async function analyzeMatchDeep(match, prefetchedHistory = null) {
     // Calculate deep prediction
-    const prediction = await calculateDeepPrediction(match);
+    const prediction = await calculateDeepPrediction(match, prefetchedHistory);
 
     // Generate smart market predictions
     const smartMarkets = generateSmartMarkets(match, prediction);
