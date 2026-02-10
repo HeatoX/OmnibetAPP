@@ -272,17 +272,32 @@ function PayPalButtonWrapper({ tier, userId, onSuccess, onError }) {
                     height: 50
                 }}
                 createOrder={async () => {
-                    const res = await fetch('/api/paypal/create-order', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            tierId: tier.id,
-                            amount: tier.price
-                        })
-                    });
-                    const order = await res.json();
-                    return order.id;
-                }}
+                    try {
+                        console.log('[PayPal Debug] Button clicked, creating order...');
+                        const res = await fetch('/api/paypal/create-order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                tierId: tier.id,
+                                amount: tier.price
+                            })
+                        });
+                        const order = await res.json();
+                        console.log('[PayPal Debug] Order response:', order);
+
+                        if (!order.id) {
+                            const errorDetails = order.error || order.message || 'No ID received';
+                            console.error('[PayPal Debug] Failed to get order ID:', order);
+                            onError(`PayPal Error: ${errorDetails}`);
+                            return null;
+                        }
+                        return order.id;
+                    } catch (err) {
+                        console.error('[PayPal Debug] Local catch:', err);
+                        onError('Error de conexión local');
+                        return null;
+                    }
+                }
                 onApprove={async (data) => {
                     const res = await fetch('/api/paypal/capture-order', {
                         method: 'POST',

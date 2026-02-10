@@ -21,8 +21,10 @@ console.log(`[PayPal Backend] Configured for ${IS_SANDBOX ? 'SANDBOX' : 'LIVE'} 
  * Generate an OAuth2 access token
  */
 async function generateAccessToken() {
+    console.log(`[PayPal lib] Fetching token for ${PAYPAL_API} with ID: ${PAYPAL_CLIENT_ID ? PAYPAL_CLIENT_ID.substring(0, 8) + '...' : 'MISSING'}`);
+
     if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
-        throw new Error("Missing PayPal credentials");
+        throw new Error("Missing PayPal credentials (PAYPAL_CLIENT_ID or PAYPAL_CLIENT_SECRET)");
     }
 
     const auth = Buffer.from(PAYPAL_CLIENT_ID + ":" + PAYPAL_CLIENT_SECRET).toString("base64");
