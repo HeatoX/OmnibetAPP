@@ -28,13 +28,15 @@ const isServer = typeof window === 'undefined';
 let teamRatings = new Map();
 
 /**
- * Persist ratings to disk (Server-Only)
+ * V42: Vercel-safe persistence. On serverless, filesystem is ephemeral.
+ * Ratings live in-memory and are retrained from finished matches on each cold start.
+ * Disk persistence is attempted as best-effort (works locally, silently skips on Vercel).
  */
 export async function saveRatings() {
     if (!isServer) return;
     try {
-        const fs = eval('require("fs")');
-        const path = eval('require("path")');
+        const fs = await import('fs');
+        const path = await import('path');
         const STORAGE_PATH = path.join(process.cwd(), 'data', 'elo_ratings.json');
 
         // Ensure directory exists
@@ -51,18 +53,19 @@ export async function saveRatings() {
         fs.writeFileSync(STORAGE_PATH, JSON.stringify(payload, null, 2));
         console.log("💾 ELO ratings persisted to disk.");
     } catch (e) {
-        console.error("Error saving ratings:", e);
+        // V42: Silently skip on Vercel (read-only filesystem)
+        console.warn("⚠️ ELO save skipped (serverless or read-only FS):", e.message);
     }
 }
 
 /**
- * Load ratings from disk (Server-Only)
+ * Load ratings from disk (Server-Only, best-effort)
  */
 export async function loadRatings() {
     if (!isServer) return;
     try {
-        const fs = eval('require("fs")');
-        const path = eval('require("path")');
+        const fs = await import('fs');
+        const path = await import('path');
         const STORAGE_PATH = path.join(process.cwd(), 'data', 'elo_ratings.json');
 
         if (fs.existsSync(STORAGE_PATH)) {
@@ -74,13 +77,13 @@ export async function loadRatings() {
                 lastTrainedTimestamp = payload.lastTrained || 0;
                 console.log(`📂 ELO ratings loaded from disk. (${teamRatings.size} teams, Last trained: ${new Date(lastTrainedTimestamp).toLocaleString()})`);
             } else {
-                // Legacy format support
                 teamRatings = new Map(Object.entries(payload));
                 console.log(`📂 ELO ratings loaded from disk. (${teamRatings.size} teams)`);
             }
         }
     } catch (e) {
-        console.warn("Could not load ELO ratings, starting fresh.");
+        // V42: Normal on Vercel — ratings will be retrained from finished matches
+        console.warn("⚠️ ELO load skipped (serverless or no file). Will retrain from scratch.");
     }
 }
 
@@ -92,9 +95,9 @@ export function resetEloSystem() {
     saveRatings();
 }
 
-// Initial load (Server-Only)
+// V42: Deferred initial load (won't block module import on Vercel)
 if (isServer) {
-    loadRatings();
+    loadRatings().catch(() => { });
 }
 
 /**

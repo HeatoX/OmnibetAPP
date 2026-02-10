@@ -270,7 +270,7 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
                 relativeDate: relativeDate,
                 odds: matchOdds,
                 prediction: predictionData,
-                playerPredictions: generatePlayerPredictions(homeTeam, awayTeam, sport, event.id, homeTeam, awayTeam)
+                playerPredictions: generatePlayerPredictions(homeTeam, awayTeam, sport, event.id, homeTeam, awayTeam, predictionData)
             };
         }));
     });
@@ -392,8 +392,8 @@ function extractOdds(competition) {
  */
 function convertMoneyLine(ml) {
     if (!ml) return null;
-    if (ml > 0) return ((ml / 100) + 1).toFixed(2);
-    return ((100 / Math.abs(ml)) + 1).toFixed(2);
+    if (ml > 0) return parseFloat(((ml / 100) + 1).toFixed(2));
+    return parseFloat(((100 / Math.abs(ml)) + 1).toFixed(2));
 }
 
 /**
@@ -753,7 +753,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
  * Generate VARIED market predictions based on sport
  * V30.24: Anchor probabilities to match context and Oracle findings
  */
-function generatePlayerPredictions(homeTeam, awayTeam, sport, matchId, homeData, awayData) {
+function generatePlayerPredictions(homeTeam, awayTeam, sport, matchId, homeData, awayData, mainPrediction = null) {
     const homeName = homeTeam.team?.shortDisplayName || homeTeam.athlete?.shortName || homeTeam.team?.name || homeTeam.athlete?.displayName || 'Local';
     const awayName = awayTeam.team?.shortDisplayName || awayTeam.athlete?.shortName || awayTeam.team?.name || awayTeam.athlete?.displayName || 'Visitante';
 
@@ -822,19 +822,44 @@ function generatePlayerPredictions(homeTeam, awayTeam, sport, matchId, homeData,
     const numPredictions = 4 + (seed % 3); // Deterministic 4-6 predictions
     const selected = shuffled.slice(0, numPredictions);
 
+    // V42: Anchor secondary markets to the main prediction
+    const mainProb = mainPrediction?.homeWinProb || 50;
+    const dominance = Math.abs(mainProb - 50); // 0 = even, 25 = dominant
+    const isFavoriteHome = mainProb >= 50;
+
     return selected.map((market, idx) => {
-        // V30.24: Smart Probability Logic
+        // V42: Anchored Probability Logic (uses main prediction as base signal)
         let baseProb = 45 + ((seed + idx) % 25); // Baseline 45-70%
 
-        // Contextual Adjustments
-        if (market.type === 'btts' && hasGiant) baseProb += 8;
-        if (market.type === 'over_under' && hasGiant && market.prediction.includes('Más')) baseProb += 7;
-        if (market.type === 'handicap' && hasGiant && market.prediction.includes('-')) baseProb += 5;
+        // Contextual Adjustments from main prediction
+        if (market.type === 'btts') {
+            // BTTS more likely when both teams are competitive (low dominance)
+            baseProb += dominance < 10 ? 10 : (hasGiant ? 5 : 0);
+        }
+        if (market.type === 'over_under') {
+            if (market.prediction.includes('Más')) {
+                // Overs more likely with high dominance (blowout) or giants
+                baseProb += Math.round(dominance * 0.3) + (hasGiant ? 5 : 0);
+            } else {
+                // Unders more likely when teams are evenly matched
+                baseProb += dominance < 8 ? 8 : -Math.round(dominance * 0.2);
+            }
+        }
+        if (market.type === 'handicap') {
+            // Home handicap more likely when home is dominant
+            const isHomeHandicap = market.prediction.includes(homeName);
+            if (isHomeHandicap && isFavoriteHome) baseProb += Math.round(dominance * 0.4);
+            if (!isHomeHandicap && !isFavoriteHome) baseProb += Math.round(dominance * 0.4);
+        }
+        if (market.type === 'half' || market.type === 'quarter') {
+            // First half/quarter winner correlates with overall winner
+            baseProb += Math.round(dominance * 0.2);
+        }
 
         return {
             team: market.prediction,
             prediction: '',
-            probability: Math.min(88, baseProb), // Cap at 88% for realism
+            probability: Math.min(88, Math.max(30, baseProb)), // Cap 30-88% for realism
             icon: market.icon,
             type: market.type,
         };
