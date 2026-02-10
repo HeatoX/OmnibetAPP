@@ -24,8 +24,15 @@ import { SelectionProvider } from "@/context/SelectionContext";
 import { ProfileProvider } from "@/context/ProfileContext";
 import { SubscriptionProvider } from "@/context/SubscriptionContext";
 import { UIProvider } from "@/context/UIContext";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 export default function RootLayout({ children }) {
+    const paypalOptions = {
+        "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "sb",
+        currency: "USD",
+        intent: "capture",
+    };
+
     return (
         <html lang="es">
             <head>
@@ -40,13 +47,15 @@ export default function RootLayout({ children }) {
                 <AuthProvider>
                     <ProfileProvider>
                         <SubscriptionProvider>
-                            <UIProvider>
-                                <AlertProvider>
-                                    <SelectionProvider>
-                                        {children}
-                                    </SelectionProvider>
-                                </AlertProvider>
-                            </UIProvider>
+                            <PayPalScriptProvider options={paypalOptions}>
+                                <UIProvider>
+                                    <AlertProvider>
+                                        <SelectionProvider>
+                                            {children}
+                                        </SelectionProvider>
+                                    </AlertProvider>
+                                </UIProvider>
+                            </PayPalScriptProvider>
                         </SubscriptionProvider>
                     </ProfileProvider>
                 </AuthProvider>

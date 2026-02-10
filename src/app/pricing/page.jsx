@@ -1,8 +1,6 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import Script from 'next/script';
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 
 const PRICING_TIERS = [
     {
@@ -74,56 +72,15 @@ const PRICING_TIERS = [
 export default function PricingPage() {
     const { user, profile, setShowLoginModal } = useAuth();
     const [loading, setLoading] = useState(null);
-    const [sdkReady, setSdkReady] = useState(false);
     const [error, setError] = useState('');
 
     // V30.36 - Fix ReferenceError: currentTier is not defined
     const currentTier = profile?.subscription_tier || 'free';
 
-    const handlePaymentSuccess = (details, tier) => {
-        console.log('Payment Successful', details);
-        // Refresh profile or redirect
-        window.location.reload();
-    };
-
-    // V42.5: Debugging & Robust Loading
-    useEffect(() => {
-        const clientID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
-        console.log(`[PayPal Debug] SDK Loading attempt with ID: ${clientID ? clientID.substring(0, 8) + '...' : 'MISSING (using sandbox "sb")'}`);
-
-        const checkSDK = () => {
-            if (typeof window !== 'undefined' && window.paypal) {
-                setSdkReady(true);
-                return true;
-            }
-            return false;
-        };
-
-        if (checkSDK()) return;
-
-        const interval = setInterval(() => {
-            if (checkSDK()) clearInterval(interval);
-        }, 1500);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    const paypalUrl = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'sb'}&currency=USD&intent=capture`;
+    const [{ isPending }] = usePayPalScriptReducer();
 
     return (
         <div className="min-h-screen bg-grid py-20">
-            <Script
-                src={paypalUrl}
-                strategy="afterInteractive"
-                onReady={() => {
-                    console.log("[PayPal Debug] SDK Ready Callback triggered");
-                    setSdkReady(true);
-                }}
-                onError={(e) => {
-                    console.error("[PayPal Debug] SDK Load Error:", e);
-                    setError('Error al cargar el SDK de PayPal. Verifica que NEXT_PUBLIC_PAYPAL_CLIENT_ID esté configurada en Vercel.');
-                }}
-            />
             <div className="bg-glow"></div>
 
             <div className="container mx-auto px-4 relative z-10">
@@ -234,11 +191,11 @@ export default function PricingPage() {
                                     </button>
                                 ) : (
                                     <div className="relative z-0">
-                                        {sdkReady ? (
+                                        {!isPending ? (
                                             <PayPalButtonWrapper
                                                 tier={tier}
                                                 userId={user?.id}
-                                                onSuccess={(details) => handlePaymentSuccess(details, tier)}
+                                                onSuccess={() => window.location.reload()}
                                                 onError={(err) => setError(err)}
                                             />
                                         ) : (
@@ -299,67 +256,46 @@ export default function PricingPage() {
  * PayPal Button Component Wrapper
  */
 function PayPalButtonWrapper({ tier, userId, onSuccess, onError }) {
-    const [isRendered, setIsRendered] = useState(false);
-    const containerId = `paypal-button-container-${tier.id}`;
-
-    useEffect(() => {
-        let timer;
-        let retries = 0;
-        const maxRetries = 10;
-
-        const renderButton = () => {
-            if (window.paypal) {
-                const container = document.getElementById(containerId);
-                if (container && container.innerHTML === '') {
-                    window.paypal.Buttons({
-                        createOrder: async () => {
-                            const res = await fetch('/api/paypal/create-order', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    tierId: tier.id,
-                                    amount: tier.price
-                                })
-                            });
-                            const order = await res.json();
-                            return order.id;
-                        },
-                        onApprove: async (data) => {
-                            const res = await fetch('/api/paypal/capture-order', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    orderID: data.orderID,
-                                    userId: userId,
-                                    tierId: tier.id
-                                })
-                            });
-                            const result = await res.json();
-                            if (result.success) onSuccess(result);
-                            else onError(result.error || 'Error capturando el pago');
-                        },
-                        onError: (err) => {
-                            console.error('PayPal Button Error', err);
-                            onError('Hubo un error con el botón de PayPal');
-                        },
-                        style: {
-                            color: tier.color === 'yellow' ? 'gold' : 'blue',
-                            shape: 'rect',
-                            label: 'pay',
-                            height: 50
-                        }
-                    }).render(`#${containerId}`);
-                    setIsRendered(true);
-                }
-            } else if (retries < maxRetries) {
-                retries++;
-                timer = setTimeout(renderButton, 1000);
-            }
-        };
-
-        timer = setTimeout(renderButton, 500);
-        return () => clearTimeout(timer);
-    }, [isRendered, containerId, tier, userId, onSuccess, onError]);
-
-    return <div id={containerId} className="w-full"></div>;
+    return (
+        <div className="w-full">
+            <PayPalButtons
+                style={{
+                    color: tier.color === 'yellow' ? 'gold' : 'blue',
+                    shape: 'rect',
+                    label: 'pay',
+                    height: 50
+                }}
+                createOrder={async () => {
+                    const res = await fetch('/api/paypal/create-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            tierId: tier.id,
+                            amount: tier.price
+                        })
+                    });
+                    const order = await res.json();
+                    return order.id;
+                }}
+                onApprove={async (data) => {
+                    const res = await fetch('/api/paypal/capture-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            orderID: data.orderID,
+                            userId: userId,
+                            tierId: tier.id
+                        })
+                    });
+                    const result = await res.json();
+                    if (result.success) onSuccess(result);
+                    else onError(result.error || 'Error capturando el pago');
+                }}
+                onError={(err) => {
+                    console.error('PayPal Button Error', err);
+                    onError('Hubo un error con el botón de PayPal');
+                }}
+            />
+        </div>
+    );
 }
