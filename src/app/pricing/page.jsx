@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Script from 'next/script';
 
@@ -74,6 +72,7 @@ const PRICING_TIERS = [
 export default function PricingPage() {
     const { user, profile, setShowLoginModal } = useAuth();
     const [loading, setLoading] = useState(null);
+    const [sdkReady, setSdkReady] = useState(false);
     const [error, setError] = useState('');
 
     // V30.36 - Fix ReferenceError: currentTier is not defined
@@ -90,6 +89,7 @@ export default function PricingPage() {
             <Script
                 src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test'}&currency=USD&intent=capture`}
                 strategy="afterInteractive"
+                onLoad={() => setSdkReady(true)}
             />
             <div className="bg-glow"></div>
 
@@ -201,7 +201,7 @@ export default function PricingPage() {
                                     </button>
                                 ) : (
                                     <div className="relative z-0">
-                                        {typeof window !== 'undefined' && window.paypal ? (
+                                        {sdkReady ? (
                                             <PayPalButtonWrapper
                                                 tier={tier}
                                                 userId={user?.id}
@@ -212,15 +212,14 @@ export default function PricingPage() {
                                             <button
                                                 onClick={() => {
                                                     if (!user) setShowLoginModal(true);
-                                                    else alert("Cargando sistema de pagos de PayPal...");
                                                 }}
-                                                className={`w-full py-4 rounded-xl font-bold text-lg transition-all
+                                                className={`w-full py-4 rounded-xl font-bold text-lg animate-pulse transition-all
                                                     ${tier.color === 'yellow'
                                                         ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black'
                                                         : 'bg-gradient-to-r from-cyan-400 to-blue-500 text-black'
                                                     }`}
                                             >
-                                                {user ? 'Pagar con PayPal' : 'Inicia Sesión para Comprar'}
+                                                {user ? 'Cargando PayPal...' : 'Inicia Sesión para Comprar'}
                                             </button>
                                         )}
                                     </div>
