@@ -86,8 +86,11 @@ export default function PricingPage() {
         window.location.reload();
     };
 
-    // V42.4: Proactive SDK monitoring (Polling fallback)
+    // V42.5: Debugging & Robust Loading
     useEffect(() => {
+        const clientID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+        console.log(`[PayPal Debug] SDK Loading attempt with ID: ${clientID ? clientID.substring(0, 8) + '...' : 'MISSING (using sandbox "sb")'}`);
+
         const checkSDK = () => {
             if (typeof window !== 'undefined' && window.paypal) {
                 setSdkReady(true);
@@ -100,18 +103,26 @@ export default function PricingPage() {
 
         const interval = setInterval(() => {
             if (checkSDK()) clearInterval(interval);
-        }, 2000);
+        }, 1500);
 
         return () => clearInterval(interval);
     }, []);
 
+    const paypalUrl = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'sb'}&currency=USD&intent=capture`;
+
     return (
         <div className="min-h-screen bg-grid py-20">
             <Script
-                src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'sb'}&currency=USD&intent=capture`}
+                src={paypalUrl}
                 strategy="afterInteractive"
-                onReady={() => setSdkReady(true)}
-                onError={() => setError('Error al cargar el SDK de PayPal. Revisa tu conexión o bloqueadores de anuncios.')}
+                onReady={() => {
+                    console.log("[PayPal Debug] SDK Ready Callback triggered");
+                    setSdkReady(true);
+                }}
+                onError={(e) => {
+                    console.error("[PayPal Debug] SDK Load Error:", e);
+                    setError('Error al cargar el SDK de PayPal. Verifica que NEXT_PUBLIC_PAYPAL_CLIENT_ID esté configurada en Vercel.');
+                }}
             />
             <div className="bg-glow"></div>
 
