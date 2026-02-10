@@ -263,7 +263,7 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
                 status: isLive ? 'live' : (isFinished ? 'finished' : 'upcoming'),
                 isLive,
                 isFinished,
-                liveMinute: competition.status?.displayClock || '',
+                liveMinute: status?.detail || competition.status?.displayClock || '',
                 sport: getSportType(sport),
                 sportIcon: getSportIcon(sport),
                 relativeDate: relativeDate,
@@ -578,32 +578,12 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const weatherImpact = weather ? (weather.status === 'Rain' ? 0.95 : weather.status === 'Clear' ? 1.05 : 1.0) : 1.0;
         const stabilityFactor = graphContext.stability || 1.0;
 
-        // V63.1: LIVE Intelligence Layer (Marcador en Vivo)
-        let liveBiasH = 1.0;
-        let liveBiasA = 1.0;
-        let liveBiasD = 1.0;
-
-        if (isLive) {
-            const hScore = parseInt(homeTeam.score) || 0;
-            const aScore = parseInt(awayTeam.score) || 0;
-            const diff = hScore - aScore;
-            const matchMinute = extraData.matchMinute || 45;
-
-            // V63.2: Personalized Prediction Logic
-            // The closer to 90', the more the score matters. Before that, trust the tactical analysis.
-            const convergenceFactor = Math.min(1.0, (matchMinute / 90) * (matchMinute / 90)); // Parabolic curve
-            const intensity = 0.15 * convergenceFactor;
-
-            if (diff > 0) {
-                liveBiasH = 1 + (diff * intensity);
-                liveBiasD = Math.max(0.3, 1 - (diff * intensity * 2)); // Less drastic drop
-                liveBiasA = Math.max(0.2, 1 - (diff * intensity * 3));
-            } else if (diff < 0) {
-                liveBiasA = 1 + (Math.abs(diff) * intensity);
-                liveBiasD = Math.max(0.3, 1 - (Math.abs(diff) * intensity * 2));
-                liveBiasH = Math.max(0.2, 1 - (Math.abs(diff) * intensity * 3));
-            }
-        }
+        // V41.0: LIVE BIAS REMOVED
+        // The Oracle's prediction MUST remain analytical and NOT follow the scoreboard.
+        // This is the core integrity of the prediction system.
+        const liveBiasH = 1.0;
+        const liveBiasA = 1.0;
+        const liveBiasD = 1.0;
 
         let hWeight = hFinal * tacticalAdv * stabilityFactor * weatherImpact * newsImpact * liveBiasH;
         let dWeight = dFinal * stabilityFactor * weatherImpact * newsImpact * liveBiasD;
@@ -616,16 +596,13 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         let awayWinProb = 100 - homeWinProb - drawProbActual;
         let finalDrawProb = drawProbActual;
 
-        // V63.2: Analytical Winner (The persistent prediction)
-        // Calculated BEFORE live score bias to maintain Oracle's identity
-        let analyticalWinner = 'draw';
-        if (hFinal >= aFinal && hFinal >= dFinal) analyticalWinner = 'home';
-        else if (aFinal > hFinal && aFinal >= dFinal) analyticalWinner = 'away';
-
+        // V41.0: Single coherent winner from the Oracle's analysis
+        // No more dual winner (analytical vs current) — the Oracle speaks once.
         const finalMax = Math.max(homeWinProb, awayWinProb, finalDrawProb);
         let currentWinner = 'draw';
         if (homeWinProb >= awayWinProb && homeWinProb >= finalDrawProb) currentWinner = 'home';
         else if (awayWinProb > homeWinProb && awayWinProb >= finalDrawProb) currentWinner = 'away';
+        const analyticalWinner = currentWinner; // Same — no live bias means no divergence
 
         let confidence = 'silver';
         if (finalMax >= 68) confidence = 'diamond';
