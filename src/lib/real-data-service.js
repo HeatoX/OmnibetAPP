@@ -374,7 +374,8 @@ function extractOdds(competition) {
             home: homeDec,
             draw: drawDec,
             away: awayDec,
-            impliedProbabilities: total > 0 ? { home: hP, draw: dP, away: aP } : null
+            // V41.3: Only return implied probabilities if we have at least home AND away odds
+            impliedProbabilities: (total > 0 && hP > 0 && aP > 0) ? { home: hP, draw: dP, away: aP } : null
         };
     }
 
@@ -504,7 +505,9 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
 
         // 4. Market Wisdom
         const marketProb = extraData?.odds?.impliedProbabilities || { home: 33, draw: 34, away: 33 };
-        const hasMarketData = !!extraData?.odds?.impliedProbabilities;
+        // V41.3: Only trust market data if ALL probabilities are valid (home + away > 10%)
+        const hasMarketData = !!(extraData?.odds?.impliedProbabilities &&
+            marketProb.home > 0 && marketProb.away > 0 && (marketProb.home + marketProb.away) > 10);
         const driftData = predictMarketDrift(extraData?.odds, marketProb.home);
 
         // 5. Narrative
@@ -594,18 +597,22 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         dFinal = canDraw ? Math.max(5, Math.round((dFinal / totalW) * 100)) : 0;
         aFinal = Math.max(5, 100 - hFinal - dFinal);
 
-        // 6. --- FULL INTELLIGENCE ENGINE (800 MOTORS) ---
-        // V40.0: Tactical DNA & Stability Analysis
-        const homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence);
-        const awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence);
-        const tacticalAdv = getTacticalAdvantage(homeADN, awayADN);
+        // 6. --- INTELLIGENCE ENGINE ---
+        // V41.3: Defensive wrapping — no single engine failure should crash the prediction
+        let tacticalAdv = 1.0;
+        let stabilityFactor = 1.0;
+        try {
+            const homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence);
+            const awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence);
+            tacticalAdv = getTacticalAdvantage(homeADN, awayADN) || 1.0;
+        } catch (e) { console.warn('Tactical ADN engine error:', e.message); }
 
-        // V63.1 Fix: Use real roster/injury data to avoid default 40% penalty
-        const graphContext = calculateGraphStability(extraData.leaders?.home || [], extraData.injuries?.home || []);
+        try {
+            const graphContext = calculateGraphStability(extraData.leaders?.home || [], extraData.injuries?.home || []);
+            stabilityFactor = graphContext?.stability || 1.0;
+        } catch (e) { console.warn('Graph stability engine error:', e.message); }
 
-        // V62.6: Applying Tactical, Environmental and Narrative Multipliers
         const weatherImpact = weather ? (weather.status === 'Rain' ? 0.95 : weather.status === 'Clear' ? 1.05 : 1.0) : 1.0;
-        const stabilityFactor = graphContext.stability || 1.0;
 
         // V41.0: LIVE BIAS REMOVED
         // The Oracle's prediction MUST remain analytical and NOT follow the scoreboard.
