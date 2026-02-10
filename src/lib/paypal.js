@@ -6,15 +6,16 @@
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
 
-// V42.10: Auto-detect environment based on ID or explicit env var
+// V42.11: Specific environment detection based on PayPal standard prefixes
+// Sandbox starts with 'AS', Live starts with 'AW' or 'AV'
 const IS_SANDBOX = process.env.PAYPAL_ENV === 'sandbox' ||
-    (PAYPAL_CLIENT_ID && (PAYPAL_CLIENT_ID.startsWith('A') || PAYPAL_CLIENT_ID.includes('sb-')));
+    (PAYPAL_CLIENT_ID && (PAYPAL_CLIENT_ID.startsWith('AS') || PAYPAL_CLIENT_ID.includes('sb-')));
 
 const PAYPAL_API = IS_SANDBOX
     ? 'https://api-m.sandbox.paypal.com'
     : 'https://api-m.paypal.com';
 
-console.log(`[PayPal Backend] Using ${IS_SANDBOX ? 'SANDBOX' : 'LIVE'} endpoint`);
+console.log(`[PayPal Backend] Configured for ${IS_SANDBOX ? 'SANDBOX' : 'LIVE'} mode`);
 
 /**
  * Generate an OAuth2 access token
