@@ -79,7 +79,7 @@ export default function PricingPage() {
     // V30.36 - Fix ReferenceError: currentTier is not defined
     const currentTier = profile?.subscription_tier || 'free';
 
-    const [{ isPending }] = usePayPalScriptReducer();
+    const [{ isPending, isRejected, options }] = usePayPalScriptReducer();
 
     return (
         <div className="min-h-screen bg-grid py-20">
@@ -175,8 +175,7 @@ export default function PricingPage() {
                                 ))}
                             </ul>
 
-                            {/* CTA / PayPal Buttons */}
-                            <div className="mt-auto min-h-[60px]">
+                            <div className="mt-auto min-h-[80px]">
                                 {tier.id === 'free' ? (
                                     <button
                                         disabled
@@ -193,7 +192,12 @@ export default function PricingPage() {
                                     </button>
                                 ) : (
                                     <div className="relative z-0">
-                                        {!isPending ? (
+                                        {isRejected ? (
+                                            <div className="text-center p-2 bg-red-500/10 rounded-lg border border-red-500/20">
+                                                <p className="text-red-400 text-xs mb-1">Error de Conexión</p>
+                                                <p className="text-[10px] text-gray-400 break-all">ID: {options['client-id']}</p>
+                                            </div>
+                                        ) : !isPending ? (
                                             <PayPalButtonWrapper
                                                 tier={tier}
                                                 userId={user?.id}
@@ -206,12 +210,12 @@ export default function PricingPage() {
                                                     if (!user) setShowLoginModal(true);
                                                 }}
                                                 className={`w-full py-4 rounded-xl font-bold text-lg animate-pulse transition-all
-                                                    ${tier.color === 'yellow'
+                                                            ${tier.color === 'yellow'
                                                         ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black'
                                                         : 'bg-gradient-to-r from-cyan-400 to-blue-500 text-black'
                                                     }`}
                                             >
-                                                {user ? 'Cargando PayPal...' : 'Inicia Sesión para Comprar'}
+                                                {user ? 'Cargando...' : 'Inicia Sesión'}
                                             </button>
                                         )}
                                     </div>
