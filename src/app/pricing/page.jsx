@@ -86,12 +86,19 @@ export default function PricingPage() {
         window.location.reload();
     };
 
+    // V42.3: More robust SDK detection
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.paypal) {
+            setSdkReady(true);
+        }
+    }, []);
+
     return (
         <div className="min-h-screen bg-grid py-20">
             <Script
                 src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test'}&currency=USD&intent=capture`}
                 strategy="afterInteractive"
-                onLoad={() => setSdkReady(true)}
+                onReady={() => setSdkReady(true)}
             />
             <div className="bg-glow"></div>
 
