@@ -297,25 +297,25 @@ function PayPalButtonWrapper({ tier, userId, onSuccess, onError }) {
                         onError('Error de conexión local');
                         return null;
                     }
-                }
-                onApprove={async (data) => {
+                },
+                    onApprove = { async(data) => {
                     const res = await fetch('/api/paypal/capture-order', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            orderID: data.orderID,
-                            userId: userId,
-                            tierId: tier.id
+                method: 'POST',
+            headers: {'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                orderID: data.orderID,
+            userId: userId,
+            tierId: tier.id
                         })
                     });
-                    const result = await res.json();
-                    if (result.success) onSuccess(result);
-                    else onError(result.error || 'Error capturando el pago');
+            const result = await res.json();
+            if (result.success) onSuccess(result);
+            else onError(result.error || 'Error capturando el pago');
                 }}
-                onError={(err) => {
-                    console.error('PayPal Button Error', err);
-                    onError('Hubo un error con el botón de PayPal');
-                }}
+            onError={(err) => {
+                console.error('PayPal Button Error', err);
+                onError('Hubo un error con el botón de PayPal');
+            }}
             />
         </div>
     );
