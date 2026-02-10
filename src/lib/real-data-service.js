@@ -598,18 +598,24 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         aFinal = Math.max(5, 100 - hFinal - dFinal);
 
         // 6. --- INTELLIGENCE ENGINE ---
-        // V41.3: Defensive wrapping — no single engine failure should crash the prediction
+        // V41.5: Variables declared OUTSIDE try-catch so return statement can access them
         let tacticalAdv = 1.0;
         let stabilityFactor = 1.0;
+        let homeADN = { label: 'Desconocido' };
+        let awayADN = { label: 'Desconocido' };
+        let graphContext = { stability: 1.0, isFragmented: false };
         try {
-            const homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence);
-            const awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence);
+            homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence) || homeADN;
+            awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence) || awayADN;
             tacticalAdv = getTacticalAdvantage(homeADN, awayADN) || 1.0;
         } catch (e) { console.warn('Tactical ADN engine error:', e.message); }
 
         try {
-            const graphContext = calculateGraphStability(extraData.leaders?.home || [], extraData.injuries?.home || []);
-            stabilityFactor = graphContext?.stability || 1.0;
+            const gCtx = calculateGraphStability(extraData.leaders?.home || [], extraData.injuries?.home || []);
+            if (gCtx) {
+                graphContext = gCtx;
+                stabilityFactor = gCtx.stability || 1.0;
+            }
         } catch (e) { console.warn('Graph stability engine error:', e.message); }
 
         const weatherImpact = weather ? (weather.status === 'Rain' ? 0.95 : weather.status === 'Clear' ? 1.05 : 1.0) : 1.0;
@@ -712,7 +718,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             newsImpact,
             sentinel: driftData,
             narrative: narrative,
-            weights: finalWeights,
+            weights: typeof finalWeights !== 'undefined' ? finalWeights : null,
             quantum: { // V40.0: Quantum Features
                 homeADN: homeADN.label,
                 awayADN: awayADN.label,
