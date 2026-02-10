@@ -445,12 +445,44 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const homeSequence = homeFormStr.split("").reverse();
         const awaySequence = awayFormStr.split("").reverse();
 
+        // V41.3: EXTRACT REAL ESPN RECORDS (W-L-D) — THE PRIMARY SIGNAL
+        const parseRecord = (competitor) => {
+            try {
+                // ESPN provides records[0].summary like "10-5-3" (W-L-D for soccer) or "30-15" (W-L for NBA)
+                const recordStr = competitor.records?.[0]?.summary || competitor.record?.items?.[0]?.summary || '';
+                if (!recordStr) return null;
+                const parts = recordStr.split('-').map(Number);
+                if (parts.length >= 2 && parts.every(n => !isNaN(n))) {
+                    const wins = parts[0];
+                    const losses = parts[1];
+                    const draws = parts.length >= 3 ? parts[2] : 0;
+                    const total = wins + losses + draws;
+                    return {
+                        wins, losses, draws, total,
+                        winPct: total > 0 ? (wins / total) * 100 : 50,
+                        pointsPct: total > 0 ? ((wins * 3 + draws) / (total * 3)) * 100 : 50 // PPG for soccer
+                    };
+                }
+            } catch (e) { }
+            return null;
+        };
+
+        const homeRecord = parseRecord(homeTeam);
+        const awayRecord = parseRecord(awayTeam);
+        const hasRecords = homeRecord && awayRecord && homeRecord.total >= 3 && awayRecord.total >= 3;
+
+        // V41.3: Get curated ESPN rankings if available
+        const homeRank = homeTeam.curatedRank?.current || 99;
+        const awayRank = awayTeam.curatedRank?.current || 99;
+        const hasRankings = homeRank < 99 || awayRank < 99;
+
         const giants = [
             'Real Madrid', 'Manchester City', 'Bayern München', 'Barcelona', 'Liverpool',
             'Paris Saint-Germain', 'Inter Milano', 'Napoli', 'Boca Juniors', 'River Plate',
             'Juventus', 'AC Milan', 'Arsenal', 'Manchester United', 'Monaco', 'AS Roma', 'Atletico Madrid',
             'Bayer Leverkusen', 'Aston Villa', 'Sporting CP', 'Benfica', 'Girona',
-            'Celtics', 'Nuggets', 'Chiefs', 'Eagles'
+            'Celtics', 'Nuggets', 'Chiefs', 'Eagles', 'Lakers', 'Warriors',
+            'Bucks', 'Thunder', 'Cavaliers', 'Knicks', 'Timberwolves', 'Mavericks'
         ];
         const homeIsGiant = giants.some(g => homeName.includes(g));
         const awayIsGiant = giants.some(g => awayName.includes(g));
@@ -459,11 +491,10 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const oracleContext = detectOraclePatterns(homeSequence, awaySequence, homeIsGiant, awayIsGiant);
 
         // 3. Mathematical Probability (Poisson + xG)
-        // V63.6: Dynamics Stats from Sequence (No more hardcoded 1.5/1.1)
         const getAvgFromSeq = (seq) => {
             const wins = seq.filter(r => r === 'W').length;
             const draws = seq.filter(r => r === 'D').length;
-            return 1.0 + (wins * 0.2) + (draws * 0.05); // Dynamic Expected Goals
+            return 1.0 + (wins * 0.2) + (draws * 0.05);
         };
         const hScoredAvg = getAvgFromSeq(homeSequence);
         const aScoredAvg = getAvgFromSeq(awaySequence);
@@ -471,104 +502,97 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const xG = calculateGoalExpectancy({ scoredAvg: hScoredAvg, concededAvg: 1.2 }, { scoredAvg: aScoredAvg, concededAvg: 1.2 });
         const poissonProbs = calculatePoissonProbabilities(xG.homeXG, xG.awayXG);
 
-        // 4. Market Wisdom (V30.60: Market Odds Implied Probabilities + V50 Sentinel)
+        // 4. Market Wisdom
         const marketProb = extraData?.odds?.impliedProbabilities || { home: 33, draw: 34, away: 33 };
         const hasMarketData = !!extraData?.odds?.impliedProbabilities;
         const driftData = predictMarketDrift(extraData?.odds, marketProb.home);
 
-        // 5. V50 Narrative & Reinforcement Integration
+        // 5. Narrative
         const narrative = getNarrativeWeight(homeName, awayName);
 
-        // Dynamic Weighting Protocol (V50 Core)
-        let baseWeights = { elo: 0.25, oracle: 0.25, poisson: 0.25, market: 0.25, narrative: 0.0 };
-        if (homeIsGiant || awayIsGiant) {
-            baseWeights = { elo: 0.35, oracle: 0.25, poisson: 0.20, market: 0.20, narrative: 0.0 };
-        } else if (Math.abs(eloData.homeWinProb - eloData.awayWinProb) < 10) {
-            baseWeights = { elo: 0.15, oracle: 0.35, poisson: 0.25, market: 0.25, narrative: 0.0 };
-        }
+        // ===================================================================
+        // V41.3: REAL STRENGTH CALCULATION — RECORDS-FIRST APPROACH
+        // ===================================================================
+        let hFinal, dFinal, aFinal;
 
-        // Apply V50 Reinforcement Policy
-        const finalWeights = getOptimizedPolicy(league, baseWeights);
-        if (narrative.factors.length > 0) finalWeights.narrative = 0.15; // Activate Narrative layer
+        if (hasRecords) {
+            // === PRIMARY PATH: Use REAL ESPN records ===
+            const usePointsPct = canDraw; // Soccer uses points %, basketball uses win %
+            const homeStr = usePointsPct ? homeRecord.pointsPct : homeRecord.winPct;
+            const awayStr = usePointsPct ? awayRecord.pointsPct : awayRecord.winPct;
 
-        // Calculate Final Composite Probability (Bayesian-Style)
-        // V63.0 Fix: Map engine properties correctly (elo.home, poisson.homeWin*100)
-        let hW = (eloData.home * finalWeights.elo) +
-            ((oracleContext.homeState?.confidence || 50) * finalWeights.oracle) +
-            ((poissonProbs.homeWin * 100) * finalWeights.poisson) +
-            (marketProb.home * finalWeights.market);
+            // Records-based probability (strong signal)
+            const recordTotal = homeStr + awayStr || 100;
+            let hRec = (homeStr / recordTotal) * 100;
+            let aRec = (awayStr / recordTotal) * 100;
 
-        // Apply Narrative Multipliers
-        hW *= narrative.multipliers.home;
-
-        // Sincerity Factor: If it's a cup match or draw is likely
-        // V63.0 Fix: Use ELO draw signal + Poisson draw signal
-        let dW = canDraw ? Math.max(25,
-            (eloData.draw * finalWeights.elo) +
-            (poissonProbs.draw * 100 * finalWeights.poisson) +
-            (marketProb.draw * finalWeights.market)
-        ) : 0;
-        let aW = (eloData.away * finalWeights.elo) +
-            ((oracleContext.awayState?.confidence || 50) * finalWeights.oracle) +
-            ((poissonProbs.awayWin * 100) * finalWeights.poisson) +
-            (marketProb.away * finalWeights.market);
-
-        // Final normalization (Robust against zero/NaN)
-        let totalW = (hW + dW + aW) || 100.0001;
-        let hFinal = (hW / totalW) * 100;
-        let dFinal = (dW / totalW) * 100;
-        let aFinal = (aW / totalW) * 100;
-
-        // V63.14: HIERARCHY TIE-BREAKER & NO-BIAS LOGIC
-        // Get absolute ELO ratings to break the 50/50 trap
-        const rHome = (eloData.homeElo || 1500);
-        const rAway = (eloData.awayElo || 1500);
-        const mId = extraData.matchId || '0'; // V63.15 Fixed: Use ID from extraData
-
-        const gap = hFinal - aFinal;
-        const absGap = Math.abs(gap);
-
-        // V41.2: FAIR TIE-BREAKER using market odds (no home default)
-        if (absGap < 0.5) {
-            // Use market odds as the tiebreaker if available
-            if (hasMarketData && marketProb.home !== marketProb.away) {
-                if (marketProb.home > marketProb.away) {
-                    hFinal = 53; aFinal = 100 - dFinal - hFinal;
-                } else {
-                    aFinal = 53; hFinal = 100 - dFinal - aFinal;
-                }
-            } else if (rHome > rAway + 10) {
-                hFinal = 53; aFinal = 100 - dFinal - hFinal;
-            } else if (rAway > rHome + 10) {
-                aFinal = 53; hFinal = 100 - dFinal - aFinal;
+            // Blend with market odds for robustness
+            if (hasMarketData) {
+                // Market gets 40% weight, records get 60%
+                hFinal = hRec * 0.55 + marketProb.home * 0.45;
+                aFinal = aRec * 0.55 + marketProb.away * 0.45;
+                dFinal = canDraw ? Math.max(12, (100 - hFinal - aFinal) * 0.5 + marketProb.draw * 0.5) : 0;
             } else {
-                // True dead heat: use matchId for stability but keep it close
-                const stableFlip = (mId?.length || 0) % 2 === 0;
-                if (stableFlip) { hFinal = 51; aFinal = 49; }
-                else { aFinal = 51; hFinal = 49; }
+                hFinal = hRec;
+                aFinal = aRec;
+                dFinal = canDraw ? Math.max(15, 100 - hFinal - aFinal) : 0;
             }
+
+            // Small home advantage (real: ~3-5% in most sports)
+            const homeBonus = canDraw ? 3 : 2;
+            hFinal += homeBonus;
+            aFinal -= homeBonus;
+
+        } else if (hasMarketData) {
+            // === SECONDARY PATH: Trust market odds (bookmakers know best) ===
+            hFinal = marketProb.home;
+            dFinal = canDraw ? marketProb.draw : 0;
+            aFinal = marketProb.away;
+
         } else {
-            // V41.2: Moderate contrast (was 1.7-2.8x, now 1.2-1.5x)
-            let boost = absGap > 5 ? 1.2 : absGap > 2 ? 1.35 : 1.5;
-            if (gap > 0) {
-                hFinal *= boost;
-                aFinal /= boost;
-            } else {
-                aFinal *= boost;
-                hFinal /= boost;
+            // === FALLBACK: Old engine blend (ELO + Oracle + Poisson) ===
+            let baseWeights = { elo: 0.25, oracle: 0.25, poisson: 0.25, market: 0.25 };
+            if (homeIsGiant || awayIsGiant) {
+                baseWeights = { elo: 0.35, oracle: 0.25, poisson: 0.20, market: 0.20 };
+            }
+
+            const finalWeights = getOptimizedPolicy(league, baseWeights);
+
+            hFinal = (eloData.home * finalWeights.elo) +
+                ((oracleContext.homeState?.confidence || 50) * finalWeights.oracle) +
+                ((poissonProbs.homeWin * 100) * finalWeights.poisson) +
+                (marketProb.home * finalWeights.market);
+
+            dFinal = canDraw ? Math.max(15,
+                (eloData.draw * finalWeights.elo) +
+                (poissonProbs.draw * 100 * finalWeights.poisson) +
+                (marketProb.draw * finalWeights.market)
+            ) : 0;
+
+            aFinal = (eloData.away * finalWeights.elo) +
+                ((oracleContext.awayState?.confidence || 50) * finalWeights.oracle) +
+                ((poissonProbs.awayWin * 100) * finalWeights.poisson) +
+                (marketProb.away * finalWeights.market);
+        }
+
+        // Apply ranking boost if available (e.g., #1 ranked team gets small boost)
+        if (hasRankings) {
+            if (homeRank < awayRank) {
+                const rankDiff = Math.min(15, (awayRank - homeRank) * 0.5);
+                hFinal += rankDiff;
+                aFinal -= rankDiff * 0.5;
+            } else if (awayRank < homeRank) {
+                const rankDiff = Math.min(15, (homeRank - awayRank) * 0.5);
+                aFinal += rankDiff;
+                hFinal -= rankDiff * 0.5;
             }
         }
 
-        // Renormalize to 100%
-        const finalSum = hFinal + dFinal + aFinal;
-        hFinal = (hFinal / finalSum) * 100;
-        dFinal = (dFinal / finalSum) * 100;
-        aFinal = 100 - hFinal - dFinal;
-
-        // V41.2: REMOVED aggressive 54-55% floor — let the real probabilities speak
-        hFinal = Math.round(hFinal);
-        dFinal = Math.round(dFinal);
-        aFinal = Math.round(aFinal);
+        // Normalize to 100%
+        const totalW = (hFinal + dFinal + aFinal) || 100;
+        hFinal = Math.max(5, Math.round((hFinal / totalW) * 100));
+        dFinal = canDraw ? Math.max(5, Math.round((dFinal / totalW) * 100)) : 0;
+        aFinal = Math.max(5, 100 - hFinal - dFinal);
 
         // 6. --- FULL INTELLIGENCE ENGINE (800 MOTORS) ---
         // V40.0: Tactical DNA & Stability Analysis
@@ -628,15 +652,21 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
                 currentWinner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`;
         }
 
-        const explanation = [
-            { factor: 'ELO / Fuerza Histórica', impact: Math.round(finalWeights.elo * 100), icon: '📊' },
-            { factor: 'Psicología (HMM Inferencia)', impact: Math.round(finalWeights.oracle * 100), icon: '🧠', confidence: oracleContext.homeState?.confidence },
-            { factor: 'Probabilidad (Poisson)', impact: Math.round(finalWeights.poisson * 100), icon: '🔢' },
-        ];
-
-        if (hasMarketData) {
-            explanation.push({ factor: 'Sabiduría del Mercado', impact: Math.round(finalWeights.market * 100), icon: '🏛️' });
+        const explanation = [];
+        if (hasRecords) {
+            explanation.push({ factor: 'Records ESPN (W-L-D)', impact: 55, icon: '📊' });
+            if (hasMarketData) explanation.push({ factor: 'Cuotas del Mercado', impact: 45, icon: '🏛️' });
+        } else if (hasMarketData) {
+            explanation.push({ factor: 'Cuotas del Mercado', impact: 100, icon: '🏛️' });
+        } else {
+            explanation.push(
+                { factor: 'ELO / Fuerza Histórica', impact: 25, icon: '📊' },
+                { factor: 'Psicología (HMM)', impact: 25, icon: '🧠' },
+                { factor: 'Probabilidad (Poisson)', impact: 25, icon: '🔢' },
+                { factor: 'Mercado', impact: 25, icon: '🏛️' }
+            );
         }
+        if (hasRankings) explanation.push({ factor: 'Ranking ESPN', impact: `#${Math.min(homeRank, awayRank)}`, icon: '🏆' });
 
         if (weatherImpact !== 1.0) {
             explanation.push({ factor: 'Factor Ambiental', impact: weatherImpact > 1 ? `+${Math.round((weatherImpact - 1) * 100)}%` : `-${Math.round((1 - weatherImpact) * 100)}%`, icon: '🌡️' });
