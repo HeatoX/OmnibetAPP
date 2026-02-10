@@ -176,7 +176,9 @@ export default function PredictionCard({ match, onClick, onDetailedAnalysis, use
                                 {match.relativeDate || 'Próximo'}
                             </div>
                             <div className="text-white font-mono text-xl font-bold bg-white/5 px-2 py-1 rounded">
-                                {match.startTime}
+                                {match.startTimeRaw
+                                    ? new Date(match.startTimeRaw).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+                                    : match.startTime}
                             </div>
                         </div>
                     )}

@@ -260,6 +260,7 @@ export async function transformESPNData(data, sport, leagueName, includeHistory 
                 },
                 startDate: event.date,
                 startTime: startTime,
+                startTimeRaw: event.date,
                 status: isLive ? 'live' : (isFinished ? 'finished' : 'upcoming'),
                 isLive,
                 isFinished,
@@ -527,21 +528,28 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const gap = hFinal - aFinal;
         const absGap = Math.abs(gap);
 
-        // 1. Break the 50/50 loop: If they are too close, use Hierarchy (ELO)
+        // V41.2: FAIR TIE-BREAKER using market odds (no home default)
         if (absGap < 0.5) {
-            if (rHome > rAway + 10) {
-                hFinal = 56; aFinal = 100 - dFinal - hFinal;
+            // Use market odds as the tiebreaker if available
+            if (hasMarketData && marketProb.home !== marketProb.away) {
+                if (marketProb.home > marketProb.away) {
+                    hFinal = 53; aFinal = 100 - dFinal - hFinal;
+                } else {
+                    aFinal = 53; hFinal = 100 - dFinal - aFinal;
+                }
+            } else if (rHome > rAway + 10) {
+                hFinal = 53; aFinal = 100 - dFinal - hFinal;
             } else if (rAway > rHome + 10) {
-                aFinal = 56; hFinal = 100 - dFinal - aFinal;
+                aFinal = 53; hFinal = 100 - dFinal - aFinal;
             } else {
-                // Absolute dead heat? Use matchId to be stable but not 50/50
+                // True dead heat: use matchId for stability but keep it close
                 const stableFlip = (mId?.length || 0) % 2 === 0;
-                if (stableFlip) { hFinal = 53; aFinal = 47; }
-                else { aFinal = 53; hFinal = 47; }
+                if (stableFlip) { hFinal = 51; aFinal = 49; }
+                else { aFinal = 51; hFinal = 49; }
             }
         } else {
-            // 2. High Contrast: Amplify real differences for a powerful Oracle view
-            let boost = absGap > 5 ? 1.7 : absGap > 2 ? 2.2 : 2.8;
+            // V41.2: Moderate contrast (was 1.7-2.8x, now 1.2-1.5x)
+            let boost = absGap > 5 ? 1.2 : absGap > 2 ? 1.35 : 1.5;
             if (gap > 0) {
                 hFinal *= boost;
                 aFinal /= boost;
@@ -557,10 +565,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         dFinal = (dFinal / finalSum) * 100;
         aFinal = 100 - hFinal - dFinal;
 
-        // Visual "Oracle Stand" Floor (Min 54% for labels)
-        if (hFinal > aFinal && hFinal < 54) { hFinal = 55; aFinal = 100 - dFinal - hFinal; }
-        if (aFinal > hFinal && aFinal < 54) { aFinal = 55; hFinal = 100 - dFinal - aFinal; }
-
+        // V41.2: REMOVED aggressive 54-55% floor — let the real probabilities speak
         hFinal = Math.round(hFinal);
         dFinal = Math.round(dFinal);
         aFinal = Math.round(aFinal);
