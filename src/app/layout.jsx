@@ -1,7 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
-import { AlertProvider } from "@/components/AlertContext";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -19,12 +18,6 @@ export const metadata = {
         type: "website",
     },
 };
-
-import { SelectionProvider } from "@/context/SelectionContext";
-import { ProfileProvider } from "@/context/ProfileContext";
-import { SubscriptionProvider } from "@/context/SubscriptionContext";
-import { UIProvider } from "@/context/UIContext";
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 export default function RootLayout({ children }) {
     const paypalOptions = {
@@ -44,21 +37,9 @@ export default function RootLayout({ children }) {
                 />
             </head>
             <body className={inter.className}>
-                <AuthProvider>
-                    <ProfileProvider>
-                        <SubscriptionProvider>
-                            <PayPalScriptProvider options={paypalOptions}>
-                                <UIProvider>
-                                    <AlertProvider>
-                                        <SelectionProvider>
-                                            {children}
-                                        </SelectionProvider>
-                                    </AlertProvider>
-                                </UIProvider>
-                            </PayPalScriptProvider>
-                        </SubscriptionProvider>
-                    </ProfileProvider>
-                </AuthProvider>
+                <Providers paypalOptions={paypalOptions}>
+                    {children}
+                </Providers>
             </body>
         </html>
     );
