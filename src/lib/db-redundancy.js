@@ -27,21 +27,6 @@ export async function syncToColdStorage(matches) {
         } catch (e) { console.warn('Browser Sync Failed:', e); }
         return;
     }
-
-    // Server-Side (Disk)
-    try {
-        const fs = await import('node:fs');
-        const path = await import('node:path');
-        const STORAGE_PATH = path.join(process.cwd(), 'data', 'matches_cache.json');
-
-        const dataDir = path.join(process.cwd(), 'data');
-        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-
-        fs.writeFileSync(STORAGE_PATH, JSON.stringify(payload, null, 2));
-        console.log("🛡️ Server Redundancy: Matches synced to disk.");
-    } catch (e) {
-        console.error('Server Redundancy Sync Failed:', e);
-    }
 }
 
 /**
@@ -61,26 +46,6 @@ export async function getFromColdStorage() {
             console.log('🛡️ Browser Redundancy: Serving from LocalStorage');
             return payload.data;
         } catch (e) { return null; }
-    }
-
-    // Server-Side (Disk)
-    try {
-        const fs = await import('node:fs');
-        const path = await import('node:path');
-        const STORAGE_PATH = path.join(process.cwd(), 'data', 'matches_cache.json');
-
-        if (fs.existsSync(STORAGE_PATH)) {
-            const raw = fs.readFileSync(STORAGE_PATH, 'utf8');
-            const payload = JSON.parse(raw);
-
-            // Server safety: 48h window
-            if (Date.now() - payload.timestamp > 172800000) return null;
-
-            console.log('🛡️ Server Redundancy Active: Serving matches from disk.');
-            return payload.data;
-        }
-    } catch (e) {
-        console.warn("Server Redundancy fetch failed:", e.message);
     }
     return null;
 }
