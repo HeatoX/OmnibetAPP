@@ -254,6 +254,8 @@ export async function resolvePendingPredictions() {
     let resolvedCount = 0;
     const updates = [];
 
+    const resolvedItems = [];
+
     for (const prediction of pending) {
         const match = finishedMatches.find(m =>
             String(m.id) === String(prediction.match_id) ||
@@ -287,6 +289,17 @@ export async function resolvePendingPredictions() {
                 resolved_at: new Date().toISOString()
             });
 
+            // Add to detailed list for broadcasters
+            resolvedItems.push({
+                match,
+                prediction,
+                result: {
+                    isWin,
+                    actualWinner,
+                    profit
+                }
+            });
+
             resolvedCount++;
         }
     }
@@ -301,9 +314,15 @@ export async function resolvePendingPredictions() {
     return {
         resolved: resolvedCount,
         totalPending: pending.length,
-        message: `Resolved ${resolvedCount}/${pending.length} predictions`
+        message: `Resolved ${resolvedCount}/${pending.length} predictions`,
+        resolvedMatches: resolvedItems
     };
 }
+
+/**
+ * Alias for legacy support / cron jobs
+ */
+export const syncRecentResults = resolvePendingPredictions;
 
 /**
  * Get recent predictions (REAL DB ONLY)
