@@ -9,7 +9,10 @@ const CONFIG_KEY = 'omnibet_engine_weights';
 /**
  * Sync current matches to local storage for offline/failover use
  */
-export function syncToColdStorage(matches) {
+/**
+ * Sync current matches to local storage for offline/failover use
+ */
+export async function syncToColdStorage(matches) {
     if (!matches || matches.length === 0) return;
 
     const payload = {
@@ -27,8 +30,8 @@ export function syncToColdStorage(matches) {
 
     // Server-Side (Disk)
     try {
-        const fs = eval('require("fs")');
-        const path = eval('require("path")');
+        const fs = await import('node:fs');
+        const path = await import('node:path');
         const STORAGE_PATH = path.join(process.cwd(), 'data', 'matches_cache.json');
 
         const dataDir = path.join(process.cwd(), 'data');
@@ -44,7 +47,7 @@ export function syncToColdStorage(matches) {
 /**
  * Retrieve matches from local storage if primary DB fails
  */
-export function getFromColdStorage() {
+export async function getFromColdStorage() {
     // Client-Side (Browser)
     if (typeof window !== 'undefined') {
         try {
@@ -62,8 +65,8 @@ export function getFromColdStorage() {
 
     // Server-Side (Disk)
     try {
-        const fs = eval('require("fs")');
-        const path = eval('require("path")');
+        const fs = await import('node:fs');
+        const path = await import('node:path');
         const STORAGE_PATH = path.join(process.cwd(), 'data', 'matches_cache.json');
 
         if (fs.existsSync(STORAGE_PATH)) {
@@ -112,7 +115,7 @@ export async function resilientFetch(primaryPromise) {
         // V30.11: Empty-to-Redundancy Failover
         // If API responds successfully but with NO matches, trigger redundancy fallback
         if (result && result.matches && result.matches.length > 0) {
-            syncToColdStorage(result.matches);
+            await syncToColdStorage(result.matches);
             return result;
         }
 
@@ -121,7 +124,7 @@ export async function resilientFetch(primaryPromise) {
     } catch (error) {
         console.error('Primary source failed, falling back to redundancy...', error);
         try {
-            const cachedMatches = getFromColdStorage();
+            const cachedMatches = await getFromColdStorage();
             if (cachedMatches && cachedMatches.length > 0) {
                 return { matches: cachedMatches, source: 'redundancy' };
             }

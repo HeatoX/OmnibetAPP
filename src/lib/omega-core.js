@@ -4,7 +4,7 @@
  * Holy Grail Logic: Fusing 3 layers of reality into a single certainty score.
  */
 
-import { getTravelAudit, getRestAudit, getMarketAudit } from './matrix-engine';
+import { getTravelAudit, getRestAudit, getMarketAudit } from './matrix-engine.js';
 
 /**
  * Calculates the Omega Score (Ω) for a match.

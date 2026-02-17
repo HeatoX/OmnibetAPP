@@ -1,4 +1,4 @@
-const { getRealMatches } = require('./src/lib/real-data-service');
+import { getRealMatches } from './src/lib/real-data-service.js';
 
 async function runAudit() {
     console.log("🔍 INICIANDO AUDITORÍA DE PREDICCIONES...");

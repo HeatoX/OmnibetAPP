@@ -6,7 +6,7 @@
  * the weight influence of each factor (Form, Odds, Home Advantage).
  */
 
-import { calculateStats } from './history-tracker';
+import { calculateStats } from './history-tracker.js';
 
 // Default Weights (Starting Point)
 const DEFAULT_WEIGHTS = {

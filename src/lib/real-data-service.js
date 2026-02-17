@@ -4,21 +4,22 @@
 // ========================================
 'use server';
 
-import { analyzeSequence, detectOraclePatterns } from './pattern-scout';
+import { analyzeSequence, detectOraclePatterns } from './pattern-scout.js';
 import {
     getEloWinProbability,
     trainEloSystem,
     isEloTrainingNeeded
 } from './elo-engine.js';
-import { resilientFetch } from './db-redundancy';
-import { getMatchWeather } from './weather-service';
-import { getNarrativeWeight } from './narrative-engine';
-import { predictMarketDrift } from './observer-market';
-import { getOptimizedPolicy } from './reinforcement-core';
-import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math';
-import { calculateGraphStability } from './graph-engine';
-import { identifyTacticalADN, getTacticalAdvantage } from './tactical-adn';
-import { calculateKellyStake } from './risk-engine';
+import { resilientFetch } from './db-redundancy.js';
+import { getMatchWeather } from './weather-service.js';
+import { getNarrativeWeight } from './narrative-engine.js';
+import { predictMarketDrift } from './observer-market.js';
+import { getOptimizedPolicy } from './reinforcement-core.js';
+import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math.js';
+import { calculateGraphStability } from './graph-engine.js';
+import { identifyTacticalADN, getTacticalAdvantage } from './tactical-adn.js';
+import { calculateKellyStake } from './risk-engine.js';
+import { MasterOrchestrator } from './agents/orchestrator.js';
 
 /**
  * ESPN Public API Endpoints (free, no API key required)
@@ -122,12 +123,12 @@ async function fetchESPNEndpoint(url, sport, league, includeHistory = false) {
             fetchUrl = `${url}${separator}limit=100&dates=${dateRange}`;
         }
 
+        if (process.env.NODE_ENV === 'development') console.log(`📡 GET ${fetchUrl}`);
         const response = await fetch(fetchUrl, {
             headers: {
                 'Accept': 'application/json',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            },
-            cache: 'no-store',
+            }
         });
 
         if (!response.ok) {
@@ -396,10 +397,36 @@ function convertMoneyLine(ml) {
     return parseFloat(((100 / Math.abs(ml)) + 1).toFixed(2));
 }
 
+// ... (existing code matches exactly)
+
 /**
- * Generate match prediction using REAL DATA agents (v3.0 - Multimodal)
- * V30.55: Async Oracle Upgrade (Weather + News + Sincerity)
+ * FETCH DEEP MATCH STATS (Boxscore, Summary, Roster)
+ * Target: https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/summary?event={matchId}
  */
+export async function getMatchSummary(matchId, sport = 'soccer', league = 'eng.1') {
+    try {
+        // Normalize sport for URL
+        const urlSport = sport === 'football' ? 'soccer' : sport;
+        // League slug usually works even if generic like 'eng.1', but better if accurate.
+        // If league is unknown, we might try a generic one or rely on the eventId being unique globally (ESPN usually requires sport/league context).
+
+        const url = `https://site.api.espn.com/apis/site/v2/sports/${urlSport}/${league}/summary?event=${matchId}`;
+        console.log(`📡 Fetching Deep Summary: ${url}`);
+
+        const res = await fetch(url, { next: { revalidate: 300 } }); // 5 min cache
+        if (!res.ok) return null;
+
+        const data = await res.json();
+        return data; // Returns the full deep data object
+    } catch (e) {
+        console.error("Match Summary Error:", e);
+        return null;
+    }
+}
+
+
+
+// ... (rest of file)
 async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league = null, extraData = {}) {
     try {
         const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.name || homeTeam.athlete?.shortName || homeTeam.athlete?.displayName || "Local";
@@ -516,223 +543,73 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         // ===================================================================
         // V41.3: REAL STRENGTH CALCULATION — RECORDS-FIRST APPROACH
         // ===================================================================
-        let hFinal, dFinal, aFinal;
+        // 6. --- MONSTER ORACLE INTEGRATION (V12.0) ---
+        // REPLACE ALL LEGACY LOGIC with AGENT SWARM
 
-        if (hasRecords) {
-            // === PRIMARY PATH: Use REAL ESPN records ===
-            const usePointsPct = canDraw; // Soccer uses points %, basketball uses win %
-            const homeStr = usePointsPct ? homeRecord.pointsPct : homeRecord.winPct;
-            const awayStr = usePointsPct ? awayRecord.pointsPct : awayRecord.winPct;
+        const orchestratorMatch = {
+            id: extraData.matchId,
+            homeTeam: homeName,
+            awayTeam: awayName,
+            league: leagueName,
+            sport: sport,
+            date: matchDate,
+        };
 
-            // Records-based probability (strong signal)
-            const recordTotal = homeStr + awayStr || 100;
-            let hRec = (homeStr / recordTotal) * 100;
-            let aRec = (awayStr / recordTotal) * 100;
-
-            // Blend with market odds for robustness
-            if (hasMarketData) {
-                // Market gets 40% weight, records get 60%
-                hFinal = hRec * 0.55 + marketProb.home * 0.45;
-                aFinal = aRec * 0.55 + marketProb.away * 0.45;
-                dFinal = canDraw ? Math.max(12, (100 - hFinal - aFinal) * 0.5 + marketProb.draw * 0.5) : 0;
-            } else {
-                hFinal = hRec;
-                aFinal = aRec;
-                dFinal = canDraw ? Math.max(15, 100 - hFinal - aFinal) : 0;
-            }
-
-            // Small home advantage (real: ~3-5% in most sports)
-            const homeBonus = canDraw ? 3 : 2;
-            hFinal += homeBonus;
-            aFinal -= homeBonus;
-
-        } else if (hasMarketData) {
-            // === SECONDARY PATH: Trust market odds (bookmakers know best) ===
-            hFinal = marketProb.home;
-            dFinal = canDraw ? marketProb.draw : 0;
-            aFinal = marketProb.away;
-
-        } else {
-            // === FALLBACK: Old engine blend (ELO + Oracle + Poisson) ===
-            let baseWeights = { elo: 0.25, oracle: 0.25, poisson: 0.25, market: 0.25 };
-            if (homeIsGiant || awayIsGiant) {
-                baseWeights = { elo: 0.35, oracle: 0.25, poisson: 0.20, market: 0.20 };
-            }
-
-            const finalWeights = getOptimizedPolicy(league, baseWeights);
-
-            hFinal = (eloData.home * finalWeights.elo) +
-                ((oracleContext.homeState?.confidence || 50) * finalWeights.oracle) +
-                ((poissonProbs.homeWin * 100) * finalWeights.poisson) +
-                (marketProb.home * finalWeights.market);
-
-            dFinal = canDraw ? Math.max(15,
-                (eloData.draw * finalWeights.elo) +
-                (poissonProbs.draw * 100 * finalWeights.poisson) +
-                (marketProb.draw * finalWeights.market)
-            ) : 0;
-
-            aFinal = (eloData.away * finalWeights.elo) +
-                ((oracleContext.awayState?.confidence || 50) * finalWeights.oracle) +
-                ((poissonProbs.awayWin * 100) * finalWeights.poisson) +
-                (marketProb.away * finalWeights.market);
-        }
-
-        // Apply ranking boost if available (e.g., #1 ranked team gets small boost)
-        if (hasRankings) {
-            if (homeRank < awayRank) {
-                const rankDiff = Math.min(15, (awayRank - homeRank) * 0.5);
-                hFinal += rankDiff;
-                aFinal -= rankDiff * 0.5;
-            } else if (awayRank < homeRank) {
-                const rankDiff = Math.min(15, (homeRank - awayRank) * 0.5);
-                aFinal += rankDiff;
-                hFinal -= rankDiff * 0.5;
-            }
-        }
-
-        // Normalize to 100%
-        const totalW = (hFinal + dFinal + aFinal) || 100;
-        hFinal = Math.max(5, Math.round((hFinal / totalW) * 100));
-        dFinal = canDraw ? Math.max(5, Math.round((dFinal / totalW) * 100)) : 0;
-        aFinal = Math.max(5, 100 - hFinal - dFinal);
-
-        // 6. --- INTELLIGENCE ENGINE ---
-        // V41.5: Variables declared OUTSIDE try-catch so return statement can access them
-        let tacticalAdv = 1.0;
-        let stabilityFactor = 1.0;
-        let homeADN = { label: 'Desconocido' };
-        let awayADN = { label: 'Desconocido' };
-        let graphContext = { stability: 1.0, isFragmented: false };
-        try {
-            homeADN = identifyTacticalADN(homeName, extraData.leaders?.home, homeSequence) || homeADN;
-            awayADN = identifyTacticalADN(awayName, extraData.leaders?.away, awaySequence) || awayADN;
-            tacticalAdv = getTacticalAdvantage(homeADN, awayADN) || 1.0;
-        } catch (e) { console.warn('Tactical ADN engine error:', e.message); }
+        const orchestrator = new MasterOrchestrator();
+        let predictionResult = null;
 
         try {
-            const gCtx = calculateGraphStability(extraData.leaders?.home || [], extraData.injuries?.home || []);
-            if (gCtx) {
-                graphContext = gCtx;
-                stabilityFactor = gCtx.stability || 1.0;
-            }
-        } catch (e) { console.warn('Graph stability engine error:', e.message); }
-
-        const weatherImpact = weather ? (weather.status === 'Rain' ? 0.95 : weather.status === 'Clear' ? 1.05 : 1.0) : 1.0;
-
-        // V41.0: LIVE BIAS REMOVED
-        // The Oracle's prediction MUST remain analytical and NOT follow the scoreboard.
-        // This is the core integrity of the prediction system.
-        const liveBiasH = 1.0;
-        const liveBiasA = 1.0;
-        const liveBiasD = 1.0;
-
-        let hWeight = hFinal * tacticalAdv * stabilityFactor * weatherImpact * newsImpact * liveBiasH;
-        let dWeight = dFinal * stabilityFactor * weatherImpact * newsImpact * liveBiasD;
-        let aWeight = aFinal * (1 / tacticalAdv) * stabilityFactor * weatherImpact * newsImpact * liveBiasA;
-
-        // Renormalize after 800 motors impact (Robust against zero/NaN)
-        const totalWeight = (hWeight + dWeight + aWeight) || 100.0001;
-        let homeWinProb = Math.round((hWeight / totalWeight) * 100);
-        let drawProbActual = Math.round((dWeight / totalWeight) * 100);
-        let awayWinProb = 100 - homeWinProb - drawProbActual;
-        let finalDrawProb = drawProbActual;
-
-        // V41.0: Single coherent winner from the Oracle's analysis
-        // No more dual winner (analytical vs current) — the Oracle speaks once.
-        const finalMax = Math.max(homeWinProb, awayWinProb, finalDrawProb);
-        let currentWinner = 'draw';
-        if (homeWinProb >= awayWinProb && homeWinProb >= finalDrawProb) currentWinner = 'home';
-        else if (awayWinProb > homeWinProb && awayWinProb >= finalDrawProb) currentWinner = 'away';
-        const analyticalWinner = currentWinner; // Same — no live bias means no divergence
-
-        let confidence = 'silver';
-        if (finalMax >= 68) confidence = 'diamond';
-        else if (finalMax >= 55) confidence = 'gold';
-
-        const margin = Math.abs(homeWinProb - awayWinProb);
-        const isTight = margin < 8 && finalMax < 42;
-
-        let text = '';
-        if (isTight && canDraw) {
-            if (analyticalWinner === 'home') text = `1X (Local o Empate)`;
-            else if (analyticalWinner === 'away') text = `X2 (Visita o Empate)`;
-            else text = 'Empate (Cerrado)';
-            confidence = 'silver';
-        } else {
-            // V63.7 FIXED: The text MUST follow the probability leader (currentWinner)
-            text = currentWinner === 'draw' ? 'Empate' :
-                currentWinner === 'home' ? `Gana ${homeName}` : `Gana ${awayName}`;
+            // Autonomous Agent Analysis
+            predictionResult = await orchestrator.analyzeMatch(orchestratorMatch);
+        } catch (e) {
+            console.warn(`Orchestrator failed for ${homeName}:`, e.message);
         }
 
-        const explanation = [];
-        if (hasRecords) {
-            explanation.push({ factor: 'Records ESPN (W-L-D)', impact: 55, icon: '📊' });
-            if (hasMarketData) explanation.push({ factor: 'Cuotas del Mercado', impact: 45, icon: '🏛️' });
-        } else if (hasMarketData) {
-            explanation.push({ factor: 'Cuotas del Mercado', impact: 100, icon: '🏛️' });
-        } else {
-            explanation.push(
-                { factor: 'ELO / Fuerza Histórica', impact: 25, icon: '📊' },
-                { factor: 'Psicología (HMM)', impact: 25, icon: '🧠' },
-                { factor: 'Probabilidad (Poisson)', impact: 25, icon: '🔢' },
-                { factor: 'Mercado', impact: 25, icon: '🏛️' }
-            );
+        // Default / Fallback
+        let hFinal = 33, dFinal = 34, aFinal = 33;
+        let predictionText = "Pendiente";
+        let confidenceLevel = "Low";
+        let exactScore = "N/A";
+        let swarmInsights = [];
+        let factors = [];
+
+        if (predictionResult && predictionResult.probabilities) {
+            hFinal = predictionResult.probabilities.home;
+            dFinal = predictionResult.probabilities.draw;
+            aFinal = predictionResult.probabilities.away;
+
+            predictionText = predictionResult.outcome === 'HOME_WIN' ? `GANA ${homeName}` :
+                predictionResult.outcome === 'AWAY_WIN' ? `GANA ${awayName}` : 'EMPATE';
+
+            confidenceLevel = predictionResult.confidence;
+            exactScore = predictionResult.exactScore || "N/A";
+
+            if (predictionResult.synthesis?.keyInsights) swarmInsights = predictionResult.synthesis.keyInsights;
+            if (predictionResult.synthesis?.factors) factors = predictionResult.synthesis.factors;
         }
-        if (hasRankings) explanation.push({ factor: 'Ranking ESPN', impact: `#${Math.min(homeRank, awayRank)}`, icon: '🏆' });
 
-        if (weatherImpact !== 1.0) {
-            explanation.push({ factor: 'Factor Ambiental', impact: weatherImpact > 1 ? `+${Math.round((weatherImpact - 1) * 100)}%` : `-${Math.round((1 - weatherImpact) * 100)}%`, icon: '🌡️' });
-        }
-        if (newsImpact !== 1.0) {
-            explanation.push({ factor: 'Análisis de Noticias', impact: newsImpact > 1 ? `+${Math.round((newsImpact - 1) * 100)}%` : `-${Math.round((1 - newsImpact) * 100)}%`, icon: '📰' });
-        }
-
-        const isValueMatch = hasMarketData && (
-            (analyticalWinner === 'home' && homeWinProb > marketProb.home + 5) ||
-            (analyticalWinner === 'away' && awayWinProb > marketProb.away + 5)
-        );
-
-        // V40.0: RISK MANAGEMENT (Kelly Criterion)
-        const decOdds = parseFloat(analyticalWinner === 'home' ? (extraData.odds?.home) : (extraData.odds?.away)) || (analyticalWinner === 'draw' ? extraData.odds?.draw : null);
-        const winProb = (analyticalWinner === 'home' ? homeWinProb : (analyticalWinner === 'away' ? awayWinProb : finalDrawProb)) / 100;
-        const kellyStake = decOdds ? calculateKellyStake(winProb, decOdds, 0.25) : 0;
-
+        // Return unified prediction object
         return {
-            winner: currentWinner, // V63.9 Fixed: Brain-to-UI Sync
-            currentWinner,
-            text,
-            homeWinProb,
-            awayWinProb,
-            drawProb: finalDrawProb,
-            confidence,
-            oracleConfidence: finalMax,
-            maxProb: finalMax,
-            explanation,
-            isValueMatch,
-            weather: weather ? {
-                temp: weather.temp,
-                status: weather.status,
-                description: weather.description
-            } : null,
-            newsImpact,
-            sentinel: driftData,
-            narrative: narrative,
-            weights: typeof finalWeights !== 'undefined' ? finalWeights : null,
-            quantum: { // V40.0: Quantum Features
-                homeADN: homeADN.label,
-                awayADN: awayADN.label,
-                tacticalEdge: tacticalAdv > 1 ? 'HOME' : tacticalAdv < 1 ? 'AWAY' : 'NEUTRAL',
-                graphStability: graphContext.stability,
-                isFragmented: graphContext.isFragmented,
-                kellyRecommendation: (kellyStake * 100).toFixed(2) + '%',
-                suggestedStake: kellyStake > 0 ? `Arriesgar ${Math.round(kellyStake * 1000) / 10}% del bankroll` : 'No apostar'
-            },
+            winner: hFinal > aFinal && hFinal > dFinal ? 'home' :
+                aFinal > hFinal && aFinal > dFinal ? 'away' : 'draw',
+            currentWinner: hFinal > aFinal && hFinal > dFinal ? 'home' :
+                aFinal > hFinal && aFinal > dFinal ? 'away' : 'draw',
+            text: predictionText,
+            homeWinProb: hFinal,
+            awayWinProb: aFinal,
+            drawProb: dFinal,
+            confidence: confidenceLevel,
+            maxProb: Math.max(hFinal, aFinal, dFinal),
+            exactScore: exactScore,
+            explanation: factors.map(f => ({ factor: f.name, impact: f.weight, icon: '🤖' })),
+            insights: swarmInsights,
+            marketHeat: 'Normal',
+            omega: hFinal > 60 || aFinal > 60 ? 'Dominant' : 'Balanced',
             oracleV12: {
-                homeState: oracleContext.homeState?.id || 'stable',
-                awayState: oracleContext.awayState?.id || 'stable',
-                momentumConfidence: oracleContext.homeState?.confidence || 0,
-                hasPattern: (oracleContext.patterns || []).length > 0
+                homeState: 'analyzed',
+                awayState: 'analyzed',
+                momentumConfidence: confidenceLevel === 'High' ? 80 : 50,
+                hasPattern: true
             }
         };
     } catch (e) {

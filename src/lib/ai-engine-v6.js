@@ -3,8 +3,8 @@
 // Implements Pattern Recognition & Hidden Markov Models (HMM)
 // ========================================
 
-import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math';
-import { detectOraclePatterns } from './pattern-scout';
+import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math.js';
+import { detectOraclePatterns } from './pattern-scout.js';
 
 // Helpers (Mocked or Imported) - For V6 we implement lean helpers here
 const analyzeLineup = (lineup, injuries, leaders) => {

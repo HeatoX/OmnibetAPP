@@ -1,18 +1,4 @@
-import "./globals.css";
-import { AuthProvider } from '@/context/AuthContext';
-import NewsFeed from '@/components/NewsFeed';
-
-
-export default function RootLayout({ children }) {
-  return (
-    <html lang="es">
-      <body className="antialiased bg-slate-950 text-white min-h-screen">
-        <AuthProvider>
-          <NewsFeed />
-          {children}
-        </AuthProvider>
-      </body>
-    </html>
-  );
-}
-
+// ⚠️ THIS FILE IS DEPRECATED — UNIFIED INTO layout.jsx
+// All providers (AuthProvider, PayPal, etc.) and NewsFeed are now in layout.jsx
+// This file can be safely deleted.
+// Next.js prioritizes .jsx over .js, so this file is never loaded.

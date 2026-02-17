@@ -3,9 +3,9 @@
 // Multi-sport expert analysis system
 // ========================================
 
-import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math';
-import { getRestAudit } from './matrix-engine';
-import { getEloWinProbability } from './elo-engine';
+import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanced-math.js';
+import { getRestAudit } from './matrix-engine.js';
+import { getEloWinProbability } from './elo-engine.js';
 
 /**
  * AI Engine for sports predictions

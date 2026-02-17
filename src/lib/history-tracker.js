@@ -5,8 +5,8 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { getPastMatches } from './real-data-service';
-import { analyzeMatchDeep } from './prediction-oracle';
+import { getPastMatches } from './real-data-service.js';
+import { analyzeMatchDeep } from './prediction-oracle.js';
 
 // Server-side Supabase client (Service Role)
 let supabase = null;

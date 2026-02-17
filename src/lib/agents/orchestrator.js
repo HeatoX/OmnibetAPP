@@ -1,6 +1,6 @@
 // ========================================
 // OmniBet AI - Master Orchestrator
-// Coordinates all AI agents like a beehive
+// Coordinates all AI agents like a beehive (REAL DATA EDITION)
 // ========================================
 
 import {
@@ -9,7 +9,7 @@ import {
     SocialSentimentAgent,
     OddsScoutAgent,
     WeatherScoutAgent
-} from './scout-agents';
+} from './scout-agents.js';
 
 import {
     PlayerAnalystAgent,
@@ -17,7 +17,9 @@ import {
     H2HAnalystAgent,
     FormAnalystAgent,
     InjuryAnalystAgent
-} from './analyst-agents';
+} from './analyst-agents.js';
+
+import { SimulationAgent, TacticalAgent } from './monster-agents.js';
 
 /**
  * Master Orchestrator - The Queen Bee
@@ -40,34 +42,42 @@ export class MasterOrchestrator {
             team: new TeamAnalystAgent(),
             h2h: new H2HAnalystAgent(),
             form: new FormAnalystAgent(),
-            injury: new InjuryAnalystAgent()
+            injury: new InjuryAnalystAgent(),
+            // Monster Upgrade
+            simulation: new SimulationAgent(),
+            tactical: new TacticalAgent()
         };
-
-        this.taskQueue = [];
-        this.results = new Map();
-        this.confidence = {};
     }
 
     /**
      * Full match analysis - deploys all agents
      */
     async analyzeMatch(matchData) {
-        const { homeTeam, awayTeam, competition, venue, matchTime, keyPlayers } = matchData;
+        // Prepare standardized match object
+        const targetMatch = {
+            matchId: matchData.id || matchData.matchId,
+            sport: matchData.sport || 'soccer',
+            league: matchData.league || 'eng.1',
+            homeTeam: matchData.home?.name || 'Home',
+            awayTeam: matchData.away?.name || 'Away',
+            city: matchData.venue?.city || 'London', // Fallback for weather
+            venue: matchData.venue?.name
+        };
 
-        console.log(`🐝 Orchestrator: Starting full analysis for ${homeTeam} vs ${awayTeam}`);
+        console.log(`🐝 Orchestrator: Starting full analysis for ${targetMatch.homeTeam} vs ${targetMatch.awayTeam} (ID: ${targetMatch.matchId})`);
         const startTime = Date.now();
 
         // Phase 1: Deploy Scout Agents (parallel)
         console.log('📡 Phase 1: Deploying Scout Agents...');
-        const scoutResults = await this.deployScouts(matchData);
+        const scoutResults = await this.deployScouts(targetMatch);
 
         // Phase 2: Deploy Analyst Agents (parallel)
         console.log('🔬 Phase 2: Deploying Analyst Agents...');
-        const analysisResults = await this.deployAnalysts(matchData, scoutResults);
+        const analysisResults = await this.deployAnalysts(targetMatch, scoutResults);
 
         // Phase 3: Synthesize all data
         console.log('🧠 Phase 3: Synthesizing Intelligence...');
-        const synthesis = await this.synthesize(scoutResults, analysisResults, matchData);
+        const synthesis = await this.synthesize(scoutResults, analysisResults, targetMatch);
 
         // Phase 4: Generate Prediction
         console.log('🎯 Phase 4: Generating Prediction...');
@@ -77,13 +87,12 @@ export class MasterOrchestrator {
         console.log(`✅ Analysis complete in ${duration}ms`);
 
         return {
-            match: matchData,
+            match: targetMatch,
             scoutReports: scoutResults,
             analysis: analysisResults,
             synthesis,
             prediction,
             metadata: {
-                agentsDeployed: Object.keys(this.scouts).length + Object.keys(this.analysts).length,
                 durationMs: duration,
                 timestamp: new Date().toISOString(),
                 confidenceLevel: prediction.confidence
@@ -94,341 +103,248 @@ export class MasterOrchestrator {
     /**
      * Deploy all scout agents in parallel
      */
-    async deployScouts(matchData) {
-        const { homeTeam, awayTeam, venue, city } = matchData;
-
+    async deployScouts(match) {
         const tasks = [
-            this.scouts.stats.execute({ sport: 'football', teamId: homeTeam }),
-            this.scouts.stats.execute({ sport: 'football', teamId: awayTeam }),
-            this.scouts.news.execute({ teamName: homeTeam, playerNames: matchData.homePlayers || [] }),
-            this.scouts.news.execute({ teamName: awayTeam, playerNames: matchData.awayPlayers || [] }),
-            this.scouts.social.execute({ teamName: homeTeam }),
-            this.scouts.social.execute({ teamName: awayTeam }),
-            this.scouts.odds.execute({ matchId: `${homeTeam}-${awayTeam}` }),
-            this.scouts.weather.execute({ city, venue, matchTime: matchData.matchTime })
+            this.scouts.stats.execute({ matchId: match.matchId, sport: match.sport, league: match.league }),
+            this.scouts.odds.execute({ matchId: match.matchId, sport: match.sport, league: match.league }),
+            this.scouts.news.execute({ teamName: match.homeTeam }),
+            this.scouts.social.execute({ matchId: match.matchId, sport: match.sport, league: match.league }), // Now uses consensus
+            this.scouts.weather.execute({ city: match.city })
         ];
 
         const results = await Promise.all(tasks);
 
         return {
-            homeStats: results[0],
-            awayStats: results[1],
-            homeNews: results[2],
-            awayNews: results[3],
-            homeSocial: results[4],
-            awaySocial: results[5],
-            odds: results[6],
-            weather: results[7]
+            stats: results[0],
+            odds: results[1],
+            news: results[2], // Home news
+            social: results[3],
+            weather: results[4]
         };
     }
 
     /**
      * Deploy all analyst agents in parallel
      */
-    async deployAnalysts(matchData, scoutData) {
-        const { homeTeam, awayTeam, competition, keyPlayers = {} } = matchData;
+    async deployAnalysts(match, scoutData) {
+        const statsData = scoutData.stats?.success ? scoutData.stats.data : null;
+        const oddsData = scoutData.odds?.success ? scoutData.odds.data : null;
 
         const tasks = [
-            // Team analysis
-            this.analysts.team.execute({ team: homeTeam, competition, opponent: awayTeam }),
-            this.analysts.team.execute({ team: awayTeam, competition, opponent: homeTeam }),
+            // Team Analysis (Real Stats)
+            this.analysts.team.execute({ team: match.homeTeam, stats: statsData, odds: oddsData }),
+            this.analysts.team.execute({ team: match.awayTeam, stats: statsData, odds: oddsData }),
 
-            // H2H analysis
-            this.analysts.h2h.execute({ homeTeam, awayTeam, venue: matchData.venue }),
+            // H2H Analysis (Comparative)
+            this.analysts.h2h.execute({
+                homeStats: statsData ? statsData.home : null,
+                awayStats: statsData ? statsData.away : null
+            }),
 
-            // Form analysis
-            this.analysts.form.execute({ team: homeTeam, lastNMatches: 10 }),
-            this.analysts.form.execute({ team: awayTeam, lastNMatches: 10 }),
+            // Form Analysis (Passing standing/recent data if available from scouts to help FormAgent)
+            this.analysts.form.execute({ team: match.homeTeam, lastNMatches: 5 }),
 
-            // Injury reports
-            this.analysts.injury.execute({ team: homeTeam }),
-            this.analysts.injury.execute({ team: awayTeam }),
+            // Injury Analysis (Placeholder as roster data is heavy)
+            this.analysts.injury.execute({ team: match.homeTeam, injuries: [] }),
 
-            // Key player analysis
-            ...(keyPlayers.home || []).map(player =>
-                this.analysts.player.execute({ player, team: homeTeam })
-            ),
-            ...(keyPlayers.away || []).map(player =>
-                this.analysts.player.execute({ player, team: awayTeam })
-            )
+            // --- MONSTER AGENTS DEPLOYMENT ---
+            // Simulation: Needs Stats to calculate xG and run Monte Carlo
+            this.analysts.simulation.execute({
+                homeStats: statsData?.home ? statsData.home.standing : null,
+                awayStats: statsData?.away ? statsData.away.standing : null
+            }),
+
+            // Tactical: Needs Teams and potential Leaders/Style indicators
+            this.analysts.tactical.execute({
+                homeTeam: match.homeTeam,
+                awayTeam: match.awayTeam,
+                leaders: scoutData.stats?.success ? scoutData.stats.data.leaders : null
+            })
         ];
 
         const results = await Promise.all(tasks);
 
         return {
-            homeTeamAnalysis: results[0],
-            awayTeamAnalysis: results[1],
-            h2hAnalysis: results[2],
-            homeForm: results[3],
-            awayForm: results[4],
-            homeInjuries: results[5],
-            awayInjuries: results[6],
-            playerAnalysis: results.slice(7)
+            homeTeam: results[0],
+            awayTeam: results[1],
+            h2h: results[2],
+            form: results[3],
+            injury: results[4],
+            simulation: results[5],
+            tactical: results[6]
         };
     }
 
     /**
      * Synthesize all gathered intelligence
      */
-    async synthesize(scoutData, analysisData, matchData) {
+    async synthesize(scoutData, analysisData, match) {
         const factors = [];
         let homeScore = 50;
         let awayScore = 50;
 
-        // Factor 1: Statistics
-        if (scoutData.homeStats.success && scoutData.awayStats.success) {
-            const homeXG = scoutData.homeStats.data?.offense?.xG || 1.5;
-            const awayXG = scoutData.awayStats.data?.offense?.xG || 1.5;
-            const xgDiff = homeXG - awayXG;
-
-            homeScore += xgDiff * 5;
-            awayScore -= xgDiff * 5;
+        // Factor 1: Real Possession/Dominance
+        if (scoutData.stats.success) {
+            const hPoss = parseFloat(scoutData.stats.data.home.possession || 50);
+            const diff = hPoss - 50;
+            homeScore += diff * 0.5;
+            awayScore -= diff * 0.5;
 
             factors.push({
-                name: 'Estadísticas xG',
-                impact: xgDiff > 0 ? 'Favorece local' : 'Favorece visitante',
-                weight: Math.abs(xgDiff * 5).toFixed(1),
-                detail: `xG Local: ${homeXG} vs xG Visitante: ${awayXG}`
+                name: 'Dominio de Posesión',
+                impact: diff > 0 ? 'Home' : 'Away',
+                weight: Math.abs(diff * 0.5).toFixed(1),
+                detail: `Local ${hPoss}% - Visita ${100 - hPoss}%`
             });
         }
 
-        // Factor 2: Form
-        if (analysisData.homeForm.success && analysisData.awayForm.success) {
-            const homeWins = analysisData.homeForm.data?.results?.wins || 0;
-            const awayWins = analysisData.awayForm.data?.results?.wins || 0;
-            const formDiff = homeWins - awayWins;
+        // Factor 2: Real Shots on Target
+        if (scoutData.stats.success) {
+            const hSOT = parseInt(scoutData.stats.data.home.shotsOnTarget || 0);
+            const aSOT = parseInt(scoutData.stats.data.away.shotsOnTarget || 0);
+            const sotDiff = hSOT - aSOT;
 
-            homeScore += formDiff * 3;
-            awayScore -= formDiff * 3;
+            homeScore += sotDiff * 2;
+            awayScore -= sotDiff * 2;
 
-            factors.push({
-                name: 'Forma reciente',
-                impact: formDiff > 0 ? 'Favorece local' : 'Favorece visitante',
-                weight: Math.abs(formDiff * 3).toFixed(1),
-                detail: `Victorias últimos 10: Local ${homeWins} vs Visitante ${awayWins}`
-            });
-        }
-
-        // Factor 3: Head-to-Head
-        if (analysisData.h2hAnalysis.success) {
-            const h2h = analysisData.h2hAnalysis.data?.overall;
-            if (h2h) {
-                const h2hAdvantage = ((h2h.homeWins - h2h.awayWins) / h2h.totalMatches) * 10;
-                homeScore += h2hAdvantage;
-                awayScore -= h2hAdvantage;
-
+            if (sotDiff !== 0) {
                 factors.push({
-                    name: 'Historial directo',
-                    impact: h2hAdvantage > 0 ? 'Favorece local' : 'Favorece visitante',
-                    weight: Math.abs(h2hAdvantage).toFixed(1),
-                    detail: `H2H: ${h2h.homeWins}W-${h2h.draws}D-${h2h.awayWins}L`
+                    name: 'Peligro de Gol (Tiros al arco)',
+                    impact: sotDiff > 0 ? 'Home' : 'Away',
+                    weight: Math.abs(sotDiff * 2).toFixed(1),
+                    detail: `Local ${hSOT} - Visita ${aSOT}`
                 });
             }
         }
 
-        // Factor 4: Injuries
-        if (analysisData.homeInjuries.success && analysisData.awayInjuries.success) {
-            const homeImpact = analysisData.homeInjuries.data?.overallImpact?.severity;
-            const awayImpact = analysisData.awayInjuries.data?.overallImpact?.severity;
+        // Factor 3: Odds Consensus
+        if (scoutData.social.success) {
+            const hSup = parseFloat(scoutData.social.data.homeSupport || 33);
+            const aSup = parseFloat(scoutData.social.data.awaySupport || 33);
 
-            const injuryScore = { high: -5, medium: -2, low: 0 };
-            homeScore += injuryScore[homeImpact] || 0;
-            awayScore += injuryScore[awayImpact] || 0;
-
-            factors.push({
-                name: 'Lesiones',
-                impact: 'Variable',
-                weight: 'Variable',
-                detail: `Impacto bajas - Local: ${homeImpact}, Visitante: ${awayImpact}`
-            });
+            // If public is heavily skewed, usually follow (or fade if contrarian logic enabled)
+            const consensusDiff = hSup - aSup;
+            if (Math.abs(consensusDiff) > 10) {
+                homeScore += consensusDiff * 0.2;
+                awayScore -= consensusDiff * 0.2;
+                factors.push({
+                    name: 'Consenso Público',
+                    impact: consensusDiff > 0 ? 'Home' : 'Away',
+                    weight: Math.abs(consensusDiff * 0.2).toFixed(1),
+                    detail: `Apoyo: ${hSup}% vs ${aSup}%`
+                });
+            }
         }
 
-        // Factor 5: Social Sentiment
-        if (scoutData.homeSocial.success && scoutData.awaySocial.success) {
-            const homeSent = parseFloat(scoutData.homeSocial.data?.sentiment?.score || 0);
-            const awaySent = parseFloat(scoutData.awaySocial.data?.sentiment?.score || 0);
-            const sentDiff = (homeSent - awaySent) * 5;
-
-            homeScore += sentDiff;
-            awayScore -= sentDiff;
-
-            factors.push({
-                name: 'Sentimiento social',
-                impact: sentDiff > 0 ? 'Favorece local' : 'Favorece visitante',
-                weight: Math.abs(sentDiff).toFixed(1),
-                detail: `Mood: Local ${scoutData.homeSocial.data?.fanConfidence}, Visitante ${scoutData.awaySocial.data?.fanConfidence}`
-            });
-        }
-
-        // Factor 6: Weather
-        if (scoutData.weather.success) {
-            const weather = scoutData.weather.data;
-            factors.push({
-                name: 'Clima',
-                impact: weather?.impact?.favorsSide || 'Neutral',
-                weight: weather?.impact?.riskFactor === 'high' ? '8' : '3',
-                detail: `${weather?.forecast?.condition}, ${weather?.forecast?.temperature}°C`
-            });
-        }
-
-        // Factor 7: Odds value
-        if (scoutData.odds.success) {
-            const odds = scoutData.odds.data;
-            factors.push({
-                name: 'Cuotas del mercado',
-                impact: 'Referencia',
-                weight: 'N/A',
-                detail: `Mejor cuota local: ${odds?.bestOdds?.home?.value} (${odds?.bestOdds?.home?.bookmaker})`
-            });
-        }
-
-        // Home advantage
+        // Factor 4: Home Advantage (Base)
         homeScore += 5;
-        factors.push({
-            name: 'Ventaja de local',
-            impact: 'Favorece local',
-            weight: '5',
-            detail: 'Factor estadístico de jugar en casa'
-        });
 
-        // Normalize scores
+        // --- MONSTER FACTORS ---
+
+        // Factor 5: Tactical Multiplier
+        if (analysisData.tactical?.success) {
+            const tac = analysisData.tactical.data;
+            // tacticalMultiplier > 1 favors Home
+            const tacImpact = (tac.tacticalMultiplier - 1) * 20; // Scale effect, e.g. 1.05 -> +1 pt
+            homeScore += tacImpact;
+            awayScore -= tacImpact;
+
+            if (Math.abs(tacImpact) > 1) {
+                factors.push({
+                    name: 'Ventaja Táctica',
+                    impact: tacImpact > 0 ? 'Home' : 'Away',
+                    weight: Math.abs(tacImpact).toFixed(1),
+                    detail: tac.analysis
+                });
+            }
+        }
+
+        // Factor 6: Simulation Consensus (The "Truth" Serum)
+        if (analysisData.simulation?.success) {
+            const sim = analysisData.simulation.data;
+            const simDiff = (sim.simulationStats.homeWinPct - sim.simulationStats.awayWinPct);
+
+            // If Monte Carlo is very confident, pull score heavily
+            homeScore += simDiff * 0.3;
+            awayScore -= simDiff * 0.3;
+
+            factors.push({
+                name: 'Simulación Monte Carlo (1000x)',
+                impact: simDiff > 0 ? 'Home' : 'Away',
+                weight: Math.abs(simDiff * 0.3).toFixed(1),
+                detail: `Predicción IA: ${sim.mostLikelyScore} (${sim.confidence})`
+            });
+        }
+
+        // Calculate Probabilities
         const total = homeScore + awayScore;
-        const homeProb = Math.min(Math.max((homeScore / total) * 100, 5), 85);
-        const awayProb = Math.min(Math.max((awayScore / total) * 100, 5), 85);
-        const drawProb = 100 - homeProb - awayProb;
+        const normalizedHome = Math.min(90, Math.max(10, (homeScore / total) * 100));
+        const normalizedAway = Math.min(90, Math.max(10, (awayScore / total) * 100));
+
+        // SHARPENING: Reduce Draw if distinct favorite
+        let finalHome = normalizedHome;
+        let finalAway = normalizedAway;
+        let finalDraw = 0;
+
+        const gap = Math.abs(normalizedHome - normalizedAway);
+
+        if (gap < 5) {
+            // Dead heat -> High Draw
+            finalDraw = 30;
+            finalHome *= 0.85;
+            finalAway *= 0.85;
+        } else if (gap < 15) {
+            // Competitive
+            finalDraw = 22;
+            const rem = 100 - finalDraw;
+            const ratio = normalizedHome / (normalizedHome + normalizedAway);
+            finalHome = rem * ratio;
+            finalAway = rem * (1 - ratio);
+        } else {
+            // Clear Favorite -> Low Draw
+            finalDraw = 12;
+            const rem = 100 - finalDraw;
+            const ratio = normalizedHome / (normalizedHome + normalizedAway);
+            // Boost favorite slightly (Bandwagon effect / Momentum)
+            if (normalizedHome > normalizedAway) finalHome += 5;
+            else finalAway += 5;
+
+            // Re-normalize
+            const total2 = finalHome + finalAway + finalDraw;
+            finalHome = (finalHome / total2) * 100;
+            finalAway = (finalAway / total2) * 100;
+            finalDraw = (finalDraw / total2) * 100;
+        }
+
+        const predictedScore = analysisData.simulation?.success
+            ? analysisData.simulation.data.mostLikelyScore
+            : "1-0"; // Fallback
 
         return {
-            factors,
-            rawScores: { home: homeScore.toFixed(1), away: awayScore.toFixed(1) },
             probabilities: {
-                home: Math.round(homeProb),
-                draw: Math.round(drawProb),
-                away: Math.round(awayProb)
+                home: Math.round(finalHome),
+                draw: Math.round(finalDraw),
+                away: Math.round(finalAway)
             },
-            keyInsights: this.generateKeyInsights(factors, scoutData, analysisData),
-            riskAssessment: this.assessRisk(factors)
+            scorePrediction: predictedScore,
+            factors,
+            keyInsights: factors.map(f => `${f.name}: ${f.detail}`)
         };
     }
 
-    /**
-     * Generate final prediction from synthesis
-     */
     generatePrediction(synthesis) {
-        const { probabilities, factors, keyInsights, riskAssessment } = synthesis;
+        const { home, draw, away } = synthesis.probabilities;
+        const max = Math.max(home, draw, away);
 
-        // Determine prediction
-        let prediction, confidence;
-        const maxProb = Math.max(probabilities.home, probabilities.draw, probabilities.away);
-
-        if (probabilities.home === maxProb) {
-            prediction = 'HOME_WIN';
-        } else if (probabilities.away === maxProb) {
-            prediction = 'AWAY_WIN';
-        } else {
-            prediction = 'DRAW';
-        }
-
-        // Determine confidence level
-        if (maxProb >= 70) {
-            confidence = 'diamond';
-        } else if (maxProb >= 55) {
-            confidence = 'gold';
-        } else {
-            confidence = 'silver';
-        }
-
-        // Calculate suggested stake
-        const stakeMap = { diamond: 4, gold: 2, silver: 1 };
-        const suggestedStake = stakeMap[confidence];
+        let outcome = 'DRAW';
+        if (home === max) outcome = 'HOME_WIN';
+        else if (away === max) outcome = 'AWAY_WIN';
 
         return {
-            outcome: prediction,
-            confidence,
-            probabilities,
-            reasoning: keyInsights.join(' '),
-            factorsAnalyzed: factors.length,
-            suggestedStake: `${suggestedStake} unidades`,
-            riskLevel: riskAssessment.level,
-            additionalMarkets: this.suggestAdditionalMarkets(synthesis),
-            disclaimer: 'Esta predicción es solo informativa. Las apuestas conllevan riesgo.'
-        };
-    }
-
-    /**
-     * Generate key insights from analysis
-     */
-    generateKeyInsights(factors, scoutData, analysisData) {
-        const insights = [];
-
-        // Find strongest factor
-        const strongestFactor = factors.reduce((max, f) =>
-            parseFloat(f.weight) > parseFloat(max.weight) ? f : max
-            , { weight: '0' });
-
-        insights.push(`Factor clave: ${strongestFactor.name} (${strongestFactor.impact}).`);
-
-        // Add form insight
-        if (analysisData.homeForm.success) {
-            const momentum = analysisData.homeForm.data?.momentum?.current;
-            if (momentum === 'Excellent' || momentum === 'Good') {
-                insights.push(`El equipo local viene en excelente forma.`);
-            }
-        }
-
-        // Add injury insight if relevant
-        if (analysisData.homeInjuries.success) {
-            const keyOut = analysisData.homeInjuries.data?.overallImpact?.keyPlayersAffected;
-            if (keyOut > 0) {
-                insights.push(`ℹ️ ${keyOut} jugador(es) clave ausente(s).`);
-            }
-        }
-
-        return insights;
-    }
-
-    /**
-     * Assess overall risk of the prediction
-     */
-    assessRisk(factors) {
-        const highImpactFactors = factors.filter(f => parseFloat(f.weight) > 5);
-        const conflictingFactors = factors.filter(f =>
-            f.impact.includes('local')).length === factors.filter(f =>
-                f.impact.includes('visitante')).length;
-
-        if (conflictingFactors) {
-            return { level: 'high', reason: 'Factores contradictorios detectados' };
-        }
-
-        if (highImpactFactors.length < 2) {
-            return { level: 'medium', reason: 'Pocos factores decisivos' };
-        }
-
-        return { level: 'low', reason: 'Múltiples factores alineados' };
-    }
-
-    /**
-     * Suggest additional betting markets
-     */
-    suggestAdditionalMarkets(synthesis) {
-        return [
-            { market: 'Over/Under 2.5', suggestion: synthesis.probabilities.home > 60 ? 'Over 2.5' : 'Under 2.5', confidence: 'medium' },
-            { market: 'Ambos Anotan', suggestion: Math.random() > 0.5 ? 'Sí' : 'No', confidence: 'medium' },
-            { market: 'Córners', suggestion: 'Over 9.5', confidence: 'low' }
-        ];
-    }
-
-    /**
-     * Quick analysis for live matches
-     */
-    async quickAnalysis(matchData) {
-        // Lightweight version for live betting
-        const odds = await this.scouts.odds.execute({ matchId: matchData.id });
-        const social = await this.scouts.social.execute({ teamName: matchData.homeTeam });
-
-        return {
-            quickPrediction: odds.success ? 'Based on live odds movement' : 'Insufficient data',
-            momentum: social.success ? social.data.momentum : 'unknown',
-            timestamp: new Date().toISOString()
+            outcome,
+            exactScore: synthesis.scorePrediction,
+            confidence: max > 60 ? 'High' : max > 45 ? 'Medium' : 'Low',
+            probabilities: synthesis.probabilities
         };
     }
 }
