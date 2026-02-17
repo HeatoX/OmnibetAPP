@@ -20,6 +20,9 @@ import { calculateGraphStability } from './graph-engine.js';
 import { identifyTacticalADN, getTacticalAdvantage } from './tactical-adn.js';
 import { calculateKellyStake } from './risk-engine.js';
 import { MasterOrchestrator } from './agents/orchestrator.js';
+import { getMatchSummary } from './data-fetcher.js';
+
+export { getMatchSummary };
 
 /**
  * ESPN Public API Endpoints (free, no API key required)
@@ -398,33 +401,6 @@ function convertMoneyLine(ml) {
 }
 
 // ... (existing code matches exactly)
-
-/**
- * FETCH DEEP MATCH STATS (Boxscore, Summary, Roster)
- * Target: https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/summary?event={matchId}
- */
-export async function getMatchSummary(matchId, sport = 'soccer', league = 'eng.1') {
-    try {
-        // Normalize sport for URL
-        const urlSport = sport === 'football' ? 'soccer' : sport;
-        // League slug usually works even if generic like 'eng.1', but better if accurate.
-        // If league is unknown, we might try a generic one or rely on the eventId being unique globally (ESPN usually requires sport/league context).
-
-        const url = `https://site.api.espn.com/apis/site/v2/sports/${urlSport}/${league}/summary?event=${matchId}`;
-        console.log(`📡 Fetching Deep Summary: ${url}`);
-
-        const res = await fetch(url, { next: { revalidate: 300 } }); // 5 min cache
-        if (!res.ok) return null;
-
-        const data = await res.json();
-        return data; // Returns the full deep data object
-    } catch (e) {
-        console.error("Match Summary Error:", e);
-        return null;
-    }
-}
-
-
 
 // ... (rest of file)
 async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league = null, extraData = {}) {

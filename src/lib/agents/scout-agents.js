@@ -3,7 +3,7 @@
 // Coordinated AI agents for sports analysis
 // ========================================
 
-import { getMatchSummary } from '../real-data-service.js';
+import { getMatchSummary } from '../data-fetcher.js';
 
 /**
  * ChatDev-style Logger
