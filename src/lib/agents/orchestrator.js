@@ -216,6 +216,21 @@ export class MasterOrchestrator {
         let homeScore = 50;
         let awayScore = 50;
 
+        // Factor 0: ESPN Odds (The Strongest Signal for Upcoming Matches)
+        if (match.odds?.impliedProbabilities) {
+            const imp = match.odds.impliedProbabilities;
+            // Use implied probabilities as the BASE score instead of 50/50
+            homeScore = imp.home || 50;
+            awayScore = imp.away || 50;
+
+            factors.push({
+                name: 'Cuotas de Mercado (ESPN)',
+                impact: homeScore > awayScore ? 'Home' : 'Away',
+                weight: Math.abs(homeScore - awayScore).toFixed(1),
+                detail: `Impl. Prob: Local ${homeScore.toFixed(0)}% - Visita ${awayScore.toFixed(0)}%`
+            });
+        }
+
         // Factor 1: Real Possession/Dominance
         if (scoutData.stats.success) {
             const hPoss = parseFloat(scoutData.stats.data.home.possession || 50);

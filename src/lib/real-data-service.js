@@ -524,11 +524,16 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
 
         const orchestratorMatch = {
             id: extraData.matchId,
+            matchId: extraData.matchId,
+            home: { name: homeName },
+            away: { name: awayName },
             homeTeam: homeName,
             awayTeam: awayName,
             league: league,
             sport: sport,
             date: extraData.date || new Date(),
+            odds: extraData.odds || null,
+            venue: { city: 'London' },
         };
 
         const orchestrator = new MasterOrchestrator();
@@ -611,7 +616,6 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             homeWinProb: 0,
             awayWinProb: 0,
             drawProb: 0,
-            confidence: 'silver',
             confidence: 'silver',
             maxProb: 0,
             matchDate: extraData.date || new Date()
