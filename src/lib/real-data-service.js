@@ -592,7 +592,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         console.error("Prediction engine fatal error:", e);
         return {
             winner: 'draw',
-            text: 'IA en mantenimiento',
+            text: `IA en mantenimiento: ${e.message}`,
             homeWinProb: 0,
             awayWinProb: 0,
             drawProb: 0,
