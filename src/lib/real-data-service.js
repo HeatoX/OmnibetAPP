@@ -528,7 +528,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             awayTeam: awayName,
             league: league,
             sport: sport,
-            date: matchDate,
+            date: extraData.date || new Date(),
         };
 
         const orchestrator = new MasterOrchestrator();
@@ -586,7 +586,8 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
                 awayState: 'analyzed',
                 momentumConfidence: confidenceLevel === 'High' ? 80 : 50,
                 hasPattern: true
-            }
+            },
+            matchDate: orchestratorMatch.date
         };
     } catch (e) {
         console.error("Prediction engine fatal error:", e);
@@ -597,7 +598,9 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             awayWinProb: 0,
             drawProb: 0,
             confidence: 'silver',
-            maxProb: 0
+            confidence: 'silver',
+            maxProb: 0,
+            matchDate: extraData.date || new Date()
         };
     }
 }
