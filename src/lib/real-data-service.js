@@ -526,7 +526,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             id: extraData.matchId,
             homeTeam: homeName,
             awayTeam: awayName,
-            league: leagueName,
+            league: league,
             sport: sport,
             date: matchDate,
         };
