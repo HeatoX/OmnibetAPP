@@ -267,21 +267,32 @@ export function calculatePrediction(match, analysis, config = {}) {
         homeProb = (homeProb * (1 - wOdds)) + (marketHomeProb * wOdds);
     }
 
-    // Normalización base
-    let finalHomeProb = homeProb * 100;
-    finalHomeProb = Math.min(Math.max(finalHomeProb, 10), 90);
-    let finalAwayProb = 100 - finalHomeProb;
+    // --- V62.1 FIX: PROPER 3-WAY PROBABILITY MODEL ---
+    // awayProb is computed SYMMETRICALLY to homeProb (not as 1-homeProb which absorbs draw).
+    let awayProb = 1 - homeProb; // Start with true complement for 2-way sports
 
-    // Reducción balanceada de empate para fútbol
+    // Compute draw independently for soccer
     let drawProb = 0;
     if (sport === 'football' || sport === 'soccer') {
         const diff = Math.abs(homeFormScore - awayFormScore);
-        const dynamicDrawProb = 20 + (10 * (1 - diff)); // Dinámico basado en paridad
-        drawProb = dynamicDrawProb; // Sync global drawProb
+        drawProb = 20 + (10 * (1 - diff)); // Dynamic based on parity (20-30%)
 
-        // Ajuste proporcional para mantener 100%
-        finalHomeProb *= (1 - (dynamicDrawProb / 100));
-        finalAwayProb *= (1 - (dynamicDrawProb / 100));
+        // CORRECT 3-way split: allocate draw space, then distribute remaining to home/away
+        const drawShare = drawProb / 100; // 0.20 - 0.30
+        const winShare = 1 - drawShare;   // 0.70 - 0.80
+
+        // homeProb is in 0-1 range representing home's relative strength vs away.
+        // In a 3-way model: home% = homeProb * winShare, away% = (1-homeProb) * winShare
+        const rawHomePercent = homeProb * winShare * 100;
+        const rawAwayPercent = (1 - homeProb) * winShare * 100;
+
+        // Clamp
+        var finalHomeProb = Math.min(Math.max(rawHomePercent, 8), 85);
+        var finalAwayProb = Math.min(Math.max(rawAwayPercent, 8), 85);
+    } else {
+        // 2-way sports (basketball, baseball, tennis)
+        var finalHomeProb = Math.min(Math.max(homeProb * 100, 10), 90);
+        var finalAwayProb = Math.min(Math.max(awayProb * 100, 10), 90);
     }
 
     // --- MOTOR MULTIDEPORTE V15 (Decoupled Engine) ---
@@ -293,15 +304,16 @@ export function calculatePrediction(match, analysis, config = {}) {
     // 1. Lógica por Deporte
     if (sport === 'football' || sport === 'soccer') {
         // --- MODELO FÚTBOL (3-Way Poisson) ---
-        let baseH = homeProb;
-        let baseD = drawProb / 100 || 0.22;
+        // V62.1: Use properly-scaled probabilities (NOT inflated awayProb)
+        let baseH = finalHomeProb / 100;  // Home share in 0-1 range
+        let baseA = finalAwayProb / 100;  // Away share in 0-1 range (SYMMETRIC, not 1-baseH)
+        let baseD = drawProb / 100;       // Draw share in 0-1 range
 
         if (homeForm?.recentGames && awayForm?.recentGames) {
             const hStats = calcStats(homeForm.recentGames);
             const aStats = calcStats(awayForm.recentGames);
 
             // V30.3 League-Specific xG Bias (Refining from GLOBAL 1.35)
-            // Premier League has higher goal average than LaLiga or Serie A
             const leagueAverages = {
                 'Spanish LALIGA': 1.22,
                 'English Premier League': 1.58,
@@ -318,18 +330,19 @@ export function calculatePrediction(match, analysis, config = {}) {
                 const elo = getEloWinProbability(match.home.id, match.away.id, sport);
 
                 // Weighted Assembly: 40% Poisson, 30% Form, 30% ELO
-                // V62 FIX: Both sides must use the same raw probability scale.
-                // Previously mathAway used finalAwayProb/100 which was inflated by draw absorption.
-                const rawAwayProb = 1 - homeProb; // Symmetric with homeProb
-                mathHome = (poi.homeWin * 0.4) + (homeProb * 0.3) + ((elo.home / 100) * 0.3);
-                mathAway = (poi.awayWin * 0.4) + (rawAwayProb * 0.3) + ((elo.away / 100) * 0.3);
-                mathDraw = (poi.draw * 0.5) + (drawProb / 100 * 0.5);
+                // V62.1: BOTH sides use symmetric probability scales
+                mathHome = (poi.homeWin * 0.4) + (baseH * 0.3) + ((elo.home / 100) * 0.3);
+                mathAway = (poi.awayWin * 0.4) + (baseA * 0.3) + ((elo.away / 100) * 0.3);
+                mathDraw = (poi.draw * 0.5) + (baseD * 0.5);
 
                 swarmInsights.push(`📐 xG [${match.league || 'Global'}]: ${homeXG.toFixed(1)} - ${awayXG.toFixed(1)}`);
                 swarmInsights.push(`🧠 ELO Rating: ${elo.homeElo} vs ${elo.awayElo}`);
             }
-        } else {
-            mathHome = baseH; mathAway = 1 - baseH; mathDraw = baseD;
+        }
+
+        // V62.1: If Poisson/ELO didn't run (no stats), use the balanced base values
+        if (mathHome === 0 && mathAway === 0) {
+            mathHome = baseH; mathAway = baseA; mathDraw = baseD;
         }
     } else if (sport === 'basketball' || sport === 'nba') {
         // --- MODELO BALONCESTO (2-Way Point Spread) ---
