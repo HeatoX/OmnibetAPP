@@ -560,16 +560,19 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         let swarmInsights = [];
         let factors = [];
 
-        if (predictionResult && predictionResult.probabilities) {
-            hFinal = predictionResult.probabilities.home;
-            dFinal = predictionResult.probabilities.draw;
-            aFinal = predictionResult.probabilities.away;
+        // Extract the nested prediction object from orchestrator result
+        const pred = predictionResult?.prediction;
 
-            predictionText = predictionResult.outcome === 'HOME_WIN' ? `GANA ${homeName}` :
-                predictionResult.outcome === 'AWAY_WIN' ? `GANA ${awayName}` : 'EMPATE';
+        if (pred && pred.probabilities) {
+            hFinal = pred.probabilities.home;
+            dFinal = pred.probabilities.draw;
+            aFinal = pred.probabilities.away;
 
-            confidenceLevel = predictionResult.confidence;
-            exactScore = predictionResult.exactScore || "N/A";
+            predictionText = pred.outcome === 'HOME_WIN' ? `GANA ${homeName}` :
+                pred.outcome === 'AWAY_WIN' ? `GANA ${awayName}` : 'EMPATE';
+
+            confidenceLevel = pred.confidence;
+            exactScore = pred.exactScore || "N/A";
 
             if (predictionResult.synthesis?.keyInsights) swarmInsights = predictionResult.synthesis.keyInsights;
             if (predictionResult.synthesis?.factors) factors = predictionResult.synthesis.factors;
