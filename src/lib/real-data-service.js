@@ -539,6 +539,17 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             predictionResult = await orchestrator.analyzeMatch(orchestratorMatch);
         } catch (e) {
             console.warn(`Orchestrator failed for ${homeName}:`, e.message);
+            // Debug: Show error in UI
+            return {
+                winner: 'draw',
+                text: `Error IO: ${e.message}`,
+                homeWinProb: 0,
+                awayWinProb: 0,
+                drawProb: 0,
+                confidence: 'silver',
+                maxProb: 0,
+                matchDate: extraData.date || new Date()
+            };
         }
 
         // Default / Fallback
