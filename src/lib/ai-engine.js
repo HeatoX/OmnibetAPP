@@ -318,8 +318,11 @@ export function calculatePrediction(match, analysis, config = {}) {
                 const elo = getEloWinProbability(match.home.id, match.away.id, sport);
 
                 // Weighted Assembly: 40% Poisson, 30% Form, 30% ELO
+                // V62 FIX: Both sides must use the same raw probability scale.
+                // Previously mathAway used finalAwayProb/100 which was inflated by draw absorption.
+                const rawAwayProb = 1 - homeProb; // Symmetric with homeProb
                 mathHome = (poi.homeWin * 0.4) + (homeProb * 0.3) + ((elo.home / 100) * 0.3);
-                mathAway = (poi.awayWin * 0.4) + (finalAwayProb / 100 * 0.3) + ((elo.away / 100) * 0.3);
+                mathAway = (poi.awayWin * 0.4) + (rawAwayProb * 0.3) + ((elo.away / 100) * 0.3);
                 mathDraw = (poi.draw * 0.5) + (drawProb / 100 * 0.5);
 
                 swarmInsights.push(`📐 xG [${match.league || 'Global'}]: ${homeXG.toFixed(1)} - ${awayXG.toFixed(1)}`);

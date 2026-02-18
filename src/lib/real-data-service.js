@@ -357,9 +357,22 @@ function getSportIcon(sport) {
 function extractOdds(competition) {
     const odds = competition.odds?.[0];
     if (odds) {
-        const homeDec = odds.homeTeamOdds?.moneyLine ? convertMoneyLine(odds.homeTeamOdds.moneyLine) : null;
-        const drawDec = odds.drawOdds?.moneyLine ? convertMoneyLine(odds.drawOdds.moneyLine) : null;
-        const awayDec = odds.awayTeamOdds?.moneyLine ? convertMoneyLine(odds.awayTeamOdds.moneyLine) : null;
+        // V62 FIX: ESPN provides moneyline at odds.moneyline.home/away.close.odds (string like "+125")
+        // The old path odds.homeTeamOdds.moneyLine does NOT exist in current ESPN API
+        const parseOddsValue = (val) => {
+            if (val == null) return null;
+            const n = typeof val === 'string' ? parseInt(val.replace('EVEN', '100'), 10) : val;
+            return isNaN(n) ? null : n;
+        };
+
+        // Try new ESPN format first, then legacy fallback
+        const homeML = parseOddsValue(odds.moneyline?.home?.close?.odds) ?? parseOddsValue(odds.homeTeamOdds?.moneyLine);
+        const drawML = parseOddsValue(odds.moneyline?.draw?.close?.odds) ?? parseOddsValue(odds.drawOdds?.moneyLine);
+        const awayML = parseOddsValue(odds.moneyline?.away?.close?.odds) ?? parseOddsValue(odds.awayTeamOdds?.moneyLine);
+
+        const homeDec = homeML != null ? convertMoneyLine(homeML) : null;
+        const drawDec = drawML != null ? convertMoneyLine(drawML) : null;
+        const awayDec = awayML != null ? convertMoneyLine(awayML) : null;
 
         // Calculate Implied Probabilities (1/odds)
         let hP = homeDec ? (1 / homeDec) : 0;
