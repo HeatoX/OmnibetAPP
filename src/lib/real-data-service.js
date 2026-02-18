@@ -19,7 +19,7 @@ import { calculateGoalExpectancy, calculatePoissonProbabilities } from './advanc
 import { calculateGraphStability } from './graph-engine.js';
 import { identifyTacticalADN, getTacticalAdvantage } from './tactical-adn.js';
 import { calculateKellyStake } from './risk-engine.js';
-import { MasterOrchestrator } from './agents/orchestrator.js';
+// MasterOrchestrator removed in V62.1 — direct calculation is now used
 import { getMatchSummary } from './data-fetcher.js';
 
 export { getMatchSummary };
@@ -530,71 +530,107 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
         const narrative = getNarrativeWeight(homeName, awayName);
 
         // ===================================================================
-        // V41.3: REAL STRENGTH CALCULATION — RECORDS-FIRST APPROACH
+        // V62.1: DIRECT PREDICTION ENGINE (replaces broken MasterOrchestrator)
+        // Uses the ALREADY-COMPUTED data above instead of a broken agent swarm
         // ===================================================================
-        // 6. --- MONSTER ORACLE INTEGRATION (V12.0) ---
-        // REPLACE ALL LEGACY LOGIC with AGENT SWARM
 
-        const orchestratorMatch = {
-            id: extraData.matchId,
-            matchId: extraData.matchId,
-            home: { name: homeName },
-            away: { name: awayName },
-            homeTeam: homeName,
-            awayTeam: awayName,
-            league: league,
-            sport: sport,
-            date: extraData.date || new Date(),
-            odds: extraData.odds || null,
-            venue: { city: 'London' },
-        };
+        // Step 1: Compute base strength from records, form, and Poisson
+        let homeStrength = 50;
+        let awayStrength = 50;
 
-        const orchestrator = new MasterOrchestrator();
-        let predictionResult = null;
-
-        try {
-            // Autonomous Agent Analysis
-            predictionResult = await orchestrator.analyzeMatch(orchestratorMatch);
-        } catch (e) {
-            console.warn(`Orchestrator failed for ${homeName}:`, e.message);
-            // Debug: Show error in UI
-            return {
-                winner: 'draw',
-                text: `Error IO: ${e.message}`,
-                homeWinProb: 0,
-                awayWinProb: 0,
-                drawProb: 0,
-                confidence: 'silver',
-                maxProb: 0,
-                matchDate: extraData.date || new Date()
-            };
+        // Records are the strongest signal (season-long performance)
+        if (hasRecords) {
+            const hPPG = homeRecord.pointsPct; // Points per game percentage
+            const aPPG = awayRecord.pointsPct;
+            // Scale PPG to a strength score centered at 50
+            homeStrength = 30 + (hPPG * 0.4); // PPG 50% -> strength 50, PPG 75% -> 60
+            awayStrength = 30 + (aPPG * 0.4);
         }
 
-        // Default / Fallback
-        let hFinal = 33, dFinal = 34, aFinal = 33;
-        let predictionText = "Pendiente";
-        let confidenceLevel = "Low";
-        let exactScore = "N/A";
-        let swarmInsights = [];
-        let factors = [];
-
-        // Extract the nested prediction object from orchestrator result
-        const pred = predictionResult?.prediction;
-
-        if (pred && pred.probabilities) {
-            hFinal = pred.probabilities.home;
-            dFinal = pred.probabilities.draw;
-            aFinal = pred.probabilities.away;
-
-            predictionText = pred.outcome === 'HOME_WIN' ? `GANA ${homeName}` :
-                pred.outcome === 'AWAY_WIN' ? `GANA ${awayName}` : 'EMPATE';
-
-            confidenceLevel = pred.confidence;
-            exactScore = pred.exactScore || "N/A";
-
-            if (predictionResult.synthesis?.keyInsights) swarmInsights = predictionResult.synthesis.keyInsights;
-            if (predictionResult.synthesis?.factors) factors = predictionResult.synthesis.factors;
+        // Rankings override (if available)
+        if (hasRankings) {
+            // Lower rank = better. Rank 1 -> +8, Rank 30 -> -2
+            if (homeRank < 99) homeStrength += Math.max(-2, 10 - homeRank * 0.3);
+            if (awayRank < 99) awayStrength += Math.max(-2, 10 - awayRank * 0.3);
         }
+
+        // Form influence (recent momentum WDLWW -> short-term signal)
+        const formWeight = 0.15;
+        const homeWins = homeSequence.filter(r => r === 'W').length;
+        const homeLosses = homeSequence.filter(r => r === 'L').length;
+        const awayWins = awaySequence.filter(r => r === 'W').length;
+        const awayLosses = awaySequence.filter(r => r === 'L').length;
+        const homeFormMomentum = (homeWins - homeLosses) * 2;  // -10 to +10
+        const awayFormMomentum = (awayWins - awayLosses) * 2;
+
+        homeStrength += homeFormMomentum * formWeight;
+        awayStrength += awayFormMomentum * formWeight;
+
+        // Home advantage
+        homeStrength += 4;
+
+        // Giant reputation bonus (slight)
+        if (homeIsGiant) homeStrength += 2;
+        if (awayIsGiant) awayStrength += 2;
+
+        // ELO integration (30%)
+        const eloWeight = 0.3;
+        homeStrength = homeStrength * (1 - eloWeight) + (eloData.home) * eloWeight;
+        awayStrength = awayStrength * (1 - eloWeight) + (eloData.away) * eloWeight;
+
+        // Poisson integration (20% weight)
+        const poissonWeight = 0.20;
+        const poissonHomeStr = poissonProbs.homeWin * 100;
+        const poissonAwayStr = poissonProbs.awayWin * 100;
+        homeStrength = homeStrength * (1 - poissonWeight) + poissonHomeStr * poissonWeight;
+        awayStrength = awayStrength * (1 - poissonWeight) + poissonAwayStr * poissonWeight;
+
+        // Market data integration (if available, 30% weight — strongest signal)
+        if (hasMarketData) {
+            const marketWeight = 0.30;
+            homeStrength = homeStrength * (1 - marketWeight) + marketProb.home * marketWeight;
+            awayStrength = awayStrength * (1 - marketWeight) + marketProb.away * marketWeight;
+        }
+
+        // Step 2: Proper 3-way probability model (same fix as ai-engine.js V62.1)
+        const totalStr = homeStrength + awayStrength;
+        const homeRatio = homeStrength / totalStr; // 0 to 1
+
+        const formDiff = Math.abs((homeWins / Math.max(1, homeSequence.length)) - (awayWins / Math.max(1, awaySequence.length)));
+        const drawBase = canDraw ? Math.max(15, Math.min(30, 25 - formDiff * 15)) : 0;
+        const drawShare = drawBase / 100;
+        const winShare = 1 - drawShare;
+
+        let hFinal = Math.round(homeRatio * winShare * 100);
+        let aFinal = Math.round((1 - homeRatio) * winShare * 100);
+        let dFinal = 100 - hFinal - aFinal;
+
+        // Clamp
+        hFinal = Math.max(8, Math.min(85, hFinal));
+        aFinal = Math.max(8, Math.min(85, aFinal));
+        dFinal = Math.max(canDraw ? 5 : 0, 100 - hFinal - aFinal);
+
+        // Determine winner and confidence
+        const maxProb = Math.max(hFinal, aFinal, dFinal);
+        let predictionText = 'EMPATE';
+        if (hFinal > aFinal && hFinal > dFinal) predictionText = `GANA ${homeName}`;
+        else if (aFinal > hFinal && aFinal > dFinal) predictionText = `GANA ${awayName}`;
+        const confidenceLevel = maxProb > 60 ? 'High' : maxProb > 45 ? 'Medium' : 'Low';
+
+        // Generate insights from available data
+        const swarmInsights = [];
+        const factors = [];
+        if (hasRecords) {
+            factors.push({ name: 'Record Temporada', weight: `${homeRecord.wins}W-${homeRecord.draws}D-${homeRecord.losses}L vs ${awayRecord.wins}W-${awayRecord.draws}D-${awayRecord.losses}L` });
+            swarmInsights.push(`📊 Record: ${homeName} (${homeRecord.winPct.toFixed(0)}% wins) vs ${awayName} (${awayRecord.winPct.toFixed(0)}% wins)`);
+        }
+        if (hasMarketData) {
+            factors.push({ name: 'Cuotas Mercado', weight: `${marketProb.home.toFixed(0)}% - ${marketProb.draw?.toFixed(0) || '?'}% - ${marketProb.away.toFixed(0)}%` });
+        }
+        swarmInsights.push(`🧮 Poisson xG: ${xG.homeXG.toFixed(2)} - ${xG.awayXG.toFixed(2)}`);
+        swarmInsights.push(`🧠 ELO: ${eloData.homeElo} vs ${eloData.awayElo}`);
+
+        console.log(`✅ [V62.1] ${homeName} vs ${awayName}: ${hFinal}%/${dFinal}%/${aFinal}% → ${predictionText}`);
 
         // Return unified prediction object
         return {
@@ -608,7 +644,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
             drawProb: dFinal,
             confidence: confidenceLevel,
             maxProb: Math.max(hFinal, aFinal, dFinal),
-            exactScore: exactScore,
+            exactScore: `${Math.round(xG.homeXG)}-${Math.round(xG.awayXG)}`,
             explanation: factors.map(f => ({ factor: f.name, impact: f.weight, icon: '🤖' })),
             insights: swarmInsights,
             marketHeat: 'Normal',
@@ -619,7 +655,7 @@ async function generateRealPrediction(homeTeam, awayTeam, sport, isLive, league 
                 momentumConfidence: confidenceLevel === 'High' ? 80 : 50,
                 hasPattern: true
             },
-            matchDate: orchestratorMatch.date
+            matchDate: extraData.date || new Date()
         };
     } catch (e) {
         console.error("Prediction engine fatal error:", e);
