@@ -20,6 +20,8 @@ import {
 } from './analyst-agents.js';
 
 import { SimulationAgent, TacticalAgent } from './monster-agents.js';
+import { QualityAssurance } from './chatdev/quality-assurance.js';
+import { StrategyDirector } from './chatdev/strategy-director.js';
 
 /**
  * Master Orchestrator - The Queen Bee
@@ -47,6 +49,10 @@ export class MasterOrchestrator {
             simulation: new SimulationAgent(),
             tactical: new TacticalAgent()
         };
+
+        // ChatDev Swarm (Management Layer)
+        this.qaDept = new QualityAssurance();
+        this.strategyBoard = new StrategyDirector();
     }
 
     /**
@@ -81,17 +87,44 @@ export class MasterOrchestrator {
 
         // Phase 4: Generate Prediction
         console.log('🎯 Phase 4: Generating Prediction...');
-        const prediction = this.generatePrediction(synthesis);
+        let prediction = this.generatePrediction(synthesis);
+
+        // Phase 5: Quality Assurance Audit
+        console.log('🕵️ Phase 5: Quality Assurance Audit...');
+        const qaResult = this.qaDept.audit(prediction);
+
+        if (!qaResult.passed) {
+            console.warn(`⚠️ QA Audit Flagged Issues: ${qaResult.issues.join(', ')}`);
+            // Sanction: Downgrade confidence
+            prediction.confidence = 'Low';
+            prediction.warning = "Audit flagged inconsistencies.";
+        }
+
+        // Phase 6: Strategy Director Review
+        console.log('👔 Phase 6: Strategy Director Review...');
+        // We use QA score (0-10) scaled to 100 as rough "Internal Confidence"
+        const strategyVerdict = this.strategyBoard.evaluate(prediction, qaResult.score * 10);
+
+        // Enhance prediction with Directive
+        prediction = {
+            ...prediction,
+            strategicNote: strategyVerdict.strategicNote,
+            action: strategyVerdict.action // PUBLISH, HOLD, REJECT
+        };
 
         const duration = Date.now() - startTime;
-        console.log(`✅ Analysis complete in ${duration}ms`);
+        console.log(`✅ Analysis complete in ${duration}ms. Decision: ${strategyVerdict.action}`);
 
         return {
             match: targetMatch,
             scoutReports: scoutResults,
             analysis: analysisResults,
             synthesis,
-            prediction,
+            prediction, // Now contains CEO verdict
+            chatDev: {
+                qa: qaResult,
+                strategy: strategyVerdict
+            },
             metadata: {
                 durationMs: duration,
                 timestamp: new Date().toISOString(),
